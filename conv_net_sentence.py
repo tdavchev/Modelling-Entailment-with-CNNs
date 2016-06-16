@@ -121,8 +121,10 @@ def train_conv_net(datasets,
     #divide train set into train/val sets 
     test_set_x = datasets[2][:,:img_h] 
     test_set_y = np.asarray(datasets[2][:,-1],"int32")
-    train_set = new_data[:,:]
-    val_set = datasets[1] # this is a change
+    train_set = new_data[:n_train_batches*batch_size,:]
+    val_set = new_data[n_train_batches*batch_size:,:]   
+    # train_set = new_data[:,:]
+    # val_set = datasets[1] # this is a change  
     train_set_x, train_set_y = shared_dataset((train_set[:,:img_h],train_set[:,-1]))
     val_set_x, val_set_y = shared_dataset((val_set[:,:img_h],val_set[:,-1]))
     n_val_batches = n_batches - n_train_batches
@@ -273,8 +275,7 @@ def make_idx_data(revs, word_idx_map, max_l=118, k=300, filter_h=5):
     """
     train, valid, test = [], [], []
     for rev in revs:
-        sent = get_idx_from_sent(rev["text"], word_idx_map, max_l, k, filter_h) 
-        # print rev["label"]  
+        sent = get_idx_from_sent(rev["text"], word_idx_map, max_l, k, filter_h)   
         sent.append(rev["label"])
         if rev["type"]=="test":            
             test.append(sent)        
