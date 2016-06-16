@@ -94,6 +94,23 @@ def get_W(word_vecs, k=300):
         i += 1
     return W, word_idx_map
 
+def load_glove_vec(fname, vocab):
+  """
+  Loads 300x1 word vecs from Stanford (Socher) GloVe
+  """
+  word_vecs = {}
+  target = open(fname, "r")
+
+  word_vecs = {}
+  for item in target:
+    elements = item.split()
+    word = elements[0]
+    if word in vocab:
+      word_vecs[word] = np.asarray(elements[1:], dtype='float32')
+
+  target.close()
+  return word_vecs
+
 def load_bin_vec(fname, vocab):
     """
     Loads 300x1 word vecs from Google (Mikolov) word2vec
@@ -166,7 +183,7 @@ if __name__=="__main__":
     print "vocab size: " + str(len(vocab))
     print "max sentence length: " + str(max_l)
     print "loading word2vec vectors...",
-    w2v = load_bin_vec(w2v_file, vocab)
+    w2v = load_glove_vec(w2v_file, vocab)
     print "word2vec loaded!"
     print "num words already in word2vec: " + str(len(w2v))
     add_unknown_words(w2v, vocab)
