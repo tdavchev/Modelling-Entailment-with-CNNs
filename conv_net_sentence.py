@@ -119,10 +119,10 @@ def train_conv_net(datasets,
     n_batches = new_data.shape[0]/batch_size
     n_train_batches = int(np.round(n_batches*0.9))
     #divide train set into train/val sets 
-    test_set_x = datasets[1][:,:img_h] 
-    test_set_y = np.asarray(datasets[1][:,-1],"int32")
-    train_set = new_data[:n_train_batches*batch_size,:]
-    val_set = new_data[n_train_batches*batch_size:,:]     
+    test_set_x = datasets[2][:,:img_h] 
+    test_set_y = np.asarray(datasets[2][:,-1],"int32")
+    train_set = new_data[:,:]
+    val_set = datasets[1] # this is a change
     train_set_x, train_set_y = shared_dataset((train_set[:,:img_h],train_set[:,-1]))
     val_set_x, val_set_y = shared_dataset((val_set[:,:img_h],val_set[:,-1]))
     n_val_batches = n_batches - n_train_batches
@@ -251,7 +251,7 @@ def safe_update(dict_to, dict_from):
         dict_to[key] = val
     return dict_to
     
-def get_idx_from_sent(sent, word_idx_map, max_l=51, k=300, filter_h=5):
+def get_idx_from_sent(sent, word_idx_map, max_l=118, k=300, filter_h=5):
     """
     Transforms sentence into a list of indices. Pad with zeroes.
     """
@@ -267,26 +267,30 @@ def get_idx_from_sent(sent, word_idx_map, max_l=51, k=300, filter_h=5):
         x.append(0)
     return x
 
-def make_idx_data_cv(revs, word_idx_map, cv, max_l=51, k=300, filter_h=5):
+def make_idx_data(revs, word_idx_map, max_l=118, k=300, filter_h=5):
     """
     Transforms sentences into a 2-d matrix.
     """
-    train, test = [], []
+    train, valid, test = [], [], []
     for rev in revs:
-        sent = get_idx_from_sent(rev["text"], word_idx_map, max_l, k, filter_h)   
-        sent.append(rev["y"])
-        if rev["split"]==cv:            
+        sent = get_idx_from_sent(rev["text"], word_idx_map, max_l, k, filter_h) 
+        # print rev["label"]  
+        sent.append(rev["label"])
+        if rev["type"]=="test":            
             test.append(sent)        
-        else:  
-            train.append(sent)   
+        elif rev["type"]=="train":  
+            train.append(sent)
+        else:
+            valid.append(sent)   
     train = np.array(train,dtype="int")
     test = np.array(test,dtype="int")
-    return [train, test]     
+    valid = np.array(valid,dtype="int")
+    return [train, valid, test]     
   
    
 if __name__=="__main__":
     print "loading data...",
-    x = cPickle.load(open("mr.p","rb"))
+    x = cPickle.load(open("snli.p","rb"))
     revs, W, W2, word_idx_map, vocab = x[0], x[1], x[2], x[3], x[4]
     print "data loaded!"
     mode= sys.argv[1]
@@ -305,21 +309,19 @@ if __name__=="__main__":
         print "using: word2vec vectors"
         U = W
     results = []
-    r = range(0,10)    
-    for i in r:
-        datasets = make_idx_data_cv(revs, word_idx_map, i, max_l=56,k=300, filter_h=5)
-        perf = train_conv_net(datasets,
-                              U,
-                              lr_decay=0.95,
-                              filter_hs=[3,4,5],
-                              conv_non_linear="relu",
-                              hidden_units=[100,2], 
-                              shuffle_batch=True, 
-                              n_epochs=25, 
-                              sqr_norm_lim=9,
-                              non_static=non_static,
-                              batch_size=50,
-                              dropout_rate=[0.5])
-        print "cv: " + str(i) + ", perf: " + str(perf)
-        results.append(perf)  
+    datasets = make_idx_data(revs, word_idx_map, max_l=118,k=300, filter_h=5)
+    perf = train_conv_net(datasets,
+                          U,
+                          lr_decay=0.95,
+                          filter_hs=[3,4,5],
+                          conv_non_linear="relu",
+                          hidden_units=[100,2], 
+                          shuffle_batch=True, 
+                          n_epochs=25, 
+                          sqr_norm_lim=9,
+                          non_static=non_static,
+                          batch_size=50,
+                          dropout_rate=[0.5])
+    print "perf: " + str(perf)
+    results.append(perf)  
     print str(np.mean(results))
