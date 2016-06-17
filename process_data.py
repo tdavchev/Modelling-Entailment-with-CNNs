@@ -56,7 +56,7 @@ def add_logic(file, file_type, revs, vocab, split_sent, clean_string=True):
             else:
                 rev = []
                 rev.append(sentence)
-                datum, vocab = process(sentence,3 ,rev, label, file_type, vocab, clean_string)
+                datum, vocab = process(sentence, 0,rev, label, file_type, vocab, clean_string)
                 revs.append(datum)
 
             
