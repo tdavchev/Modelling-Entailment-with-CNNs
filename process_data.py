@@ -189,10 +189,15 @@ if __name__=="__main__":
     print "number of sentences: " + str(len(revs))
     print "vocab size: " + str(len(vocab))
     print "max sentence length: " + str(max_l)
-    print "loading GloVe vectors..." if "glove" in w2v_file else print "loading word2vec vectors...",
+    who = "word2vec"
+    if "glove" in w2v_file:
+        who = "GloVe"
+        print "loading GloVe vectors...",
+    else:   
+        print "loading {0} vectors...".format(who),
     w2v = load_glove_vec(w2v_file, vocab)
-    print "word2vec loaded!"
-    print "num words already in word2vec: " + str(len(w2v))
+    print "{0} loaded!".format(who)
+    print "num words already in {0}: {1}".format(who, str(len(w2v)))
     add_unknown_words(w2v, vocab)
     W, word_idx_map = get_W(w2v)
     rand_vecs = {}
