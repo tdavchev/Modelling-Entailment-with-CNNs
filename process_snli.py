@@ -18,6 +18,9 @@ for line in target:
 		else:
 			idx = 2
 		if model == 1:
+			if elements[5][-1] != '.':
+				elements[5] = elements[5]+"."
+
 			print("{0}\t{1} {2}".format(idx,elements[5],elements[6]))
 		elif model == 21: # record only first sentence and the element
 			print("{0}\t{1}".format(idx,elements[5]))
