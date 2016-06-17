@@ -125,9 +125,9 @@ def train_conv_net(datasets,
     val_set = datasets[1]#[n_train_batches*batch_size:,:]   
     # train_set = new_data[:,:]
     # val_set = datasets[1] # this is a change  
-    valid_set_x = datasets[1][:,:img_h]
     train_set_x, train_set_y = shared_dataset((train_set[:,:img_h],train_set[:,-1]))
-    valid_set_y = np.asarray(datasets[1][:,-1],"int32")
+    valid_set_x = datasets[1][:,:img_h]
+    val_set_y = np.asarray(datasets[1][:,-1],"int32")
     # val_set_x, val_set_y = shared_dataset((val_set[:,:img_h],val_set[:,-1]))
     n_val_batches = datasets[1].shape[0]/batch_size 
     val_model = theano.function([index], classifier.errors(y),
