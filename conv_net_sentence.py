@@ -37,7 +37,7 @@ def train_conv_net(datasets,
                    U,
                    img_w=300, 
                    filter_hs=[3,4,5],
-                   hidden_units=[100,2], 
+                   hidden_units=[100,3], 
                    dropout_rate=[0.5],
                    shuffle_batch=True,
                    n_epochs=25, 
@@ -119,16 +119,19 @@ def train_conv_net(datasets,
     n_batches = new_data.shape[0]/batch_size
     n_train_batches = int(np.round(n_batches))
     #divide train set into train/val sets 
-    test_set_x = datasets[2][:,:img_h] 
+    # test_set_x = datasets[2][:,:img_h] 
+    # test_set_y = np.asarray(datasets[2][:,-1],"int32")
+    test_set_x = datasets[2][:,:-1] 
     test_set_y = np.asarray(datasets[2][:,-1],"int32")
+    print test_set_y[0]
     train_set = new_data[:,:]
     val_set = datasets[1]#[n_train_batches*batch_size:,:]   
     # train_set = new_data[:,:]
     # val_set = datasets[1] # this is a change  
-    train_set_x, train_set_y = shared_dataset((train_set[:,:img_h],train_set[:,-1]))
+    train_set_x, train_set_y = shared_dataset((train_set[:,:-1],train_set[:,-1]))
     # val_set_x = datasets[1][:,:img_h]
     # val_set_y = np.asarray(datasets[1][:,-1],"int32")
-    val_set_x, val_set_y = shared_dataset((val_set[:,:img_h],val_set[:,-1]))
+    val_set_x, val_set_y = shared_dataset((val_set[:,:-1],val_set[:,-1]))
     n_val_batches = datasets[1].shape[0]/batch_size 
     val_model = theano.function([index], classifier.errors(y),
          givens={
@@ -279,6 +282,7 @@ def make_idx_data(revs, word_idx_map, max_l=118, k=300, filter_h=5):
     for rev in revs:
         sent = get_idx_from_sent(rev["text"], word_idx_map, max_l, k, filter_h)   
         sent.append(rev["label"])
+        # print sent sent[-1] is the label
         if rev["type"]=="test":            
             test.append(sent)        
         elif rev["type"]=="train":  
@@ -318,7 +322,7 @@ if __name__=="__main__":
                           lr_decay=0.95,
                           filter_hs=[3,4,5],
                           conv_non_linear="relu",
-                          hidden_units=[100,2], 
+                          hidden_units=[100,3], 
                           shuffle_batch=True, 
                           n_epochs=25, 
                           sqr_norm_lim=9,
