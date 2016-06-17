@@ -4,78 +4,87 @@ from collections import defaultdict
 import sys, re
 import pandas as pd
 
-def build_data(data_folder, clean_string=True):
+def process(sentence, idx, rev, label, file_type, clean_string=True):
     """
-    Loads data and split into 10 folds.
+    Defines a label, text, num_words and type for each sentence
+    label in [0,1,2]
+    text - the sentence under consideration
+    num_words - count of words present in text
+    type in [train, valid, test]
+    """
+    rev=[]
+    if clean_string:
+        orig_rev = clean_str(" ".join(rev))
+    else:
+        orig_rev = " ".join(rev).lower()
+    words = set(orig_rev.split())
+    for word in words:
+        vocab[word] += 1
+    datum  = {"label":label, 
+              "text": orig_rev,                             
+              "num_words": len(orig_rev.split()),
+              "type":file_type,
+              "idx":idx}
+
+    return datum
+
+def add_logic(file, file_type, revs, vocab, split_sent, clean_string=True):
+    """
+    Deals with the logic behind a saved sentence-label relationship
+    Supports split sentence in twos
+    """
+    print split_sent
+    with open(file, "rb") as f:
+        for line in f:
+            data = line.split("\t")
+            label = data[0]
+            label = label.strip()
+            sentence = data[1] 
+            sentence = sentence.strip()
+            if split_sent:
+                print file_type
+                print "a sega tuk"
+                print sentence
+                sentence = sentence.split(".")
+                # get rid of potential empty spaces
+                sentence[0] = sentence[0].strip()
+                sentence[1] = sentence[1].strip()
+            
+            if type(sentence) == list:
+                for idx in xrange(len(sentence)):
+                    rev = []
+                    print sentence[idx]
+                    rev.append(sentence[idx])
+                    datum = process(sentence,idx ,rev, label, file_type, clean_string)
+                    revs.append(datum)
+            else:
+                rev = []
+                rev.append(sentence)
+                datum = process(sentence,3 ,rev, label, file_type, clean_string)
+                revs.append(datum)
+
+            
+   
+    return revs,vocab
+
+
+def build_data(data_folder, split_sent, clean_string=True):
+    """
+    Loads data and adds logic.
     """
     revs = []
     train_file = data_folder[0]
     valid_file = data_folder[1]
     test_file = data_folder[2]
     vocab = defaultdict(float)
-    with open(train_file, "rb") as f:
-        for line in f:
-            data = line.split("\t")
-            label = data[0]
-            label = label.strip()
-            # print label
-            sentence = data[1]      
-            rev = []
-            rev.append(sentence.strip())
-            if clean_string:
-                orig_rev = clean_str(" ".join(rev))
-            else:
-                orig_rev = " ".join(rev).lower()
-            words = set(orig_rev.split())
-            # print words
-            for word in words:
-                vocab[word] += 1
-            datum  = {"label":label, 
-                      "text": orig_rev,                             
-                      "num_words": len(orig_rev.split()),
-                      "type":"train"}
-            revs.append(datum)
-    with open(valid_file, "rb") as f:
-        for line in f:
-            data = line.split("\t")
-            label = data[0]
-            label = label.strip()
-            sentence = data[1] 
-            rev = []
-            rev.append(sentence.strip())
-            if clean_string:
-                orig_rev = clean_str(" ".join(rev))
-            else:
-                orig_rev = " ".join(rev).lower()
-            words = set(orig_rev.split())
-            for word in words:
-                vocab[word] += 1
-            datum  = {"label":label, 
-                      "text": orig_rev,                             
-                      "num_words": len(orig_rev.split()),
-                      "type":"valid"}
-            revs.append(datum)
+    # dedicate_logic
 
-    with open(test_file, "rb") as f:
-        for line in f:
-            data = line.split("\t")
-            label = data[0]
-            label = label.strip()
-            sentence = data[1] 
-            rev = []
-            rev.append(sentence.strip())
-            if clean_string:
-                orig_rev = clean_str(" ".join(rev))
-            else:
-                orig_rev = " ".join(rev).lower()
-            words = set(orig_rev.split())
-            for word in words:
-                vocab[word] += 1
-            datum  = {"label":label, 
-                      "text": orig_rev,                             
-                      "num_words": len(orig_rev.split()),
-                      "type":"test"}
-            revs.append(datum)
+    for idx in xrange(len(data_folder)):
+        # 0 train, 1 valid, 2 test
+        # chained ternary operator
+        data_type = "train" if idx==0 else "valid" if idx==1 else "test"
+        # update revs and vocab
+        revs, vocab = add_logic(data_folder[idx], data_type, revs, vocab, split_sent)
 
     return revs, vocab
     
@@ -160,7 +169,8 @@ def clean_str(string, TREC=False):
     string = re.sub(r"!", " ! ", string) 
     string = re.sub(r"\(", " \( ", string) 
     string = re.sub(r"\)", " \) ", string) 
-    string = re.sub(r"\?", " \? ", string) 
+    string = re.sub(r"\?", " \? ", string)
+    string = re.sub(r"\.{2}", ".", string)
     string = re.sub(r"\s{2,}", " ", string)    
     return string.strip() if TREC else string.strip().lower()
 
@@ -173,10 +183,11 @@ def clean_str_sst(string):
     return string.strip().lower()
 
 if __name__=="__main__":    
-    w2v_file = sys.argv[1]     
-    data_folder = ["train.txt","valid.txt","test.txt"]    
+    w2v_file = sys.argv[1]
+    split_sent = sys.argv[2]
+    data_folder = ["train.txt","valid.txt","test.txt"]   
     print "loading data...",        
-    revs, vocab = build_data(data_folder, clean_string=True)
+    revs, vocab = build_data(data_folder, split_sent, clean_string=True)
     max_l = np.max(pd.DataFrame(revs)["num_words"])
     print "data loaded!"
     print "number of sentences: " + str(len(revs))
@@ -191,6 +202,6 @@ if __name__=="__main__":
     rand_vecs = {}
     add_unknown_words(rand_vecs, vocab)
     W2, _ = get_W(rand_vecs)
-    cPickle.dump([revs, W, W2, word_idx_map, vocab], open("snli.p", "wb"))
+    cPickle.dump([revs, W, W2, word_idx_map, vocab], open("snli-testing.p", "wb"))
     print "dataset created!"
     
