@@ -117,7 +117,7 @@ def train_conv_net(datasets,
         new_data = datasets[0]
     new_data = np.random.permutation(new_data)
     n_batches = new_data.shape[0]/batch_size
-    # n_train_batches = int(np.round(n_batches*0.9))
+    n_train_batches = int(np.round(n_batches))
     #divide train set into train/val sets 
     test_set_x = datasets[2][:,:img_h] 
     test_set_y = np.asarray(datasets[2][:,-1],"int32")
