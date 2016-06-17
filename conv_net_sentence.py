@@ -50,7 +50,7 @@ def train_conv_net(datasets,
     """
     Train a simple conv net
     img_h = sentence length (padded where necessary)
-    img_w = word vector length (300 for word2vec)
+    img_w = word vector length (300 for word2vec and GloVe)
     filter_hs = filter window sizes    
     hidden_units = [x,y] x is the number of feature maps (per filter window), and y is the penultimate layer
     sqr_norm_lim = s^2 in the paper
@@ -123,7 +123,7 @@ def train_conv_net(datasets,
     # test_set_y = np.asarray(datasets[2][:,-1],"int32")
     test_set_x = datasets[2][:,:-1] 
     test_set_y = np.asarray(datasets[2][:,-1],"int32")
-    print test_set_y[0]
+    # print test_set_y[0]
     train_set = new_data[:,:]
     val_set = datasets[1]#[n_train_batches*batch_size:,:]   
     # train_set = new_data[:,:]
@@ -133,13 +133,14 @@ def train_conv_net(datasets,
     # val_set_y = np.asarray(datasets[1][:,-1],"int32")
     val_set_x, val_set_y = shared_dataset((val_set[:,:-1],val_set[:,-1]))
     n_val_batches = datasets[1].shape[0]/batch_size 
+
+    #compile theano functions to get train/val/test errors
     val_model = theano.function([index], classifier.errors(y),
          givens={
             x: val_set_x[index * batch_size: (index + 1) * batch_size],
              y: val_set_y[index * batch_size: (index + 1) * batch_size]},
                                 allow_input_downcast=True)
             
-    #compile theano functions to get train/val/test errors
     test_model = theano.function([index], classifier.errors(y),
              givens={
                 x: train_set_x[index * batch_size: (index + 1) * batch_size],
@@ -154,12 +155,15 @@ def train_conv_net(datasets,
     test_size = test_set_x.shape[0]
     test_layer0_input = Words[T.cast(x.flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
     for conv_layer in conv_layers:
+        # print"zashto sum tuk"
         test_layer0_output = conv_layer.predict(test_layer0_input, test_size)
         test_pred_layers.append(test_layer0_output.flatten(2))
     test_layer1_input = T.concatenate(test_pred_layers, 1)
     test_y_pred = classifier.predict(test_layer1_input)
     test_error = T.mean(T.neq(test_y_pred, y))
-    test_model_all = theano.function([x,y], test_error, allow_input_downcast = True)   
+    test_model_all = theano.function([x,y], test_error, allow_input_downcast = True)
+
+
     
     #start training over mini-batches
     print '... training'
@@ -258,7 +262,7 @@ def safe_update(dict_to, dict_from):
         dict_to[key] = val
     return dict_to
     
-def get_idx_from_sent(sent, word_idx_map, max_l=118, k=300, filter_h=5):
+def get_idx_from_sent(sent, word_idx_map, max_l=81, k=300, filter_h=5):
     """
     Transforms sentence into a list of indices. Pad with zeroes.
     """
@@ -274,30 +278,31 @@ def get_idx_from_sent(sent, word_idx_map, max_l=118, k=300, filter_h=5):
         x.append(0)
     return x
 
-def make_idx_data(revs, word_idx_map, max_l=118, k=300, filter_h=5):
+def make_idx_data(revs, word_idx_map, cur_idx, max_l=81, k=300, filter_h=5):
     """
     Transforms sentences into a 2-d matrix.
     """
     train, valid, test = [], [], []
     for rev in revs:
-        sent = get_idx_from_sent(rev["text"], word_idx_map, max_l, k, filter_h)   
-        sent.append(rev["label"])
-        # print sent sent[-1] is the label
-        if rev["type"]=="test":            
-            test.append(sent)        
-        elif rev["type"]=="train":  
-            train.append(sent)
-        else:
-            valid.append(sent)   
+        if(rev["idx"]==cur_idx):
+            sent = get_idx_from_sent(rev["text"], word_idx_map, max_l, k, filter_h)   
+            sent.append(rev["label"])
+            # print sent sent[-1] is the label
+            if rev["type"]=="test":            
+                test.append(sent)        
+            elif rev["type"]=="train":  
+                train.append(sent)
+            else:
+                valid.append(sent)   
     train = np.array(train,dtype="int")
     test = np.array(test,dtype="int")
     valid = np.array(valid,dtype="int")
-    return [train, valid, test]     
+    return [train[:300], valid[:100], test[:100]]     
   
    
 if __name__=="__main__":
     print "loading data...",
-    x = cPickle.load(open("snli.p","rb"))
+    x = cPickle.load(open("snli-testing.p","rb"))
     revs, W, W2, word_idx_map, vocab = x[0], x[1], x[2], x[3], x[4]
     print "data loaded!"
     mode= sys.argv[1]
@@ -308,27 +313,32 @@ if __name__=="__main__":
     elif mode=="-static":
         print "model architecture: CNN-static"
         non_static=False
-    execfile("conv_net_classes.py")    
-    if word_vectors=="-rand":
-        print "using: random vectors"
-        U = W2
-    elif word_vectors=="-word2vec":
-        print "using: word2vec vectors"
-        U = W
-    results = []
-    datasets = make_idx_data(revs, word_idx_map, max_l=118,k=300, filter_h=5)
-    perf = train_conv_net(datasets,
-                          U,
-                          lr_decay=0.95,
-                          filter_hs=[3,4,5],
-                          conv_non_linear="relu",
-                          hidden_units=[100,3], 
-                          shuffle_batch=True, 
-                          n_epochs=25, 
-                          sqr_norm_lim=9,
-                          non_static=non_static,
-                          batch_size=50,
-                          dropout_rate=[0.5])
-    print "perf: " + str(perf)
-    results.append(perf)  
-    print str(np.mean(results))
+    execfile("conv_net_classes.py")
+    for idx in xrange(2):
+        if word_vectors=="-rand":
+            print "using: random vectors"
+            U = W2
+        elif word_vectors=="-word2vec":
+            print "using: word2vec vectors"
+            U = W
+        results = []
+    
+        print "----------------------"
+        print("        CNN {0}       ".format(idx))
+        print "----------------------"
+        datasets = make_idx_data(revs, word_idx_map, idx, max_l=81,k=300, filter_h=5)
+        perf = train_conv_net(datasets,
+                              U,
+                              lr_decay=0.95,
+                              filter_hs=[3,4,5],
+                              conv_non_linear="relu",
+                              hidden_units=[100,3], 
+                              shuffle_batch=True, 
+                              n_epochs=25, 
+                              sqr_norm_lim=9,
+                              non_static=non_static,
+                              batch_size=50,
+                              dropout_rate=[0.5])
+        print "perf: " + str(perf)
+        results.append(perf)  
+        print str(np.mean(results))
