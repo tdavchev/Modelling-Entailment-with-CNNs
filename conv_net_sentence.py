@@ -17,6 +17,7 @@ import re
 import warnings
 import sys
 import time
+import cv_process_data as process
 warnings.filterwarnings("ignore")   
 
 #different non-linearities
@@ -307,7 +308,7 @@ def make_idx_data(revs, word_idx_map, cur_idx, max_l=81, k=300, filter_h=5):
     test = np.array(test,dtype="int")
     valid = np.array(valid,dtype="int")
 
-    return [train[:400], valid[:100], test[:100]]     
+    return [train, valid, test]     
   
    
 if __name__=="__main__":
@@ -323,7 +324,8 @@ if __name__=="__main__":
     elif mode=="-static":
         print "model architecture: CNN-static"
         non_static=False
-    new_inputs = [[[]]]
+    first_sent = [] # note currently takes the output of the convolution layers and not the predictions
+    second_sent = [] # I need to try it with predictions as well
     for idx in xrange(2):
         execfile("conv_net_classes.py")
         if word_vectors=="-rand":
@@ -333,8 +335,6 @@ if __name__=="__main__":
             print "using: word2vec vectors"
             U = W
         results = []
-        first_sent = []
-        second_sent = []
         print "----------------------"
         print("        CNN {0}       ".format(idx))
         print "----------------------"
@@ -369,3 +369,29 @@ if __name__=="__main__":
         print "perf: " + str(perf)
         results.append(perf)
         print str(np.mean(results))
+
+    print "concatenating the two sentences"
+    first_sent = np.asarray(first_sent)
+    second_sent = np.asarray(second_sent)
+    sentence = np.concatenate((first_sent,second_sent),axis=1)
+    sento_finale = []
+    for ind in xrange(datasets[0][:,-1].shape[0]):
+        off = np.append(sentence[ind],(datasets[0][ind,-1]))
+        sento_finale.append(off)
+
+    print "sentences concatenated."
+
+    print "Making pickles..."
+    process.build_me(sento_finale,W)
+
+    # f = open("conv-layer-output.txt","w") #opens file with name of "test.txt"
+    # for sent in sento_finale:
+    #     for br in xrange(0,len(sent)):
+    #         if (br+1)==len(sent):
+    #             f.write('%d' % sent[br])
+    #         else:
+    #             f.write('%10.6f ' % sent[br])
+
+    #     f.write("\n")
+
+    # f.close()
