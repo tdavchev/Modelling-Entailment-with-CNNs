@@ -117,17 +117,19 @@ def train_conv_net(datasets,
         new_data = datasets[0]
     new_data = np.random.permutation(new_data)
     n_batches = new_data.shape[0]/batch_size
-    n_train_batches = int(np.round(n_batches*0.9))
+    # n_train_batches = int(np.round(n_batches*0.9))
     #divide train set into train/val sets 
     test_set_x = datasets[2][:,:img_h] 
     test_set_y = np.asarray(datasets[2][:,-1],"int32")
-    train_set = new_data[:n_train_batches*batch_size,:]
-    val_set = new_data[n_train_batches*batch_size:,:]   
+    train_set = new_data[:,:]
+    val_set = datasets[1]#[n_train_batches*batch_size:,:]   
     # train_set = new_data[:,:]
     # val_set = datasets[1] # this is a change  
+    valid_set_x = datasets[1][:,:img_h]
     train_set_x, train_set_y = shared_dataset((train_set[:,:img_h],train_set[:,-1]))
-    val_set_x, val_set_y = shared_dataset((val_set[:,:img_h],val_set[:,-1]))
-    n_val_batches = n_batches - n_train_batches
+    valid_set_y = np.asarray(datasets[1][:,-1]."int32")
+    # val_set_x, val_set_y = shared_dataset((val_set[:,:img_h],val_set[:,-1]))
+    n_val_batches = datasets[1].shape[0]/batch_size 
     val_model = theano.function([index], classifier.errors(y),
          givens={
             x: val_set_x[index * batch_size: (index + 1) * batch_size],
