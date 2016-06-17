@@ -4,7 +4,7 @@ from collections import defaultdict
 import sys, re
 import pandas as pd
 
-def process(sentence, idx, rev, label, file_type, clean_string=True):
+def process(sentence, idx, rev, label, file_type, vocab, clean_string=True):
     """
     Defines a label, text, num_words and type for each sentence
     label in [0,1,2]
@@ -12,7 +12,7 @@ def process(sentence, idx, rev, label, file_type, clean_string=True):
     num_words - count of words present in text
     type in [train, valid, test]
     """
-    rev=[]
+    # rev=[]
     if clean_string:
         orig_rev = clean_str(" ".join(rev))
     else:
@@ -26,7 +26,7 @@ def process(sentence, idx, rev, label, file_type, clean_string=True):
               "type":file_type,
               "idx":idx}
 
-    return datum
+    return datum, vocab
 
 def add_logic(file, file_type, revs, vocab, split_sent, clean_string=True):
     """
@@ -42,9 +42,6 @@ def add_logic(file, file_type, revs, vocab, split_sent, clean_string=True):
             sentence = data[1] 
             sentence = sentence.strip()
             if split_sent:
-                print file_type
-                print "a sega tuk"
-                print sentence
                 sentence = sentence.split(".")
                 # get rid of potential empty spaces
                 sentence[0] = sentence[0].strip()
@@ -53,14 +50,13 @@ def add_logic(file, file_type, revs, vocab, split_sent, clean_string=True):
             if type(sentence) == list:
                 for idx in xrange(len(sentence)):
                     rev = []
-                    print sentence[idx]
                     rev.append(sentence[idx])
-                    datum = process(sentence,idx ,rev, label, file_type, clean_string)
+                    datum, vocab = process(sentence,idx ,rev, label, file_type, vocab, clean_string)
                     revs.append(datum)
             else:
                 rev = []
                 rev.append(sentence)
-                datum = process(sentence,3 ,rev, label, file_type, clean_string)
+                datum, vocab = process(sentence,3 ,rev, label, file_type, vocab, clean_string)
                 revs.append(datum)
 
             
@@ -193,7 +189,7 @@ if __name__=="__main__":
     print "number of sentences: " + str(len(revs))
     print "vocab size: " + str(len(vocab))
     print "max sentence length: " + str(max_l)
-    print "loading word2vec vectors...",
+    print "loading GloVe vectors..." if "glove" in w2v_file else print "loading word2vec vectors...",
     w2v = load_glove_vec(w2v_file, vocab)
     print "word2vec loaded!"
     print "num words already in word2vec: " + str(len(w2v))
