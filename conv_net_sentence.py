@@ -57,7 +57,7 @@ def train_conv_net(datasets,
     lr_decay = adadelta decay parameter
     """    
     rng = np.random.RandomState(3435)
-    img_h = len(datasets[0][0])-1  
+    img_h = len(datasets[0][0])-1
     filter_w = img_w    
     feature_maps = hidden_units[0]
     filter_shapes = []
@@ -93,7 +93,6 @@ def train_conv_net(datasets,
     layer1_input = T.concatenate(layer1_inputs,1)
     hidden_units[0] = feature_maps*len(filter_hs)    
     classifier = MLPDropout(rng, input=layer1_input, layer_sizes=hidden_units, activations=activations, dropout_rates=dropout_rate)
-    
     #define parameters of the model and update functions using adadelta
     params = classifier.params     
     for conv_layer in conv_layers:
@@ -121,9 +120,8 @@ def train_conv_net(datasets,
     #divide train set into train/val sets 
     # test_set_x = datasets[2][:,:img_h] 
     # test_set_y = np.asarray(datasets[2][:,-1],"int32")
-    test_set_x = datasets[2][:,:-1] 
+    test_set_x = datasets[2][:,:img_h] 
     test_set_y = np.asarray(datasets[2][:,-1],"int32")
-    # print test_set_y[0]
     train_set = new_data[:,:]
     val_set = datasets[1]#[n_train_batches*batch_size:,:]   
     # train_set = new_data[:,:]
@@ -146,24 +144,21 @@ def train_conv_net(datasets,
                 x: train_set_x[index * batch_size: (index + 1) * batch_size],
                  y: train_set_y[index * batch_size: (index + 1) * batch_size]},
                                  allow_input_downcast=True)               
-    train_model = theano.function([index], cost, updates=grad_updates,
+    train_model = theano.function([index], [cost,layer1_input], updates=grad_updates,
           givens={
             x: train_set_x[index*batch_size:(index+1)*batch_size],
               y: train_set_y[index*batch_size:(index+1)*batch_size]},
-                                  allow_input_downcast = True)     
+                                  allow_input_downcast = True)  
     test_pred_layers = []
     test_size = test_set_x.shape[0]
     test_layer0_input = Words[T.cast(x.flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
     for conv_layer in conv_layers:
-        # print"zashto sum tuk"
         test_layer0_output = conv_layer.predict(test_layer0_input, test_size)
         test_pred_layers.append(test_layer0_output.flatten(2))
     test_layer1_input = T.concatenate(test_pred_layers, 1)
     test_y_pred = classifier.predict(test_layer1_input)
     test_error = T.mean(T.neq(test_y_pred, y))
     test_model_all = theano.function([x,y], test_error, allow_input_downcast = True)
-
-
     
     #start training over mini-batches
     print '... training'
@@ -171,13 +166,15 @@ def train_conv_net(datasets,
     best_val_perf = 0
     val_perf = 0
     test_perf = 0       
-    cost_epoch = 0    
+    cost_epoch = 0   
     while (epoch < n_epochs):
         start_time = time.time()
         epoch = epoch + 1
+        outputs = []
         if shuffle_batch:
             for minibatch_index in np.random.permutation(range(n_train_batches)):
-                cost_epoch = train_model(minibatch_index)
+                [cost_epoch, output] = train_model(minibatch_index)
+                outputs.append(output)
                 set_zero(zero_vec)
         else:
             for minibatch_index in xrange(n_train_batches):
@@ -186,13 +183,26 @@ def train_conv_net(datasets,
         train_losses = [test_model(i) for i in xrange(n_train_batches)]
         train_perf = 1 - np.mean(train_losses)
         val_losses = [val_model(i) for i in xrange(n_val_batches)]
-        val_perf = 1- np.mean(val_losses)                        
+        val_perf = 1- np.mean(val_losses)
         print('epoch: %i, training time: %.2f secs, train perf: %.2f %%, val perf: %.2f %%' % (epoch, time.time()-start_time, train_perf * 100., val_perf*100.))
         if val_perf >= best_val_perf:
             best_val_perf = val_perf
             test_loss = test_model_all(test_set_x,test_set_y)        
-            test_perf = 1- test_loss         
-    return test_perf
+            test_perf = 1- test_loss 
+
+    new_input = []
+    count = 0
+    for output in outputs:
+        count += 1
+        if new_input == []:
+            new_input = output
+        else:
+            output = np.asarray(output)
+            new_input = np.concatenate((new_input,output),axis=0)
+        
+        new_input = np.asarray(new_input)
+
+    return test_perf,new_input
 
 def shared_dataset(data_xy, borrow=True):
         """ Function that loads the dataset into shared variables
@@ -285,9 +295,8 @@ def make_idx_data(revs, word_idx_map, cur_idx, max_l=81, k=300, filter_h=5):
     train, valid, test = [], [], []
     for rev in revs:
         if(rev["idx"]==cur_idx):
-            sent = get_idx_from_sent(rev["text"], word_idx_map, max_l, k, filter_h)   
+            sent = get_idx_from_sent(rev["text"], word_idx_map, max_l, k, filter_h)
             sent.append(rev["label"])
-            # print sent sent[-1] is the label
             if rev["type"]=="test":            
                 test.append(sent)        
             elif rev["type"]=="train":  
@@ -297,7 +306,8 @@ def make_idx_data(revs, word_idx_map, cur_idx, max_l=81, k=300, filter_h=5):
     train = np.array(train,dtype="int")
     test = np.array(test,dtype="int")
     valid = np.array(valid,dtype="int")
-    return [train[:300], valid[:100], test[:100]]     
+
+    return [train[:400], valid[:100], test[:100]]     
   
    
 if __name__=="__main__":
@@ -313,8 +323,9 @@ if __name__=="__main__":
     elif mode=="-static":
         print "model architecture: CNN-static"
         non_static=False
-    execfile("conv_net_classes.py")
+    new_inputs = [[[]]]
     for idx in xrange(2):
+        execfile("conv_net_classes.py")
         if word_vectors=="-rand":
             print "using: random vectors"
             U = W2
@@ -322,23 +333,39 @@ if __name__=="__main__":
             print "using: word2vec vectors"
             U = W
         results = []
-    
+        first_sent = []
+        second_sent = []
         print "----------------------"
         print("        CNN {0}       ".format(idx))
         print "----------------------"
         datasets = make_idx_data(revs, word_idx_map, idx, max_l=81,k=300, filter_h=5)
-        perf = train_conv_net(datasets,
-                              U,
-                              lr_decay=0.95,
-                              filter_hs=[3,4,5],
-                              conv_non_linear="relu",
-                              hidden_units=[100,3], 
-                              shuffle_batch=True, 
-                              n_epochs=25, 
-                              sqr_norm_lim=9,
-                              non_static=non_static,
-                              batch_size=50,
-                              dropout_rate=[0.5])
+        if idx == 0:
+            perf, first_sent = train_conv_net(datasets, 
+                U,
+                lr_decay=0.95,
+                filter_hs=[3,4,5],
+                conv_non_linear="relu",
+                hidden_units=[100,3],
+                shuffle_batch=True,
+                n_epochs=5, #trqbva 25
+                sqr_norm_lim=9,
+                non_static=non_static,
+                batch_size=50,
+                dropout_rate=[0.5]) # trqbva 0.5
+        else:
+            perf, second_sent = train_conv_net(datasets, 
+                U,
+                lr_decay=0.95,
+                filter_hs=[3,4,5],
+                conv_non_linear="relu",
+                hidden_units=[100,3],
+                shuffle_batch=True,
+                n_epochs=5, #trqbva 25
+                sqr_norm_lim=9,
+                non_static=non_static,
+                batch_size=50,
+                dropout_rate=[0.5]) # trqbva 0.5
+
         print "perf: " + str(perf)
-        results.append(perf)  
+        results.append(perf)
         print str(np.mean(results))
