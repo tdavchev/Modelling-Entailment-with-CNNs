@@ -73,6 +73,7 @@ def train_conv_net(datasets,
     print parameters
 
     #define model architecture
+    print("define model architecture")
     index = T.lscalar()
     x = T.matrix('x')
     y = T.ivector('y')
@@ -95,6 +96,7 @@ def train_conv_net(datasets,
     hidden_units[0] = feature_maps*len(filter_hs)
     classifier = MLPDropout(rng, input=layer1_input, layer_sizes=hidden_units, activations=activations, dropout_rates=dropout_rate)
     #define parameters of the model and update functions using adadelta
+    print "define parameters of the model and update functions using adadelta"
     params = classifier.params
     for conv_layer in conv_layers:
         params += conv_layer.params
@@ -109,6 +111,7 @@ def train_conv_net(datasets,
 
     #shuffle dataset and assign to mini batches. if dataset size is not a multiple of mini batches, replicate
     #extra data (at random)
+    print "shuffle dataset and assign to mini batches. if dataset size is not a multiple of mini batches, replicate"
     np.random.seed(3435)
     if datasets[0].shape[0] % batch_size > 0:
         extra_data_num = batch_size - datasets[0].shape[0] % batch_size
@@ -121,6 +124,7 @@ def train_conv_net(datasets,
     n_batches = new_data.shape[0]/batch_size
     n_train_batches = int(np.round(n_batches))
     #divide train set into train/val sets
+    print "divide train set into train/val sets"
     # test_set_x = datasets[2][:,:img_h]
     # test_set_y = np.asarray(datasets[2][:,-1],"int32")
     test_set_x = datasets[2][:,:img_h]
@@ -136,6 +140,7 @@ def train_conv_net(datasets,
     n_val_batches = datasets[1].shape[0]/batch_size
 
     #compile theano functions to get train/val/test errors
+    print "compile theano functions to get train/val/test errors"
     val_model = theano.function([index], classifier.errors(y),
          givens={
             x: val_set_x[index * batch_size: (index + 1) * batch_size],
@@ -216,11 +221,13 @@ def train_conv_net(datasets,
             test_perf = 1- test_loss
     new_input, f_p_y_given_xs, f_weights1, f_weights2, f_weights3, f_weights4, f_bias1, f_bias2, f_bias3, f_bias4 = [],[],[],[],[],[],[],[],[],[]
     count = 0
+    print("vlizam v cikula s addvaneto na neshta")
     for br in xrange(0,len(outputs)):
         count += 1
         if new_input == []:
             new_input = outputs[br]
             f_p_y_given_xs =p_y_given_xs[br]
+            print("purviq cikul uspeshen")
             #f_weights1 = weights1[br]
             #f_weights2 = weights2[br]
             #f_weights3 = weights3[br]
@@ -251,7 +258,7 @@ def train_conv_net(datasets,
             #f_bias2 = np.concatenate((f_bias2,bias2[br]),axis=0)
             #f_bias3 = np.concatenate((f_bias3,bias3[br]),axis=0)
             #f_bias4 = np.concatenate((f_bias4,bias4[br]),axis=0)
-
+        print("izlezoh ot cikula")
 
         new_input = np.asarray(new_input)
         f_p_y_given_xs = np.asarray(f_p_y_given_xs)
@@ -265,8 +272,8 @@ def train_conv_net(datasets,
         #f_bias4 = np.asarray(f_bias4)
 
 
-
-    return test_perf,new_input,f_p_y_given_xs,f_weights1,f_weights2,f_weights3,f_weights4,f_bias1,f_bias2,f_bias3,f_bias4
+    print("izlizam ot funkciata")
+    return test_perf,new_input,f_p_y_given_xs#,f_weights1,f_weights2,f_weights3,f_weights4,f_bias1,f_bias2,f_bias3,f_bias4
 
 def shared_dataset(data_xy, borrow=True):
         """ Function that loads the dataset into shared variables
@@ -403,7 +410,8 @@ if __name__=="__main__":
         print "----------------------"
         datasets = make_idx_data(revs, word_idx_map, idx, max_l=81,k=300, filter_h=5)
         if idx == 0:
-            perf, first_sent,f_p_y_given_xs1,f_weights11,f_weights21,f_weights31,f_weights41,f_bias11,f_bias21,f_bias31,f_bias41 = train_conv_net(datasets,
+            # perf, first_sent,f_p_y_given_xs1,f_weights11,f_weights21,f_weights31,f_weights41,f_bias11,f_bias21,f_bias31,f_bias41 = train_conv_net(datasets,
+            perf, first_sent,f_p_y_given_xs1 = train_conv_net(datasets,
                 U,
                 lr_decay=0.95,
                 filter_hs=[3,4,5],
@@ -415,8 +423,11 @@ if __name__=="__main__":
                 non_static=non_static,
                 batch_size=50,
                 dropout_rate=[0.5]) # trqbva 0.5
+            print"subrah kvot mi trqbvashe"
         else:
-            perf, second_sent,f_p_y_given_xs2,f_weights12,f_weights22,f_weights32,f_weights42,f_bias12,f_bias22,f_bias32,f_bias42 = train_conv_net(datasets,
+            print "vikam sledvashtata funkcia"
+            # perf, second_sent,f_p_y_given_xs2,f_weights12,f_weights22,f_weights32,f_weights42,f_bias12,f_bias22,f_bias32,f_bias42 = train_conv_net(datasets,
+            perf, second_sent,f_p_y_given_xs2 = train_conv_net(datasets,
                 U,
                 lr_decay=0.95,
                 filter_hs=[3,4,5],
