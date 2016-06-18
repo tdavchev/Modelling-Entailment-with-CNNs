@@ -59,6 +59,9 @@ def train_conv_net(datasets,
     """    
     rng = np.random.RandomState(3435)
     img_h = len(datasets[0][0])-1
+    print img_h
+    print len(datasets[0])
+    print datasets[0][0]
     filter_w = img_w    
     feature_maps = hidden_units[0]
     filter_shapes = []
@@ -163,6 +166,14 @@ def train_conv_net(datasets,
     
     #start training over mini-batches
     print '... training'
+    olq =  datasets[2][:,:img_h]
+    print olq.shape
+    olq = olq[0:50].flatten()
+    print len(olq)
+
+
+
+
     epoch = 0
     best_val_perf = 0
     val_perf = 0
@@ -308,7 +319,7 @@ def make_idx_data(revs, word_idx_map, cur_idx, max_l=81, k=300, filter_h=5):
     test = np.array(test,dtype="int")
     valid = np.array(valid,dtype="int")
 
-    return [train, valid, test]     
+    return [train[:400], valid[:100], test[:100]]     
   
    
 if __name__=="__main__":
@@ -333,6 +344,8 @@ if __name__=="__main__":
             U = W2
         elif word_vectors=="-word2vec":
             print "using: word2vec vectors"
+            # print W.shape
+            print len(W)
             U = W
         results = []
         print "----------------------"
