@@ -34,9 +34,9 @@ def Iden(x):
 
 def train_conv_net(datasets,
                    U,
-                   img_w=300,
+                   img_w=1,
                    filter_hs=[3,4,5],
-                   hidden_units=[100,2],
+                   hidden_units=[100,3],
                    dropout_rate=[0.5],
                    shuffle_batch=True,
                    n_epochs=25,
@@ -185,7 +185,7 @@ def train_conv_net(datasets,
             test_loss = test_model_all(test_set_x,test_set_y)
             test_perf = 1- test_loss
     return test_perf
-    
+
 
 def shared_dataset(data_xy, borrow=True):
         """ Function that loads the dataset into shared variables
@@ -300,7 +300,7 @@ if __name__=="__main__":
                               lr_decay=0.95,
                               filter_hs=[3,4,5],
                               conv_non_linear="relu",
-                              hidden_units=[100,2],
+                              hidden_units=[100,3],
                               shuffle_batch=True,
                               n_epochs=25,
                               sqr_norm_lim=9,
