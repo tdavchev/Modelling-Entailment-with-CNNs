@@ -105,7 +105,7 @@ def train_conv_net(datasets,
         #if word vectors are allowed to change, add them as model parameters
         params += [Words]
     cost = classifier.negative_log_likelihood(y)
-    weights = classifier.getW()
+    # weights = classifier.getW()
     dropout_cost = classifier.dropout_negative_log_likelihood(y)
     grad_updates = sgd_updates_adadelta(params, dropout_cost, lr_decay, 1e-6, sqr_norm_lim)
 
@@ -149,7 +149,7 @@ def train_conv_net(datasets,
                 x: train_set_x[index * batch_size: (index + 1) * batch_size],
                  y: train_set_y[index * batch_size: (index + 1) * batch_size]},
                                  allow_input_downcast=True)
-    train_model = theano.function([index], [cost,layer1_input], updates=grad_updates,
+    train_model = theano.function([index], [cost, params, layer1_input], updates=grad_updates,
           givens={
             x: train_set_x[index*batch_size:(index+1)*batch_size],
               y: train_set_y[index*batch_size:(index+1)*batch_size]},
@@ -160,11 +160,11 @@ def train_conv_net(datasets,
               y: train_set_y[index * batch_size: (index + 1) * batch_size]},
                                    allow_input_downcast=True)
 
-    trains_weights = theano.function([index], weights,
-          givens={
-            x: train_set_x[index * batch_size: (index + 1) * batch_size],
-              y: train_set_y[index * batch_size: (index + 1) * batch_size]},
-                                   allow_input_downcast=True)
+    # trains_weights = theano.function([index], weights,
+    #       givens={
+    #         x: train_set_x[index * batch_size: (index + 1) * batch_size],
+    #           y: train_set_y[index * batch_size: (index + 1) * batch_size]},
+    #                                allow_input_downcast=True)
     test_pred_layers = []
     test_size = test_set_x.shape[0]
     test_layer0_input = Words[T.cast(x.flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
@@ -196,13 +196,13 @@ def train_conv_net(datasets,
         outputs = []
         if shuffle_batch:
             for minibatch_index in np.random.permutation(range(n_train_batches)):
-                [cost_epoch, output] = train_model(minibatch_index)
-                params = trains_params(minibatch)
+                [cost_epoch, params, output] = train_model(minibatch_index)
+                # params = trains_params(minibatch)
                 print params
                 print params.shape
-                Weights = trains_weights(minibatch_index)
-                print Weights
-                print Weights.shape
+                # Weights = trains_weights(minibatch_index)
+                # print Weights
+                # print Weights.shape
                 outputs.append(output)
                 set_zero(zero_vec)
         else:
