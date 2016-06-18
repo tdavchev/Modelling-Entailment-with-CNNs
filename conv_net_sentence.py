@@ -480,7 +480,7 @@ if __name__=="__main__":
     # print sentence
     print sentence.shape
     print "-----"
-    for ind in xrange(0,sentence[0].shape):
+    for ind in xrange(0,sentence[0].shape[0]):
         print ind
         # print datasets[0][ind,-1]
         s = np.append(sentence[0][ind],sentence[1][ind])
