@@ -429,7 +429,6 @@ if __name__=="__main__":
         datasets = make_idx_data(revs, word_idx_map, idx, max_l=81,k=300, filter_h=5)
         if idx == 0:
             perf, first_sent,f_p_y_given_xs1,f_weights11,f_weights21,f_weights31,f_weights41,f_bias11, idx_set = train_conv_net(datasets,
-            # perf, first_sent,f_p_y_given_xs1 = train_conv_net(datasets,
                 U,
                 idx,
                 lr_decay=0.95,
@@ -446,7 +445,6 @@ if __name__=="__main__":
         else:
             print "vikam sledvashtata funkcia"
             perf, second_sent,f_p_y_given_xs2,f_weights12,f_weights22,f_weights32,f_weights42,f_bias12, idx_set = train_conv_net(datasets,
-            # perf, second_sent,f_p_y_given_xs2 = train_conv_net(datasets,
                 U,
                 idx,
                 lr_decay=0.95,
@@ -466,28 +464,27 @@ if __name__=="__main__":
 
     print "concatenating the two sentences"
     first_sent = np.asarray(first_sent)
-    # print first_sent.shape
+    f_p_y_given_xs1 = np.asarray(f_p_y_given_xs1)
     sentence = []
+    p_sentence = []
     second_sent = np.asarray(second_sent)
-    count = 0
-    for s1, s2 in first_sent, second_sent:
-        print count
-        count +=1
+    f_p_y_given_xs2 = np.asarray(f_p_y_given_xs2)
+    for s1, s2, p1, p2 in first_sent, second_sent, f_p_y_given_xs1, f_p_y_given_xs2:
         sentence = np.concatenate((s1,s2),axis=1)
-        print sentence
-    # sentence = np.concatenate((first_sent,second_sent),axis=2)
+        p_sentence = np.concatenate((p1,p2),axis=1)
+
     sento_finale = []
-    for ind in xrange(0,datasets[0][:,-1].shape[0]):
-        print ind
-        # print datasets[0][ind,-1]
-        # s = np.append(sentence[ind],sentence[1][ind])
+    p_sento_finale = []
+    for ind in xrange(0,sentence.shape[0]):
         off = np.append(sentence[ind],(datasets[0][ind,-1]))
+        p_off = np.append(p_sentence[ind],(datasets[0][ind,-1]))
         sento_finale.append(off)
+        p_sento_finale.append(p_off)
 
     print "sentences concatenated."
 
     print "Making pickles..."
-    process.build_me(f_p_y_given_xs1,f_p_y_given_xs2,f_weights11,f_weights21,f_weights31,f_weights41,f_bias11,f_weights12,f_weights22,f_weights32,f_weights42,f_bias12)
+    process.build_me(f_weights11,f_weights21,f_weights31,f_weights41,f_bias11,f_weights12,f_weights22,f_weights32,f_weights42,f_bias12)
 
     print "Saving into conv-layer-output.txt"
     f = open("conv-layer-output.txt","w") #opens file with name of "test.txt"
@@ -497,6 +494,19 @@ if __name__=="__main__":
                 f.write('%d' % sent[br])
             else:
                 f.write('%10.6f ' % sent[br])
+
+        f.write("\n")
+
+    f.close()
+
+    print "Saving into conv-layer-output-prob.txt"
+    f = open("conv-layer-output-prob.txt","w") #opens file with name of "test.txt"
+    for p_sent in p_sento_finale:
+        for br in xrange(0,len(p_sent)):
+            if (br+1)==len(p_sent):
+                f.write('%d' % p_sent[br])
+            else:
+                f.write('%10.6f ' % p_sent[br])
 
         f.write("\n")
 

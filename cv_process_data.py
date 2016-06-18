@@ -20,7 +20,7 @@ def build_data_cv(data, cv=10):
     return revs
 
 #def build_me(data, f_p_y_given_xs1,f_weights11,f_weights21,f_weights31,f_weights41,f_bias11,f_bias21,f_bias31,f_bias41,f_p_y_given_xs2,f_weights12,f_weights22,f_weights32,f_weights42,f_bias12,f_bias22,f_bias32,f_bias42):
-def build_me(f_p_y_given_xs1,f_p_y_given_xs2,f_weights11,f_weights21,f_weights31,f_weights41,f_bias11,f_weights12,f_weights22,f_weights32,f_weights42,f_bias12):
+def build_me(f_weights21,f_weights31,f_weights41,f_bias11,f_weights12,f_weights22,f_weights32,f_weights42,f_bias12):
     # print "loading data...",
     # revs = build_data_cv(data, cv=10)
     # max_l = np.max(pd.DataFrame(revs)["num_words"])
