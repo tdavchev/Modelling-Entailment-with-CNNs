@@ -173,7 +173,6 @@ def train_conv_net(datasets,
 
 
 
-
     epoch = 0
     best_val_perf = 0
     val_perf = 0
@@ -397,14 +396,14 @@ if __name__=="__main__":
     print "Making pickles..."
     process.build_me(sento_finale,W)
 
-    # f = open("conv-layer-output.txt","w") #opens file with name of "test.txt"
-    # for sent in sento_finale:
-    #     for br in xrange(0,len(sent)):
-    #         if (br+1)==len(sent):
-    #             f.write('%d' % sent[br])
-    #         else:
-    #             f.write('%10.6f ' % sent[br])
+    f = open("conv-layer-output.txt","w") #opens file with name of "test.txt"
+    for sent in sento_finale:
+        for br in xrange(0,len(sent)):
+            if (br+1)==len(sent):
+                f.write('%d' % sent[br])
+            else:
+                f.write('%10.6f ' % sent[br])
 
-    #     f.write("\n")
+        f.write("\n")
 
-    # f.close()
+    f.close()
