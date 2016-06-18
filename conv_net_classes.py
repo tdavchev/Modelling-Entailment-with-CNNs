@@ -150,6 +150,8 @@ class MLPDropout(object):
         self.negative_log_likelihood = self.layers[-1].negative_log_likelihood
         self.errors = self.layers[-1].errors
 
+        self.weights = self.layers[-1].weights
+
         # Grab all the parameters together.
         self.params = [ param for layer in self.dropout_layers for param in layer.params ]
 

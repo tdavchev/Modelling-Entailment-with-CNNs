@@ -154,6 +154,12 @@ def train_conv_net(datasets,
             x: train_set_x[index*batch_size:(index+1)*batch_size],
               y: train_set_y[index*batch_size:(index+1)*batch_size]},
                                   allow_input_downcast = True)
+    trains_params = theano.function([index], params,
+          givens={
+            x: train_set_x[index * batch_size: (index + 1) * batch_size],
+              y: train_set_y[index * batch_size: (index + 1) * batch_size]},
+                                   allow_input_downcast=True)
+
     trains_weights = theano.function([index], weights,
           givens={
             x: train_set_x[index * batch_size: (index + 1) * batch_size],
@@ -191,6 +197,9 @@ def train_conv_net(datasets,
         if shuffle_batch:
             for minibatch_index in np.random.permutation(range(n_train_batches)):
                 [cost_epoch, output] = train_model(minibatch_index)
+                params = trains_params(minibatch)
+                print params
+                print params.shape
                 Weights = trains_weights(minibatch_index)
                 print Weights
                 print Weights.shape
