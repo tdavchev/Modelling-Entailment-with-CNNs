@@ -153,6 +153,11 @@ def train_conv_net(datasets,
             x: train_set_x[index*batch_size:(index+1)*batch_size],
               y: train_set_y[index*batch_size:(index+1)*batch_size]},
                                   allow_input_downcast = True)
+    trains_weights = theano.function([index], classifier.getW,
+          givens={
+            x: train_set_x[index * batch_size: (index + 1) * batch_size],
+              y: train_set_y[index * batch_size: (index + 1) * batch_size]},
+                                   allow_input_downcast=True)
     test_pred_layers = []
     test_size = test_set_x.shape[0]
     test_layer0_input = Words[T.cast(x.flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
@@ -173,7 +178,6 @@ def train_conv_net(datasets,
 
 
 
-
     epoch = 0
     best_val_perf = 0
     val_perf = 0
@@ -186,6 +190,9 @@ def train_conv_net(datasets,
         if shuffle_batch:
             for minibatch_index in np.random.permutation(range(n_train_batches)):
                 [cost_epoch, output] = train_model(minibatch_index)
+                Weights = trains_weights(minibatch_index)
+                print Weights
+                print Weights.shape
                 outputs.append(output)
                 set_zero(zero_vec)
         else:
@@ -397,14 +404,14 @@ if __name__=="__main__":
     print "Making pickles..."
     process.build_me(sento_finale,W)
 
-    # f = open("conv-layer-output.txt","w") #opens file with name of "test.txt"
-    # for sent in sento_finale:
-    #     for br in xrange(0,len(sent)):
-    #         if (br+1)==len(sent):
-    #             f.write('%d' % sent[br])
-    #         else:
-    #             f.write('%10.6f ' % sent[br])
+    f = open("conv-layer-output.txt","w") #opens file with name of "test.txt"
+    for sent in sento_finale:
+        for br in xrange(0,len(sent)):
+            if (br+1)==len(sent):
+                f.write('%d' % sent[br])
+            else:
+                f.write('%10.6f ' % sent[br])
 
-    #     f.write("\n")
+        f.write("\n")
 
-    # f.close()
+    f.close()
