@@ -120,10 +120,14 @@ def train_conv_net(datasets,
     #divide train set into train/val sets 
     test_set_x = datasets[1][:,:img_h] 
     test_set_y = np.asarray(datasets[1][:,-1],"int32")
+    # print test_set_x.shape[0]
     train_set = new_data[:n_train_batches*batch_size,:]
+    # print train_set.shape[0]
     val_set = new_data[n_train_batches*batch_size:,:]     
     train_set_x, train_set_y = shared_dataset((train_set[:,:img_h],train_set[:,-1]))
+    # print train_set_x.shape[0]
     val_set_x, val_set_y = shared_dataset((val_set[:,:img_h],val_set[:,-1]))
+    # print val_set_x[0]
     n_val_batches = n_batches - n_train_batches
     val_model = theano.function([index], classifier.errors(y),
          givens={
@@ -248,31 +252,16 @@ def safe_update(dict_to, dict_from):
             raise KeyError(key)
         dict_to[key] = val
     return dict_to
-    
-def get_idx_from_sent(sent, word_idx_map, max_l=51, k=300, filter_h=5):
-    """
-    Transforms sentence into a list of indices. Pad with zeroes.
-    """
-    x = []
-    pad = filter_h - 1
-    for i in xrange(pad):
-        x.append(0)
-    words = sent.split()
-    for word in words:
-        if word in word_idx_map:
-            x.append(word_idx_map[word])
-    while len(x) < max_l+2*pad:
-        x.append(0)
-    return x
 
-def make_idx_data_cv(revs, word_idx_map, cv, max_l=51, k=300, filter_h=5):
+def make_idx_data_cv(revs, cv):
     """
     Transforms sentences into a 2-d matrix.
     """
     train, test = [], []
     for rev in revs:
-        sent = get_idx_from_sent(rev["text"], word_idx_map, max_l, k, filter_h)   
-        sent.append(rev["y"])
+        # sent = get_idx_from_sent(rev["text"], word_idx_map, max_l, k, filter_h)   
+        sent = rev["text"]
+        sent = np.append(sent,rev["y"]) #label
         if rev["split"]==cv:            
             test.append(sent)        
         else:  
@@ -284,8 +273,8 @@ def make_idx_data_cv(revs, word_idx_map, cv, max_l=51, k=300, filter_h=5):
    
 if __name__=="__main__":
     print "loading data...",
-    x = cPickle.load(open("mr.p","rb"))
-    revs, W, W2, word_idx_map, vocab = x[0], x[1], x[2], x[3], x[4]
+    x = cPickle.load(open("new_dump.p","rb"))
+    revs, W = x[0], x[1]
     print "data loaded!"
     mode= sys.argv[1]
     word_vectors = sys.argv[2]    
@@ -296,16 +285,14 @@ if __name__=="__main__":
         print "model architecture: CNN-static"
         non_static=False
     execfile("conv_net_classes.py")    
-    if word_vectors=="-rand":
-        print "using: random vectors"
-        U = W2
-    elif word_vectors=="-word2vec":
-        print "using: word2vec vectors"
-        U = W
+    print "using: word2vec vectors"
+    U = W
     results = []
     r = range(0,10)    
     for i in r:
-        datasets = make_idx_data_cv(revs, word_idx_map, i, max_l=56,k=300, filter_h=5)
+        datasets = make_idx_data_cv(revs, i)
+        print datasets[0].shape
+        print "^^^^"
         perf = train_conv_net(datasets,
                               U,
                               lr_decay=0.95,
