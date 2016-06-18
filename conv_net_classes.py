@@ -153,6 +153,7 @@ class MLPDropout(object):
         # self.weights = self.layers[-1].w
 
         # Grab all the parameters together.
+        self.p_y_given_x = self.layers[-1].p_y_given_x
         self.params = [ param for layer in self.dropout_layers for param in layer.params ]
 
     def predict(self, new_data):
@@ -338,9 +339,6 @@ class LogisticRegression(object):
             return T.mean(T.neq(self.y_pred, y))
         else:
             raise NotImplementedError()
-
-    # def getW(self):
-    #     return self.W
 
 class LeNetConvPoolLayer(object):
     """Pool Layer of a convolutional network """
