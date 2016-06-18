@@ -204,7 +204,7 @@ def train_conv_net(datasets,
                     takeW = False
                     if idx == 0:
                         r = np.random.rand()
-                        if r > 0.75:
+                        if r > 0.8:
                             takeW = True
                         if takeW:
                             ra = np.random.randint(batch_size-1,size=1)
@@ -397,7 +397,7 @@ def make_idx_data(revs, word_idx_map, cur_idx, max_l=81, k=300, filter_h=5):
     test = np.array(test,dtype="int")
     valid = np.array(valid,dtype="int")
 
-    return [train, valid, test]
+    return [train[:100], valid[:10], test[:10]]
 
 
 if __name__=="__main__":
@@ -477,16 +477,17 @@ if __name__=="__main__":
     print "sentences concatenated."
 
     print "Making pickles..."
-    process.build_me(sento_finale,f_p_y_given_xs1,f_p_y_given_xs2,f_weights11,f_weights21,f_weights31,f_weights41,f_bias11)
+    process.build_me(f_p_y_given_xs1,f_p_y_given_xs2,f_weights11,f_weights21,f_weights31,f_weights41,f_bias11)
 
-    # f = open("conv-layer-output.txt","w") #opens file with name of "test.txt"
-    # for sent in sento_finale:
-    #     for br in xrange(0,len(sent)):
-    #         if (br+1)==len(sent):
-    #             f.write('%d' % sent[br])
-    #         else:
-    #             f.write('%10.6f ' % sent[br])
+    print "Saving into .txt"
+    f = open("conv-layer-output.txt","w") #opens file with name of "test.txt"
+    for sent in sento_finale:
+        for br in xrange(0,len(sent)):
+            if (br+1)==len(sent):
+                f.write('%d' % sent[br])
+            else:
+                f.write('%10.6f ' % sent[br])
 
-    #     f.write("\n")
+        f.write("\n")
 
-    # f.close()
+    f.close()
