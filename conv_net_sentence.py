@@ -469,8 +469,9 @@ if __name__=="__main__":
 
     print "concatenating the two sentences"
     first_sent = np.asarray(first_sent)
+    print first_sent.shape
     second_sent = np.asarray(second_sent)
-    sentence = np.concatenate((first_sent,second_sent),axis=1)
+    sentence = np.concatenate((first_sent,second_sent),axis=2)
     sento_finale = []
     print "-----"
     # print datasets[0][:,-1]
@@ -479,10 +480,11 @@ if __name__=="__main__":
     # print sentence
     print sentence.shape
     print "-----"
-    for ind in xrange(0,sentence.shape):
+    for ind in xrange(0,sentence[0].shape):
         print ind
         # print datasets[0][ind,-1]
-        off = np.append(sentence[ind],(datasets[0][ind,-1]))
+        s = np.append(sentence[0][ind],sentence[1][ind])
+        off = np.append(s,(datasets[0][ind,-1]))
         sento_finale.append(off)
 
     print "sentences concatenated."
