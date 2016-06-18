@@ -427,9 +427,6 @@ if __name__=="__main__":
         print("        CNN {0}       ".format(idx))
         print "----------------------"
         datasets = make_idx_data(revs, word_idx_map, idx, max_l=81,k=300, filter_h=5)
-        for item in dataset[0]:
-            print item
-        print "dataset 0 ^^"
         if idx == 0:
             perf, first_sent,f_p_y_given_xs1,f_weights11,f_weights21,f_weights31,f_weights41,f_bias11, idx_set = train_conv_net(datasets,
             # perf, first_sent,f_p_y_given_xs1 = train_conv_net(datasets,
