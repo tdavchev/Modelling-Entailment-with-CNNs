@@ -196,7 +196,7 @@ def train_conv_net(datasets,
         start_time = time.time()
         epoch = epoch + 1
         if epoch == n_epochs:
-             outputs, p_y_given_xs, weights1,weights2,weights3,weights4,bias1 = [],[],[],[],[],[],[],[],[],[]
+             outputs, p_y_given_xs, weights1,weights2,weights3,weights4,bias1 = [],[],[],[],[],[],[]
         if shuffle_batch:
             for minibatch_index in np.random.permutation(range(n_train_batches)):
                 [cost_epoch, p_y_given_x, W, b, W2, b2, W3, b3, W4, b4, layer0_output] = train_model(minibatch_index) #2-4 conv 1 is output
