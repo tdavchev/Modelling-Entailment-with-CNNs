@@ -221,14 +221,13 @@ def train_conv_net(datasets,
                             weights2.append(w2[idx_set[ks]])
                             weights3.append(w3[idx_set[ks]])
                             weights4.append(w4[idx_set[ks]])
-                    else:
                     p_y_given_xs.append(p_y_given_x)
                     outputs.append(layer0_output)
                 set_zero(zero_vec)
-        # else:
-        #     for minibatch_index in xrange(n_train_batches):
-        #         cost_epoch = train_model(minibatch_index)
-        #         set_zero(zero_vec)
+        else:
+            for minibatch_index in xrange(n_train_batches):
+                cost_epoch = train_model(minibatch_index)
+                set_zero(zero_vec)
         train_losses = [test_model(i) for i in xrange(n_train_batches)]
         train_perf = 1 - np.mean(train_losses)
         val_losses = [val_model(i) for i in xrange(n_val_batches)]
