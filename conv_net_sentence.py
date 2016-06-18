@@ -469,7 +469,14 @@ if __name__=="__main__":
     second_sent = np.asarray(second_sent)
     sentence = np.concatenate((first_sent,second_sent),axis=1)
     sento_finale = []
-    for ind in xrange(datasets[0][:,-1].shape[0]):
+    print "-----"
+    # print datasets[0][:,-1]
+    print datasets[0][:,-1].shape[0]
+    print "-----"
+    # print sentence
+    print sentence.shape
+    print "-----"
+    for ind in xrange(sentence.shape[0]):
         off = np.append(sentence[ind],(datasets[0][ind,-1]))
         sento_finale.append(off)
 
