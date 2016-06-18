@@ -159,39 +159,33 @@ def train_conv_net(datasets,
 
     #start training over mini-batches
     print '... training'
-    olq =  datasets[0][:,:img_h]
-    print olq.shape
-    olq = olq[0:50].flatten()
-    print len(olq)
-
-
     epoch = 0
     best_val_perf = 0
     val_perf = 0
     test_perf = 0
     cost_epoch = 0
-    # while (epoch < n_epochs):
-    #     start_time = time.time()
-    #     epoch = epoch + 1
-    #     if shuffle_batch:
-    #         for minibatch_index in np.random.permutation(range(n_train_batches)):
-    #             cost_epoch = train_model(minibatch_index)
-    #             set_zero(zero_vec)
-    #     else:
-    #         for minibatch_index in xrange(n_train_batches):
-    #             cost_epoch = train_model(minibatch_index)
-    #             set_zero(zero_vec)
-    #     train_losses = [test_model(i) for i in xrange(n_train_batches)]
-    #     train_perf = 1 - np.mean(train_losses)
-    #     val_losses = [val_model(i) for i in xrange(n_val_batches)]
-    #     val_perf = 1- np.mean(val_losses)
-    #     print('epoch: %i, training time: %.2f secs, train perf: %.2f %%, val perf: %.2f %%' % (epoch, time.time()-start_time, train_perf * 100., val_perf*100.))
-    #     if val_perf >= best_val_perf:
-    #         best_val_perf = val_perf
-    #         test_loss = test_model_all(test_set_x,test_set_y)
-    #         test_perf = 1- test_loss
-    # return test_perf
-    return 0
+    while (epoch < n_epochs):
+        start_time = time.time()
+        epoch = epoch + 1
+        if shuffle_batch:
+            for minibatch_index in np.random.permutation(range(n_train_batches)):
+                cost_epoch = train_model(minibatch_index)
+                set_zero(zero_vec)
+        else:
+            for minibatch_index in xrange(n_train_batches):
+                cost_epoch = train_model(minibatch_index)
+                set_zero(zero_vec)
+        train_losses = [test_model(i) for i in xrange(n_train_batches)]
+        train_perf = 1 - np.mean(train_losses)
+        val_losses = [val_model(i) for i in xrange(n_val_batches)]
+        val_perf = 1- np.mean(val_losses)
+        print('epoch: %i, training time: %.2f secs, train perf: %.2f %%, val perf: %.2f %%' % (epoch, time.time()-start_time, train_perf * 100., val_perf*100.))
+        if val_perf >= best_val_perf:
+            best_val_perf = val_perf
+            test_loss = test_model_all(test_set_x,test_set_y)
+            test_perf = 1- test_loss
+    return test_perf
+    
 
 def shared_dataset(data_xy, borrow=True):
         """ Function that loads the dataset into shared variables
@@ -280,7 +274,7 @@ def make_idx_data_cv(revs, cv):
 
 if __name__=="__main__":
     print "loading data...",
-    x = cPickle.load(open("new_dump.p","rb"))
+    x = cPickle.load(open("old_dump.p","rb"))
     revs, W = x[0], x[1]
     print "data loaded!"
     mode= sys.argv[1]
