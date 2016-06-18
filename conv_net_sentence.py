@@ -476,7 +476,7 @@ if __name__=="__main__":
     # print sentence
     print sentence.shape
     print "-----"
-    for ind in xrange(sentence.shape[0]):
+    for ind in xrange(datasets[0][:,-1].shape[0]):
         off = np.append(sentence[ind],(datasets[0][ind,-1]))
         sento_finale.append(off)
 
@@ -485,7 +485,7 @@ if __name__=="__main__":
     print "Making pickles..."
     process.build_me(f_p_y_given_xs1,f_p_y_given_xs2,f_weights11,f_weights21,f_weights31,f_weights41,f_bias11,f_weights12,f_weights22,f_weights32,f_weights42,f_bias12)
 
-    print "Saving into .txt"
+    print "Saving into conv-layer-output.txt"
     f = open("conv-layer-output.txt","w") #opens file with name of "test.txt"
     for sent in sento_finale:
         for br in xrange(0,len(sent)):
