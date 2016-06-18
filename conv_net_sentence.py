@@ -153,6 +153,11 @@ def train_conv_net(datasets,
             x: train_set_x[index*batch_size:(index+1)*batch_size],
               y: train_set_y[index*batch_size:(index+1)*batch_size]},
                                   allow_input_downcast = True)
+    trains_weights = thean.function([index], classifier.getW,
+          givens={
+            x: train_set_x[index * batch_size: (index + 1) * batch_size],
+              y: train_set_y[index * batch_size: (index + 1) * batch_size]},
+                                   allow_input_downcast=True)
     test_pred_layers = []
     test_size = test_set_x.shape[0]
     test_layer0_input = Words[T.cast(x.flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
