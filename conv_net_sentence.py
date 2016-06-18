@@ -105,6 +105,7 @@ def train_conv_net(datasets,
         #if word vectors are allowed to change, add them as model parameters
         params += [Words]
     cost = classifier.negative_log_likelihood(y)
+    weights = classifier.getW()
     dropout_cost = classifier.dropout_negative_log_likelihood(y)
     grad_updates = sgd_updates_adadelta(params, dropout_cost, lr_decay, 1e-6, sqr_norm_lim)
 
@@ -153,7 +154,7 @@ def train_conv_net(datasets,
             x: train_set_x[index*batch_size:(index+1)*batch_size],
               y: train_set_y[index*batch_size:(index+1)*batch_size]},
                                   allow_input_downcast = True)
-    trains_weights = theano.function([index], classifier.getW,
+    trains_weights = theano.function([index], weights,
           givens={
             x: train_set_x[index * batch_size: (index + 1) * batch_size],
               y: train_set_y[index * batch_size: (index + 1) * batch_size]},
