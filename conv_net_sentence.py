@@ -469,12 +469,15 @@ if __name__=="__main__":
     # print first_sent.shape
     sentence = []
     second_sent = np.asarray(second_sent)
+    count = 0
     for s1, s2 in first_sent, second_sent:
+        print count
+        count +=1
         sentence = np.concatenate((s1,s2),axis=1)
         print sentence
     # sentence = np.concatenate((first_sent,second_sent),axis=2)
     sento_finale = []
-    for ind in xrange(0,sentence.shape[0]):
+    for ind in xrange(0,datasets[0][:,-1].shape[0]):
         print ind
         # print datasets[0][ind,-1]
         # s = np.append(sentence[ind],sentence[1][ind])
