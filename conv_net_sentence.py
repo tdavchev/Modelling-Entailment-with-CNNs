@@ -105,6 +105,7 @@ def train_conv_net(datasets,
         #if word vectors are allowed to change, add them as model parameters
         params += [Words]
     cost = classifier.negative_log_likelihood(y)
+    p_y_given_x = classifier.p_y_given_x
     # weights = classifier.getW()
     dropout_cost = classifier.dropout_negative_log_likelihood(y)
     grad_updates = sgd_updates_adadelta(params, dropout_cost, lr_decay, 1e-6, sqr_norm_lim)
@@ -149,7 +150,7 @@ def train_conv_net(datasets,
                 x: train_set_x[index * batch_size: (index + 1) * batch_size],
                  y: train_set_y[index * batch_size: (index + 1) * batch_size]},
                                  allow_input_downcast=True)
-    train_model = theano.function([index], [cost, params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], layer1_input], updates=grad_updates,
+    train_model = theano.function([index], [cost, p_y_given_x, params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], layer1_input], updates=grad_updates,
           givens={
             x: train_set_x[index*batch_size:(index+1)*batch_size],
               y: train_set_y[index*batch_size:(index+1)*batch_size]},
@@ -193,10 +194,12 @@ def train_conv_net(datasets,
     while (epoch < n_epochs):
         start_time = time.time()
         epoch = epoch + 1
-        outputs, weights1,weights2,weights3,weights4,bias1,bias2,bias3,bias4 = [],[],[],[],[],[],[],[],[]
+        outputs, p_y_given_xs, weights1,weights2,weights3,weights4,bias1,bias2,bias3,bias4 = [],[],[],[],[],[],[],[],[],[]
         if shuffle_batch:
             for minibatch_index in np.random.permutation(range(n_train_batches)):
-                [cost_epoch, W, b, W2, b2, W3, b3, W4, b4, layer0_output] = train_model(minibatch_index) #2-4 conv 1 is output
+                [cost_epoch, p_y_given_x, W, b, W2, b2, W3, b3, W4, b4, layer0_output] = train_model(minibatch_index) #2-4 conv 1 is output
+                # print p_y_given_x.shape
+                p_y_given_xs.append(p_y_given_x)
                 weights1.append(W)
                 weights2.append(W2)
                 weights3.append(W3)
@@ -221,21 +224,59 @@ def train_conv_net(datasets,
             test_loss = test_model_all(test_set_x,test_set_y)
             test_perf = 1- test_loss
     print params
-    new_input = []
+    new_input, f_p_y_given_xs, f_weights1, f_weights2, f_weights3, f_weights4, f_bias1, f_bias2, f_bias3, f_bias4 = [],[],[],[],[],[],[],[],[],[]
     count = 0
     for br in xrange(0,len(outputs)):
         count += 1
         if new_input == []:
             new_input = outputs[br]
+            f_p_y_given_xs =p_y_given_xs[br]
+            f_weights1 = weights1[br]
+            f_weights2 = weights2[br]
+            f_weights3 = weights3[br]
+            f_weights4 = weights4[br]
+            f_bias1 = bias1[br]
+            f_bias2 = bias2[br]
+            f_bias3 = bias3[br]
+            f_bias4 = bias4[br]
         else:
             output = np.asarray(outputs[br])
+            p_y_given_x = np.asarray(p_y_given_xs[br])
+            weight1 = np.asarray(weights1[br])
+            weight2 = np.asarray(weights2[br])
+            weight3 = np.asarray(weights3[br])
+            weight4 = np.asarray(weights4[br])
+            bia1 = np.asarray(bias1[br])
+            bia2 = np.asarray(bias2[br])
+            bia3 = np.asarray(bias3[br])
+            bia4 = np.asarray(bias4[br])
+
             new_input = np.concatenate((new_input,outputs[br]),axis=0)
+            f_p_y_given_xs = np.concatenate((f_p_y_given_xs,p_y_given_xs[br]),axis=0)
+            f_weights1 = np.concatenate((f_weights1,weights1[br]),axis=0)
+            f_weights2 = np.concatenate((f_weights2,weights2[br]),axis=0)
+            f_weights3 = np.concatenate((f_weights3,weights3[br]),axis=0)
+            f_weights4 = np.concatenate((f_weights4,weights4[br]),axis=0)
+            f_bias1 = np.concatenate((f_bias1,bias1[br]),axis=0)
+            f_bias2 = np.concatenate((f_bias2,bias2[br]),axis=0)
+            f_bias3 = np.concatenate((f_bias3,bias3[br]),axis=0)
+            f_bias4 = np.concatenate((f_bias4,bias4[br]),axis=0)
+
 
         new_input = np.asarray(new_input)
+        f_p_y_given_xs = np.asarray(f_p_y_given_xs)
+        f_weights1 = np.asarray(f_weights1)
+        f_weights2 = np.asarray(f_weights2)
+        f_weights3 = np.asarray(f_weights3)
+        f_weights4 = np.asarray(f_weights4)
+        f_bias1 = np.asarray(f_bias1)
+        f_bias2 = np.asarray(f_bias2)
+        f_bias3 = np.asarray(f_bias3)
+        f_bias4 = np.asarray(f_bias4)
 
 
 
-    return test_perf,new_input
+    return test_perf,new_input,f_p_y_given_xs,f_weights1,f_weights2,f_weights3,f_weights4,f_bias1,f_bias2,f_bias3,f_bias4
 
 def shared_dataset(data_xy, borrow=True):
         """ Function that loads the dataset into shared variables
@@ -340,7 +381,7 @@ def make_idx_data(revs, word_idx_map, cur_idx, max_l=81, k=300, filter_h=5):
     test = np.array(test,dtype="int")
     valid = np.array(valid,dtype="int")
 
-    return [train[:400], valid[:100], test[:100]]
+    return [train, valid, test]
 
 
 if __name__=="__main__":
@@ -374,7 +415,7 @@ if __name__=="__main__":
         print "----------------------"
         datasets = make_idx_data(revs, word_idx_map, idx, max_l=81,k=300, filter_h=5)
         if idx == 0:
-            perf, first_sent = train_conv_net(datasets,
+            perf, first_sent,f_p_y_given_xs1,f_weights11,f_weights21,f_weights31,f_weights41,f_bias11,f_bias21,f_bias31,f_bias41 = train_conv_net(datasets,
                 U,
                 lr_decay=0.95,
                 filter_hs=[3,4,5],
@@ -387,7 +428,7 @@ if __name__=="__main__":
                 batch_size=50,
                 dropout_rate=[0.5]) # trqbva 0.5
         else:
-            perf, second_sent = train_conv_net(datasets,
+            perf, second_sent,f_p_y_given_xs2,f_weights12,f_weights22,f_weights32,f_weights42,f_bias12,f_bias22,f_bias32,f_bias42 = train_conv_net(datasets,
                 U,
                 lr_decay=0.95,
                 filter_hs=[3,4,5],
@@ -416,16 +457,16 @@ if __name__=="__main__":
     print "sentences concatenated."
 
     print "Making pickles..."
-    process.build_me(sento_finale,W)
+    process.build_me(sento_finale,f_p_y_given_xs1,f_weights11,f_weights21,f_weights31,f_weights41,f_bias11,f_bias21,f_bias31,f_bias41,f_p_y_given_xs2,f_weights12,f_weights22,f_weights32,f_weights42,f_bias12,f_bias22,f_bias32,f_bias42)
 
-    f = open("conv-layer-output.txt","w") #opens file with name of "test.txt"
-    for sent in sento_finale:
-        for br in xrange(0,len(sent)):
-            if (br+1)==len(sent):
-                f.write('%d' % sent[br])
-            else:
-                f.write('%10.6f ' % sent[br])
+    # f = open("conv-layer-output.txt","w") #opens file with name of "test.txt"
+    # for sent in sento_finale:
+    #     for br in xrange(0,len(sent)):
+    #         if (br+1)==len(sent):
+    #             f.write('%d' % sent[br])
+    #         else:
+    #             f.write('%10.6f ' % sent[br])
 
-        f.write("\n")
+    #     f.write("\n")
 
-    f.close()
+    # f.close()
