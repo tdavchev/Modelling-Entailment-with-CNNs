@@ -59,9 +59,6 @@ def train_conv_net(datasets,
     """
     rng = np.random.RandomState(3435)
     img_h = len(datasets[0][0])-1
-    print img_h
-    print len(datasets[0])
-    print datasets[0][0]
     filter_w = img_w
     feature_maps = hidden_units[0]
     filter_shapes = []
@@ -179,13 +176,6 @@ def train_conv_net(datasets,
 
     #start training over mini-batches
     print '... training'
-    olq =  datasets[0][:,:img_h]
-    print olq.shape
-    olq = olq[0:50].flatten()
-    print len(olq)
-
-
-
     epoch = 0
     best_val_perf = 0
     val_perf = 0
@@ -194,21 +184,22 @@ def train_conv_net(datasets,
     while (epoch < n_epochs):
         start_time = time.time()
         epoch = epoch + 1
-        outputs, p_y_given_xs, weights1,weights2,weights3,weights4,bias1,bias2,bias3,bias4 = [],[],[],[],[],[],[],[],[],[]
+        if epoch-1 == n_epochs-1:
+             outputs, p_y_given_xs, weights1,weights2,weights3,weights4,bias1,bias2,bias3,bias4 = [],[],[],[],[],[],[],[],[],[]
         if shuffle_batch:
             for minibatch_index in np.random.permutation(range(n_train_batches)):
                 [cost_epoch, p_y_given_x, W, b, W2, b2, W3, b3, W4, b4, layer0_output] = train_model(minibatch_index) #2-4 conv 1 is output
-                # print p_y_given_x.shape
-                p_y_given_xs.append(p_y_given_x)
-                weights1.append(W)
-                weights2.append(W2)
-                weights3.append(W3)
-                weights4.append(W4)
-                bias1.append(b)
-                bias2.append(b2)
-                bias3.append(b3)
-                bias4.append(b4)
-                outputs.append(layer0_output)
+                if epoch - 1 ==n_epochs-1:
+                    p_y_given_xs.append(p_y_given_x)
+                    #weights1.append(W)
+                    #weights2.append(W2)
+                    #weights3.append(W3)
+                    #weights4.append(W4)
+                    #bias1.append(b)
+                    #bias2.append(b2)
+                    #bias3.append(b3)
+                    #bias4.append(b4)
+                    outputs.append(layer0_output)
                 set_zero(zero_vec)
         else:
             for minibatch_index in xrange(n_train_batches):
@@ -223,7 +214,6 @@ def train_conv_net(datasets,
             best_val_perf = val_perf
             test_loss = test_model_all(test_set_x,test_set_y)
             test_perf = 1- test_loss
-    print params
     new_input, f_p_y_given_xs, f_weights1, f_weights2, f_weights3, f_weights4, f_bias1, f_bias2, f_bias3, f_bias4 = [],[],[],[],[],[],[],[],[],[]
     count = 0
     for br in xrange(0,len(outputs)):
@@ -231,48 +221,48 @@ def train_conv_net(datasets,
         if new_input == []:
             new_input = outputs[br]
             f_p_y_given_xs =p_y_given_xs[br]
-            f_weights1 = weights1[br]
-            f_weights2 = weights2[br]
-            f_weights3 = weights3[br]
-            f_weights4 = weights4[br]
-            f_bias1 = bias1[br]
-            f_bias2 = bias2[br]
-            f_bias3 = bias3[br]
-            f_bias4 = bias4[br]
+            #f_weights1 = weights1[br]
+            #f_weights2 = weights2[br]
+            #f_weights3 = weights3[br]
+            #f_weights4 = weights4[br]
+            #f_bias1 = bias1[br]
+            #f_bias2 = bias2[br]
+            #f_bias3 = bias3[br]
+            #f_bias4 = bias4[br]
         else:
             output = np.asarray(outputs[br])
             p_y_given_x = np.asarray(p_y_given_xs[br])
-            weight1 = np.asarray(weights1[br])
-            weight2 = np.asarray(weights2[br])
-            weight3 = np.asarray(weights3[br])
-            weight4 = np.asarray(weights4[br])
-            bia1 = np.asarray(bias1[br])
-            bia2 = np.asarray(bias2[br])
-            bia3 = np.asarray(bias3[br])
-            bia4 = np.asarray(bias4[br])
+            #weight1 = np.asarray(weights1[br])
+            #weight2 = np.asarray(weights2[br])
+            #weight3 = np.asarray(weights3[br])
+            #weight4 = np.asarray(weights4[br])
+            #bia1 = np.asarray(bias1[br])
+            #bia2 = np.asarray(bias2[br])
+            #bia3 = np.asarray(bias3[br])
+            #bia4 = np.asarray(bias4[br])
 
             new_input = np.concatenate((new_input,outputs[br]),axis=0)
             f_p_y_given_xs = np.concatenate((f_p_y_given_xs,p_y_given_xs[br]),axis=0)
-            f_weights1 = np.concatenate((f_weights1,weights1[br]),axis=0)
-            f_weights2 = np.concatenate((f_weights2,weights2[br]),axis=0)
-            f_weights3 = np.concatenate((f_weights3,weights3[br]),axis=0)
-            f_weights4 = np.concatenate((f_weights4,weights4[br]),axis=0)
-            f_bias1 = np.concatenate((f_bias1,bias1[br]),axis=0)
-            f_bias2 = np.concatenate((f_bias2,bias2[br]),axis=0)
-            f_bias3 = np.concatenate((f_bias3,bias3[br]),axis=0)
-            f_bias4 = np.concatenate((f_bias4,bias4[br]),axis=0)
+            #f_weights1 = np.concatenate((f_weights1,weights1[br]),axis=0)
+            #f_weights2 = np.concatenate((f_weights2,weights2[br]),axis=0)
+            #f_weights3 = np.concatenate((f_weights3,weights3[br]),axis=0)
+            #f_weights4 = np.concatenate((f_weights4,weights4[br]),axis=0)
+            #f_bias1 = np.concatenate((f_bias1,bias1[br]),axis=0)
+            #f_bias2 = np.concatenate((f_bias2,bias2[br]),axis=0)
+            #f_bias3 = np.concatenate((f_bias3,bias3[br]),axis=0)
+            #f_bias4 = np.concatenate((f_bias4,bias4[br]),axis=0)
 
 
         new_input = np.asarray(new_input)
         f_p_y_given_xs = np.asarray(f_p_y_given_xs)
-        f_weights1 = np.asarray(f_weights1)
-        f_weights2 = np.asarray(f_weights2)
-        f_weights3 = np.asarray(f_weights3)
-        f_weights4 = np.asarray(f_weights4)
-        f_bias1 = np.asarray(f_bias1)
-        f_bias2 = np.asarray(f_bias2)
-        f_bias3 = np.asarray(f_bias3)
-        f_bias4 = np.asarray(f_bias4)
+        #f_weights1 = np.asarray(f_weights1)
+        #f_weights2 = np.asarray(f_weights2)
+        #f_weights3 = np.asarray(f_weights3)
+        #f_weights4 = np.asarray(f_weights4)
+        #f_bias1 = np.asarray(f_bias1)
+        #f_bias2 = np.asarray(f_bias2)
+        #f_bias3 = np.asarray(f_bias3)
+        #f_bias4 = np.asarray(f_bias4)
 
 
 
@@ -386,7 +376,7 @@ def make_idx_data(revs, word_idx_map, cur_idx, max_l=81, k=300, filter_h=5):
 
 if __name__=="__main__":
     print "loading data...",
-    x = cPickle.load(open("snli-testing.p","rb"))
+    x = cPickle.load(open("snli-glove-splitintwo18062016.p","rb"))
     revs, W, W2, word_idx_map, vocab = x[0], x[1], x[2], x[3], x[4]
     print "data loaded!"
     mode= sys.argv[1]
@@ -406,8 +396,6 @@ if __name__=="__main__":
             U = W2
         elif word_vectors=="-word2vec":
             print "using: word2vec vectors"
-            # print W.shape
-            print len(W)
             U = W
         results = []
         print "----------------------"
@@ -457,7 +445,7 @@ if __name__=="__main__":
     print "sentences concatenated."
 
     print "Making pickles..."
-    process.build_me(sento_finale,f_p_y_given_xs1,f_weights11,f_weights21,f_weights31,f_weights41,f_bias11,f_bias21,f_bias31,f_bias41,f_p_y_given_xs2,f_weights12,f_weights22,f_weights32,f_weights42,f_bias12,f_bias22,f_bias32,f_bias42)
+    process.build_me(sento_finale,f_p_y_given_xs1,f_p_y_given_xs2)
 
     # f = open("conv-layer-output.txt","w") #opens file with name of "test.txt"
     # for sent in sento_finale:
