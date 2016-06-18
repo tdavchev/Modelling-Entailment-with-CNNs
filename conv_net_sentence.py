@@ -149,16 +149,16 @@ def train_conv_net(datasets,
                 x: train_set_x[index * batch_size: (index + 1) * batch_size],
                  y: train_set_y[index * batch_size: (index + 1) * batch_size]},
                                  allow_input_downcast=True)
-    train_model = theano.function([index], [cost, params, layer1_input], updates=grad_updates,
+    train_model = theano.function([index], [cost, params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], layer1_input], updates=grad_updates,
           givens={
             x: train_set_x[index*batch_size:(index+1)*batch_size],
               y: train_set_y[index*batch_size:(index+1)*batch_size]},
                                   allow_input_downcast = True)
-    trains_params = theano.function([index], params,
-          givens={
-            x: train_set_x[index * batch_size: (index + 1) * batch_size],
-              y: train_set_y[index * batch_size: (index + 1) * batch_size]},
-                                   allow_input_downcast=True)
+    # trains_params = theano.function([index], params,
+    #       givens={
+    #         x: train_set_x[index * batch_size: (index + 1) * batch_size],
+    #           y: train_set_y[index * batch_size: (index + 1) * batch_size]},
+    #                                allow_input_downcast=True)
 
     # trains_weights = theano.function([index], weights,
     #       givens={
@@ -193,17 +193,19 @@ def train_conv_net(datasets,
     while (epoch < n_epochs):
         start_time = time.time()
         epoch = epoch + 1
-        outputs = []
+        outputs, weights1,weights2,weights3,weights4,bias1,bias2,bias3,bias4 = [],[],[],[],[],[],[],[],[]
         if shuffle_batch:
             for minibatch_index in np.random.permutation(range(n_train_batches)):
-                [cost_epoch, params, output] = train_model(minibatch_index)
-                # params = trains_params(minibatch)
-                print params
-                print params.shape
-                # Weights = trains_weights(minibatch_index)
-                # print Weights
-                # print Weights.shape
-                outputs.append(output)
+                [cost_epoch, W, b, W2, b2, W3, b3, W4, b4, layer0_output] = train_model(minibatch_index) #2-4 conv 1 is output
+                weights1.append(W)
+                weights2.append(W2)
+                weights3.append(W3)
+                weights4.append(W4)
+                bias1.append(b)
+                bias2.append(b2)
+                bias3.append(b3)
+                bias4.append(b4)
+                outputs.append(layer0_output)
                 set_zero(zero_vec)
         else:
             for minibatch_index in xrange(n_train_batches):
@@ -218,18 +220,20 @@ def train_conv_net(datasets,
             best_val_perf = val_perf
             test_loss = test_model_all(test_set_x,test_set_y)
             test_perf = 1- test_loss
-
+    print params
     new_input = []
     count = 0
-    for output in outputs:
+    for br in xrange(0,len(outputs)):
         count += 1
         if new_input == []:
-            new_input = output
+            new_input = outputs[br]
         else:
-            output = np.asarray(output)
-            new_input = np.concatenate((new_input,output),axis=0)
+            output = np.asarray(outputs[br])
+            new_input = np.concatenate((new_input,outputs[br]),axis=0)
 
         new_input = np.asarray(new_input)
+
+
 
     return test_perf,new_input
 
@@ -377,7 +381,7 @@ if __name__=="__main__":
                 conv_non_linear="relu",
                 hidden_units=[100,3],
                 shuffle_batch=True,
-                n_epochs=25, #trqbva 25
+                n_epochs=2, #trqbva 25
                 sqr_norm_lim=9,
                 non_static=non_static,
                 batch_size=50,
@@ -390,7 +394,7 @@ if __name__=="__main__":
                 conv_non_linear="relu",
                 hidden_units=[100,3],
                 shuffle_batch=True,
-                n_epochs=25, #trqbva 25
+                n_epochs=2, #trqbva 25
                 sqr_norm_lim=9,
                 non_static=non_static,
                 batch_size=50,
