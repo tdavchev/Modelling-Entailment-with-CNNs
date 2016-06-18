@@ -360,7 +360,7 @@ if __name__=="__main__":
                 conv_non_linear="relu",
                 hidden_units=[100,3],
                 shuffle_batch=True,
-                n_epochs=5, #trqbva 25
+                n_epochs=25, #trqbva 25
                 sqr_norm_lim=9,
                 non_static=non_static,
                 batch_size=50,
@@ -373,7 +373,7 @@ if __name__=="__main__":
                 conv_non_linear="relu",
                 hidden_units=[100,3],
                 shuffle_batch=True,
-                n_epochs=5, #trqbva 25
+                n_epochs=25, #trqbva 25
                 sqr_norm_lim=9,
                 non_static=non_static,
                 batch_size=50,

@@ -291,8 +291,9 @@ if __name__=="__main__":
     r = range(0,10)    
     for i in r:
         datasets = make_idx_data_cv(revs, i)
+        print "Used train data set",
         print datasets[0].shape
-        print "^^^^"
+       # print "^^^^"
         perf = train_conv_net(datasets,
                               U,
                               lr_decay=0.95,
