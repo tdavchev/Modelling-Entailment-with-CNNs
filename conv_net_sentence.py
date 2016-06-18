@@ -483,7 +483,7 @@ if __name__=="__main__":
     print "sentences concatenated."
 
     print "Making pickles..."
-    process.build_me(f_p_y_given_xs1,f_p_y_given_xs2,f_weights11,f_weights21,f_weights31,f_weights41,f_bias11)
+    process.build_me(f_p_y_given_xs1,f_p_y_given_xs2,f_weights11,f_weights21,f_weights31,f_weights41,f_bias11,f_weights12,f_weights22,f_weights32,f_weights42,f_bias12)
 
     print "Saving into .txt"
     f = open("conv-layer-output.txt","w") #opens file with name of "test.txt"
