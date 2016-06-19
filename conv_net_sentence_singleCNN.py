@@ -314,28 +314,17 @@ if __name__=="__main__":
         print "using: word2vec vectors"
         U = W
     results = []
+    count = 0
     datasets = make_idx_data(revs, word_idx_map, max_l=118,k=300, filter_h=5)
-    perf = train_conv_net(datasets,
-                          U,
-                          lr_decay=0.95,
-                          filter_hs=[3,4,5],
-                          conv_non_linear="relu",
-                          hidden_units=[100,3], 
-                          shuffle_batch=True, 
-                          n_epochs=25, 
-                          sqr_norm_lim=9,
-                          non_static=non_static,
-                          batch_size=50,
-                          dropout_rate=[0.5])
-    print "perf: " + str(perf)
-    results.append(perf)  
-    print str(np.mean(results))
-
-for activations in [Iden, Sigmoid, ReLU, Tanh]:
-    for batch_size in [50,100,150,200]:
+    for activations in [Iden, Sigmoid, ReLU, Tanh]:
+    for batch_size in [50,100,150,250]:
         for conv_non_linear in ["relu","tanh"]:
             for dropout in [0.0, 0.1, 0.5, 0.9]:
                 results = []
+                count += 1
+                print "------------------"
+                print "     CNN{0}".format(count)
+                print "------------------"
                 print "##################"
                 print("activations: {0}. batch_size: {1}, conv_non_linear: {2}, dropout: {3}".format(activations,batch_size,conv_non_linear,dropout))
                 print "##################"
@@ -355,3 +344,18 @@ for activations in [Iden, Sigmoid, ReLU, Tanh]:
                 print "perf: " + str(perf)
                 results.append(perf)  
                 print str(np.mean(results))
+    # perf = train_conv_net(datasets,
+    #                       U,
+    #                       lr_decay=0.95,
+    #                       filter_hs=[3,4,5],
+    #                       conv_non_linear="relu",
+    #                       hidden_units=[100,3], 
+    #                       shuffle_batch=True, 
+    #                       n_epochs=25, 
+    #                       sqr_norm_lim=9,
+    #                       non_static=non_static,
+    #                       batch_size=50,
+    #                       dropout_rate=[0.5])
+    # print "perf: " + str(perf)
+    # results.append(perf)  
+    # print str(np.mean(results))
