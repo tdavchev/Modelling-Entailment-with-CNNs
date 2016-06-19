@@ -33,7 +33,6 @@ def add_logic(file, file_type, revs, vocab, split_sent, clean_string=True):
     Deals with the logic behind a saved sentence-label relationship
     Supports split sentence in twos
     """
-    print split_sent
     with open(file, "rb") as f:
         for line in f:
             data = line.split("\t")
@@ -147,7 +146,7 @@ def add_unknown_words(word_vecs, vocab, min_df=1, k=300):
     """
     for word in vocab:
         if word not in word_vecs and vocab[word] >= min_df:
-            word_vecs[word] = np.random.uniform(-0.25,0.25,k)  
+            word_vecs[word] = np.random.uniform(-0.25,0.25,k)
 
 def clean_str(string, TREC=False):
     """
@@ -181,6 +180,8 @@ def clean_str_sst(string):
 if __name__=="__main__":    
     w2v_file = sys.argv[1]
     split_sent = sys.argv[2]
+    if split_sent=="False":
+        split_sent = False
     data_folder = ["train.txt","valid.txt","test.txt"]   
     print "loading data...",        
     revs, vocab = build_data(data_folder, split_sent, clean_string=True)
@@ -203,6 +204,6 @@ if __name__=="__main__":
     rand_vecs = {}
     add_unknown_words(rand_vecs, vocab)
     W2, _ = get_W(rand_vecs)
-    cPickle.dump([revs, W, W2, word_idx_map, vocab], open("snli-testing.p", "wb"))
+    cPickle.dump([revs, W, W2, word_idx_map, vocab], open("snli-GloVe.p", "wb"))
     print "dataset created!"
     
