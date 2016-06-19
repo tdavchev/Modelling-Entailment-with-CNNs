@@ -207,20 +207,18 @@ def train_conv_net(datasets,
                         if r > 0.8:
                             takeW = True
                         if takeW:
-                            ra = np.random.randint(batch_size-1,size=1)
-                            idx_set.append((minibatch_index,ra))
-                            weights1.append(W[ra])
-                            bias1.append(b[ra])
-                            weights2.append(w2[ra])
-                            weights3.append(w3[ra])
-                            weights4.append(w4[ra])
-                    else:
-                        if minibatch_index in ks:
-                            weights1.append(W[idx_set[ks]])
-                            bias1.append(b[idx_set[ks]])
-                            weights2.append(w2[idx_set[ks]])
-                            weights3.append(w3[idx_set[ks]])
-                            weights4.append(w4[idx_set[ks]])
+                            idx_set.append(minibatch_index)
+                            weights1.append(W)
+                            bias1.append(b)
+                            weights2.append(W2)
+                            weights3.append(W3)
+                            weights4.append(W4)
+                    elif minibatch_index in idx_set:
+                        weights1.append(W)
+                        bias1.append(b)
+                        weights2.append(W2)
+                        weights3.append(W3)
+                        weights4.append(W4)
                     p_y_given_xs.append(p_y_given_x)
                     outputs.append(layer0_output)
                 set_zero(zero_vec)
@@ -396,7 +394,7 @@ def make_idx_data(revs, word_idx_map, cur_idx, max_l=81, k=300, filter_h=5):
     test = np.array(test,dtype="int")
     valid = np.array(valid,dtype="int")
 
-    return [train[:100], valid[:10], test[:10]]
+    return [train, valid, test]
 
 
 if __name__=="__main__":
@@ -436,7 +434,7 @@ if __name__=="__main__":
                 conv_non_linear="relu",
                 hidden_units=[100,3],
                 shuffle_batch=True,
-                n_epochs=2, #trqbva 25
+                n_epochs=25, #trqbva 25
                 sqr_norm_lim=9,
                 non_static=non_static,
                 batch_size=50,
@@ -452,7 +450,7 @@ if __name__=="__main__":
                 conv_non_linear="relu",
                 hidden_units=[100,3],
                 shuffle_batch=True,
-                n_epochs=2, #trqbva 25
+                n_epochs=25, #trqbva 25
                 sqr_norm_lim=9,
                 non_static=non_static,
                 batch_size=50,
@@ -463,50 +461,78 @@ if __name__=="__main__":
         print str(np.mean(results))
 
     print "concatenating the two sentences"
-    first_sent = np.asarray(first_sent)
-    f_p_y_given_xs1 = np.asarray(f_p_y_given_xs1)
-    sentence = []
-    p_sentence = []
-    second_sent = np.asarray(second_sent)
-    f_p_y_given_xs2 = np.asarray(f_p_y_given_xs2)
-    for s1, s2, p1, p2 in first_sent, second_sent, f_p_y_given_xs1, f_p_y_given_xs2:
-        sentence = np.concatenate((s1,s2),axis=1)
-        p_sentence = np.concatenate((p1,p2),axis=1)
+    # concatenating runs out of memory so just spit them on a file
+    #first_sent = np.asarray(first_sent)
+    #f_p_y_given_xs1 = np.asarray(f_p_y_given_xs1)
+    #sentence = []
+    #p_sentence = []
+    #second_sent = np.asarray(second_sent)
+    #f_p_y_given_xs2 = np.asarray(f_p_y_given_xs2)
+    #for s1, s2 in first_sent, second_sent:
+    #    sentence = np.concatenate((s1,s2),axis=1)
 
-    sento_finale = []
-    p_sento_finale = []
-    for ind in xrange(0,sentence.shape[0]):
-        off = np.append(sentence[ind],(datasets[0][ind,-1]))
-        p_off = np.append(p_sentence[ind],(datasets[0][ind,-1]))
-        sento_finale.append(off)
-        p_sento_finale.append(p_off)
+    #for p1, p2 in f_p_y_given_xs1, f_p_y_given_xs2:
+    #    p_sentence = np.concatenate((p1,p2),axis=1)
 
-    print "sentences concatenated."
+    #sento_finale = []
+    #p_sento_finale = []
+    #for ind in xrange(0,sentence.shape[0]):
+    #    off = np.append(sentence[ind],(datasets[0][ind,-1]))
+    #    p_off = np.append(p_sentence[ind],(datasets[0][ind,-1]))
+    #    sento_finale.append(off)
+    #    p_sento_finale.append(p_off)
+    #print "sentences concatenated."
 
     print "Making pickles..."
     process.build_me(f_weights11,f_weights21,f_weights31,f_weights41,f_bias11,f_weights12,f_weights22,f_weights32,f_weights42,f_bias12)
 
-    print "Saving into conv-layer-output.txt"
-    f = open("conv-layer-output.txt","w") #opens file with name of "test.txt"
-    for sent in sento_finale:
-        for br in xrange(0,len(sent)):
-            if (br+1)==len(sent):
-                f.write('%d' % sent[br])
+    print "Saving into text files"
+    f = open("firstsent-conv-layer-output.txt","w") #opens file with name of "test.txt"
+    for ind in xrange(0,first_sent.shape[0]):#sento_finale:
+        print first_sent.shape[0]
+        for br in xrange(0,len(first_sent[ind])):
+            if (br+1)==len(first_sent[ind]):
+                f.write('%d' % first_sent[ind][br])
             else:
-                f.write('%10.6f ' % sent[br])
+                f.write('%10.6f ' % first_sent[ind][br])
+
+        f.write("\n")
+    print "First sentence copied to text file"
+
+    f.close()
+
+    f = open("secondsent-conv-layer-output.txt","w") #opens file with name of "test.txt"
+    for ind in xrange(0,second_sent.shape[0]):#sento_finale:
+        for br in xrange(0,len(second_sent[ind])):
+            if (br+1)==len(second_sent[ind]):
+                f.write('%d' % second_sent[ind][br])
+            else:
+                f.write('%10.6f ' % second_sent[ind][br])
+
+        f.write("\n")
+    f.close()
+
+    print "Saving into first_conv-layer-output-prob.txt"
+    f = open("first_conv-layer-output-prob.txt","w") #opens file with name of "test.txt"
+    for br in xrange(0,len(f_p_y_given_xs1[br])):
+        for y in xrange(0,len(f_p_y_given_xs1[br])):
+            if (y+1)==len(f_p_y_given_xs1[br][y]):
+                f.write('%d' % f_p_y_given_xs1[br][y])
+            else:
+                f.write('%10.6f ' % f_p_y_given_xs1[br][y])
 
         f.write("\n")
 
     f.close()
 
-    print "Saving into conv-layer-output-prob.txt"
-    f = open("conv-layer-output-prob.txt","w") #opens file with name of "test.txt"
-    for p_sent in p_sento_finale:
-        for br in xrange(0,len(p_sent)):
-            if (br+1)==len(p_sent):
-                f.write('%d' % p_sent[br])
+    print "Saving into second_conv-layer-output-prob.txt"  
+    f = open("second_conv-layer-output-prob.txt","w") #opens file with name of "test.txt"
+    for br in xrange(0,len(f_p_y_given_xs2[br])):
+        for y in xrange(0,len(f_p_y_given_xs2[br])):
+            if (y+1)==len(f_p_y_given_xs2[br][y]):
+                f.write('%d' % f_p_y_given_xs2[br][y])
             else:
-                f.write('%10.6f ' % p_sent[br])
+                f.write('%10.6f ' % f_p_y_given_xs2[br][y])
 
         f.write("\n")
 
