@@ -489,7 +489,6 @@ if __name__=="__main__":
     print "Saving into text files"
     f = open("firstsent-conv-layer-output.txt","w") #opens file with name of "test.txt"
     for ind in xrange(0,len(first_sent)):#sento_finale:
-        print first_sent.shape[0]
         for br in xrange(0,len(first_sent[ind])):
             if (br+1)==len(first_sent[ind]):
                 f.write('%d' % first_sent[ind][br])
