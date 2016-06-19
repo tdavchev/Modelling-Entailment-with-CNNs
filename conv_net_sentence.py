@@ -474,64 +474,77 @@ if __name__=="__main__":
     #for p1, p2 in f_p_y_given_xs1, f_p_y_given_xs2:
     #    p_sentence = np.concatenate((p1,p2),axis=1)
 
-    #sento_finale = []
-    #p_sento_finale = []
-    #for ind in xrange(0,sentence.shape[0]):
-    #    off = np.append(sentence[ind],(datasets[0][ind,-1]))
-    #    p_off = np.append(p_sentence[ind],(datasets[0][ind,-1]))
-    #    sento_finale.append(off)
-    #    p_sento_finale.append(p_off)
-    #print "sentences concatenated."
+    sento_finale = []
+    p_sento_finale = []
+    for ind in xrange(0,len(first_sent)):
+       off = []
+       off = np.append(first_sent[ind],(datasets[0][ind,-1]))
+       p_off = np.append(first_sent[ind],(datasets[0][ind,-1]))
+       sento_finale.append(off)
+       p_sento_finale.append(p_off)
+    print "first sentences concatenated."
 
     print "Making pickles..."
     process.build_me(f_weights11,f_weights21,f_weights31,f_weights41,f_bias11,f_weights12,f_weights22,f_weights32,f_weights42,f_bias12)
 
+    f = open("first_conv-layer-output.txt","w")
     print "Saving into text files"
-    f = open("firstsent-conv-layer-output.txt","w") #opens file with name of "test.txt"
-    for ind in xrange(0,len(first_sent)):#sento_finale:
-        for br in xrange(0,len(first_sent[ind])):
-            if (br+1)==len(first_sent[ind]):
-                f.write('%d' % first_sent[ind][br])
+    for sent in xrange(0, len(sento_finale)):
+        for br in xrange(0,len(sento_finale[sent])):
+            if (br+1)==len(sento_finale[sent]):
+                f.write('%d' % sento_finale[sent][br])
             else:
-                f.write('%10.6f ' % first_sent[ind][br])
+                f.write('%10.6f ' % sento_finale[sent][br])
 
         f.write("\n")
-    print "First sentence copied to text file"
 
-    f.close()
-
-    f = open("secondsent-conv-layer-output.txt","w") #opens file with name of "test.txt"
-    for ind in xrange(0,len(second_sent)):#sento_finale:
-        for br in xrange(0,len(second_sent[ind])):
-            if (br+1)==len(second_sent[ind]):
-                f.write('%d' % second_sent[ind][br])
-            else:
-                f.write('%10.6f ' % second_sent[ind][br])
-
-        f.write("\n")
     f.close()
 
     print "Saving into first_conv-layer-output-prob.txt"
     f = open("first_conv-layer-output-prob.txt","w") #opens file with name of "test.txt"
-    for br in xrange(0,len(f_p_y_given_xs1[br])):
-        for y in xrange(0,len(f_p_y_given_xs1[br])):
-            if (y+1)==len(f_p_y_given_xs1[br][y]):
-                f.write('%d' % f_p_y_given_xs1[br][y])
+    for p_sent in p_sento_finale:
+        for br in xrange(0,len(p_sent)):
+            if (br+1)==len(p_sent):
+                f.write('%d' % p_sent[br])
             else:
-                f.write('%10.6f ' % f_p_y_given_xs1[br][y])
+                f.write('%10.6f ' % p_sent[br])
 
         f.write("\n")
 
     f.close()
 
-    print "Saving into second_conv-layer-output-prob.txt"  
-    f = open("second_conv-layer-output-prob.txt","w") #opens file with name of "test.txt"
-    for br in xrange(0,len(f_p_y_given_xs2[br])):
-        for y in xrange(0,len(f_p_y_given_xs2[br])):
-            if (y+1)==len(f_p_y_given_xs2[br][y]):
-                f.write('%d' % f_p_y_given_xs2[br][y])
+    sento_finale = []
+    p_sento_finale = []
+
+    for ind in xrange(0,len(second_sent)):
+       off = []
+       off = np.append(second_sent[ind],(datasets[0][ind,-1]))
+       p_off = np.append(second_sent[ind],(datasets[0][ind,-1]))
+       sento_finale.append(off)
+       p_sento_finale.append(p_off)
+    print "second sentences concatenated."
+
+    f = open("second_conv-layer-output.txt","w")
+    print "Saving into text files"
+    for sent in xrange(0, len(sento_finale)):
+        for br in xrange(0,len(sento_finale[sent])):
+            if (br+1)==len(sento_finale[sent]):
+                f.write('%d' % sento_finale[sent][br])
             else:
-                f.write('%10.6f ' % f_p_y_given_xs2[br][y])
+                f.write('%10.6f ' % sento_finale[sent][br])
+
+        f.write("\n")
+
+    f.close()
+
+    print "Saving into second_conv-layer-output-prob.txt"
+    f = open("second_conv-layer-output-prob.txt","w") #opens file with name of "test.txt"
+    for p_sent in p_sento_finale:
+        for br in xrange(0,len(p_sent)):
+            if (br+1)==len(p_sent):
+                f.write('%d' % p_sent[br])
+            else:
+                f.write('%10.6f ' % p_sent[br])
 
         f.write("\n")
 
