@@ -488,7 +488,7 @@ if __name__=="__main__":
 
     print "Saving into text files"
     f = open("firstsent-conv-layer-output.txt","w") #opens file with name of "test.txt"
-    for ind in xrange(0,first_sent.shape[0]):#sento_finale:
+    for ind in xrange(0,len(first_sent)):#sento_finale:
         print first_sent.shape[0]
         for br in xrange(0,len(first_sent[ind])):
             if (br+1)==len(first_sent[ind]):
@@ -502,7 +502,7 @@ if __name__=="__main__":
     f.close()
 
     f = open("secondsent-conv-layer-output.txt","w") #opens file with name of "test.txt"
-    for ind in xrange(0,second_sent.shape[0]):#sento_finale:
+    for ind in xrange(0,len(second_sent)):#sento_finale:
         for br in xrange(0,len(second_sent[ind])):
             if (br+1)==len(second_sent[ind]):
                 f.write('%d' % second_sent[ind][br])
