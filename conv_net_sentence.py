@@ -193,7 +193,7 @@ def train_conv_net(datasets,
         start_time = time.time()
         epoch = epoch + 1
         if epoch == n_epochs:
-             outputs, p_y_given_xs, weights1,weights2,weights3,weights4,bias1 = [],[],[],[],[],[],[]
+             outputs, p_y_given_xs = [],[]
         if shuffle_batch:
             for minibatch_index in np.random.permutation(range(n_train_batches)):
                 [cost_epoch, p_y_given_x, layer1_input] = train_model(minibatch_index) #2-4 conv 1 is output
@@ -215,6 +215,7 @@ def train_conv_net(datasets,
             best_val_perf = val_perf
             test_loss = test_model_all(test_set_x,test_set_y)
             test_perf = 1- test_loss
+
     return test_perf, outputs, p_y_given_xs
 
 def shared_dataset(data_xy, borrow=True):
@@ -369,7 +370,7 @@ if __name__=="__main__":
             sys.stdout.flush()
             print non_static, batch_size,dropout_rate
             sys.stdout.flush()
-            perf, first_sent, f_p_y_given_xs1 = train_conv_net(datasets, U, lr_decay=0.95, filter_hs=[3,4,5], conv_non_linear=conv_non_linear, hidden_units=[100,3], shuffle_batch=True, n_epochs=25, sqr_norm_lim=9, non_static=non_static, batch_size=batch_size, dropout_rate=[dropout_rate])
+            # perf, first_sent, f_p_y_given_xs1 = train_conv_net(datasets, U, lr_decay=0.95, filter_hs=[3,4,5], conv_non_linear=conv_non_linear, hidden_units=[100,3], shuffle_batch=True, n_epochs=25, sqr_norm_lim=9, non_static=non_static, batch_size=batch_size, dropout_rate=[dropout_rate])
             perf, second_sent,f_p_y_given_xs2 = train_conv_net(datasets,
                    U,
                    idx,
