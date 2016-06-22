@@ -183,6 +183,7 @@ def train_conv_net(datasets,
         val_losses = [val_model(i) for i in xrange(n_val_batches)]
         val_perf = 1- np.mean(val_losses)
         print('epoch: %i, training time: %.2f secs, train perf: %.2f %%, val perf: %.2f %%' % (epoch, time.time()-start_time, train_perf * 100., val_perf*100.))
+        sys.stdout.flush()
         if val_perf >= best_val_perf:
             best_val_perf = val_perf
             test_loss = test_model_all(test_set_x,test_set_y)
@@ -290,72 +291,86 @@ def make_idx_data(revs, word_idx_map, max_l=118, k=300, filter_h=5):
     train = np.array(train,dtype="int")
     test = np.array(test,dtype="int")
     valid = np.array(valid,dtype="int")
-    return [train[:100], valid[:10], test[:10]]
+    return [train, valid, test]
 
 
 if __name__=="__main__":
     print "loading data...",
-    x = cPickle.load(open("snli-glove.p","rb"))
+    sys.stdout.flush()
+    x = cPickle.load(open("/home/s1045064/dissertation/repo-diss/sentence-classification/snli-GloVe.p","rb"))
     revs, W, W2, word_idx_map, vocab = x[0], x[1], x[2], x[3], x[4]
     print "data loaded!"
+    sys.stdout.flush()
     mode= sys.argv[1]
     word_vectors = sys.argv[2]
+    batch_size = sys.argv[3]
+    batch_size = int(batch_size)
+    dropout_rate = sys.argv[4]
+    dropout_rate = float(dropout_rate)
+    conv_non_linear = sys.argv[5]
     if mode=="-nonstatic":
         print "model architecture: CNN-non-static"
+        sys.stdout.flush()
         non_static=True
     elif mode=="-static":
         print "model architecture: CNN-static"
+        sys.stdout.flush()
         non_static=False
-    execfile("conv_net_classes.py")
+    execfile("/home/s1045064/dissertation/repo-diss/sentence-classification/conv_net_classes.py")
     if word_vectors=="-rand":
         print "using: random vectors"
+        sys.stdout.flush()
         U = W2
     elif word_vectors=="-word2vec":
         print "using: word2vec vectors"
+        sys.stdout.flush()
         U = W
     results = []
     count = 0
     datasets = make_idx_data(revs, word_idx_map, max_l=118,k=300, filter_h=5)
-    for activations in [Iden, Sigmoid, ReLU, Tanh]:
-        for batch_size in [50,100,150,250]:
-            for conv_non_linear in ["relu","tanh"]:
-                for dropout in [0.0, 0.1, 0.5, 0.9]:
-                    results = []
-                    count += 1
-                    print "------------------"
-                    print "     CNN{0}".format(count)
-                    print "------------------"
-                    print "##################"
-                    print("activations: {0}. batch_size: {1}, conv_non_linear: {2}, dropout: {3}".format(activations,batch_size,conv_non_linear,dropout))
-                    print "##################"
-                    perf = train_conv_net(datasets,
-                        U,
-                        lr_decay=0.95,
-                        filter_hs=[3,4,5],
-                        conv_non_linear=conv_non_linear,
-                        hidden_units=[100,3],
-                        shuffle_batch=True,
-                        n_epochs=25,
-                        sqr_norm_lim=9,
-                        non_static=False,
-                        batch_size=batch_size,
-                        dropout_rate=[dropout],
-                        activations=activations)
-                    print "perf: " + str(perf)
-                    results.append(perf)  
-                    print str(np.mean(results))
-    # perf = train_conv_net(datasets,
-    #                       U,
-    #                       lr_decay=0.95,
-    #                       filter_hs=[3,4,5],
-    #                       conv_non_linear="relu",
-    #                       hidden_units=[100,3],
-    #                       shuffle_batch=True,
-    #                       n_epochs=25,
-    #                       sqr_norm_lim=9,
-    #                       non_static=non_static,
-    #                       batch_size=50,
-    #                       dropout_rate=[0.5])
-    # print "perf: " + str(perf)
-    # results.append(perf)
-    # print str(np.mean(results))
+#    for activations in [Iden]:#[Iden, Sigmoid, ReLU, Tanh]:
+#        for batch_size in [150]:#[50,100]:
+#            for conv_non_linear in ["relu"]:#["relu","tanh"]:
+#                for dropout in [0.0]:# [0.0, 0.1, 0.5, 0.9]:
+#                    results = []
+#                    count += 1
+#                    print "------------------"
+#                    print "     CNN{0}".format(count)
+#                    print "------------------"
+#                    print "##################"
+#                    print("activations: {0}. batch_size: {1}, conv_non_linear: {2}, dropout: {3}".format(activations,batch_size,conv_non_linear,dropout))
+#                    print "##################"
+#                    perf = train_conv_net(datasets,
+#                        U,
+#                        lr_decay=0.95,
+#                        filter_hs=[3,4,5],
+#                        conv_non_linear=conv_non_linear,
+#                        hidden_units=[100,3],
+#                        shuffle_batch=True,
+#                        n_epochs=25,
+#                        sqr_norm_lim=9,
+#                        non_static=False,
+#                        batch_size=batch_size,
+#                        dropout_rate=[dropout],
+#                        activations=activations)
+#                    print "perf: " + str(perf)
+#                    results.append(perf)  
+#                    print str(np.mean(results))
+    perf = train_conv_net(datasets,
+                          U,
+                          lr_decay=0.95,
+                          #filter_hs=[3,4,5],
+	  		  filter_hs=[5,6,7],
+                          conv_non_linear=conv_non_linear,
+                          hidden_units=[100,3],
+                          shuffle_batch=True,
+                          n_epochs=25,
+                          sqr_norm_lim=9,
+                          non_static=non_static,
+                          batch_size=batch_size,
+                          dropout_rate=[dropout_rate])
+    print "perf: " + str(perf)
+    sys.stdout.flush()
+    results.append(perf)
+    print str(np.mean(results))
+    sys.stdout.flush()
