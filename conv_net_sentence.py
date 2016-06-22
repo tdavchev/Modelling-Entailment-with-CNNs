@@ -153,7 +153,7 @@ def train_conv_net(datasets,
                 x: train_set_x[index * batch_size: (index + 1) * batch_size],
                  y: train_set_y[index * batch_size: (index + 1) * batch_size]},
                                  allow_input_downcast=True)
-    train_model = theano.function([index], [cost, p_y_given_x, params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], layer1_input], updates=grad_updates,
+    train_model = theano.function([index], [layer0_input, cost, p_y_given_x, params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], layer1_input], updates=grad_updates,
           givens={
             x: train_set_x[index*batch_size:(index+1)*batch_size],
               y: train_set_y[index*batch_size:(index+1)*batch_size]},
@@ -199,8 +199,9 @@ def train_conv_net(datasets,
              outputs, p_y_given_xs, weights1,weights2,weights3,weights4,bias1 = [],[],[],[],[],[],[]
         if shuffle_batch:
             for minibatch_index in np.random.permutation(range(n_train_batches)):
-                [cost_epoch, p_y_given_x, W, b, W2, b2, W3, b3, W4, b4, layer0_output] = train_model(minibatch_index) #2-4 conv 1 is output
-                if epoch - 1 ==n_epochs-1:
+                [layer0, cost_epoch, p_y_given_x, W, b, W2, b2, W3, b3, W4, b4, layer0_output] = train_model(minibatch_index) #2-4 conv 1 is output
+                if epoch - 1 == n_epochs-1:
+                    print "layer0:", len(layer0), len(layer0[0])
                     takeW = False
                     if idx == 0:
                         r = np.random.rand()
@@ -396,19 +397,27 @@ def make_idx_data(revs, word_idx_map, cur_idx, max_l=81, k=300, filter_h=5):
 
     return [train[:100], valid[:10], test[:10]]
 
-
 if __name__=="__main__":
-    print "loading data...",
+    print "loading data..."
+    sys.stdout.flush()
     x = cPickle.load(open("snli-glove-splitintwo18062016.p","rb"))
     revs, W, W2, word_idx_map, vocab = x[0], x[1], x[2], x[3], x[4]
     print "data loaded!"
+    sys.stdout.flush()
     mode= sys.argv[1]
     word_vectors = sys.argv[2]
+    batch_size = sys.argv[3]
+    batch_size = int(batch_size)
+    dropout_rate = sys.argv[4]
+    dropout_rate = float(dropout_rate)
+    conv_non_linear = sys.argv[5]
     if mode=="-nonstatic":
         print "model architecture: CNN-non-static"
+        sys.stdout.flush()
         non_static=True
     elif mode=="-static":
         print "model architecture: CNN-static"
+        sys.stdout.flush()
         non_static=False
     first_sent = [] # note currently takes the output of the convolution layers and not the predictions
     second_sent = [] # I need to try it with predictions as well
@@ -416,51 +425,58 @@ if __name__=="__main__":
         execfile("conv_net_classes.py")
         if word_vectors=="-rand":
             print "using: random vectors"
+            sys.stdout.flush()
             U = W2
         elif word_vectors=="-word2vec":
             print "using: word2vec vectors"
+            sys.stdout.flush()
             U = W
         results = []
         print "----------------------"
         print("        CNN {0}       ".format(idx))
         print "----------------------"
-        datasets = make_idx_data(revs, word_idx_map, idx, max_l=81,k=300, filter_h=5)
+        datasets = make_idx_data(revs, word_idx_map, 0, max_l=81,k=300, filter_h=5)
         if idx == 0:
             perf, first_sent,f_p_y_given_xs1,f_weights11,f_weights21,f_weights31,f_weights41,f_bias11, idx_set = train_conv_net(datasets,
-                U,
-                idx,
-                lr_decay=0.95,
-                filter_hs=[3,4,5],
-                conv_non_linear="relu",
-                hidden_units=[100,3],
-                shuffle_batch=True,
-                n_epochs=25, #trqbva 25
-                sqr_norm_lim=9,
-                non_static=non_static,
-                batch_size=50,
-                dropout_rate=[0.5]) # trqbva 0.5
+                          U,
+                          lr_decay=0.95,
+                          filter_hs=[3,4,5],
+                          # filter_hs=[5,6,7],
+                          conv_non_linear=conv_non_linear,
+                          hidden_units=[100,3],
+                          shuffle_batch=True,
+                          n_epochs=25,
+                          sqr_norm_lim=9,
+                          non_static=non_static,
+                          batch_size=batch_size,
+                          dropout_rate=[dropout_rate])
             print"subrah kvot mi trqbvashe"
+            sys.stdout.flush()
         else:
             print "vikam sledvashtata funkcia"
+            sys.stdout.flush()
             perf, second_sent,f_p_y_given_xs2,f_weights12,f_weights22,f_weights32,f_weights42,f_bias12, idx_set = train_conv_net(datasets,
-                U,
-                idx,
-                lr_decay=0.95,
-                filter_hs=[3,4,5],
-                conv_non_linear="relu",
-                hidden_units=[100,3],
-                shuffle_batch=True,
-                n_epochs=25, #trqbva 25
-                sqr_norm_lim=9,
-                non_static=non_static,
-                batch_size=50,
-                dropout_rate=[0.5]) # trqbva 0.5
+                          U,
+                          lr_decay=0.95,
+                          filter_hs=[3,4,5],
+                          # filter_hs=[5,6,7],
+                          conv_non_linear=conv_non_linear,
+                          hidden_units=[100,3],
+                          shuffle_batch=True,
+                          n_epochs=25,
+                          sqr_norm_lim=9,
+                          non_static=non_static,
+                          batch_size=batch_size,
+                          dropout_rate=[dropout_rate])
 
         print "perf: " + str(perf)
+        sys.stdout.flush()
         results.append(perf)
         print str(np.mean(results))
+        sys.stdout.flush()
 
     print "concatenating the two sentences"
+    sys.stdout.flush()
     # concatenating runs out of memory so just spit them on a file
     #first_sent = np.asarray(first_sent)
     #f_p_y_given_xs1 = np.asarray(f_p_y_given_xs1)
@@ -483,12 +499,15 @@ if __name__=="__main__":
        sento_finale.append(off)
        p_sento_finale.append(p_off)
     print "first sentences concatenated."
+    sys.stdout.flush()
 
-    print "Making pickles..."
-    process.build_me(f_weights11,f_weights21,f_weights31,f_weights41,f_bias11,f_weights12,f_weights22,f_weights32,f_weights42,f_bias12)
+    # print "Making pickles..."
+    # sys.stdout.flush()
+    # process.build_me(f_weights11,f_weights21,f_weights31,f_weights41,f_bias11,f_weights12,f_weights22,f_weights32,f_weights42,f_bias12)
 
     f = open("first_conv-layer-output.txt","w")
     print "Saving into text files"
+    sys.stdout.flush()
     for sent in xrange(0, len(sento_finale)):
         for br in xrange(0,len(sento_finale[sent])):
             if (br+1)==len(sento_finale[sent]):
@@ -501,6 +520,7 @@ if __name__=="__main__":
     f.close()
 
     print "Saving into first_conv-layer-output-prob.txt"
+    sys.stdout.flush()
     f = open("first_conv-layer-output-prob.txt","w") #opens file with name of "test.txt"
     for p_sent in p_sento_finale:
         for br in xrange(0,len(p_sent)):
@@ -523,9 +543,11 @@ if __name__=="__main__":
        sento_finale.append(off)
        p_sento_finale.append(p_off)
     print "second sentences concatenated."
+    sys.stdout.flush()
 
     f = open("second_conv-layer-output.txt","w")
     print "Saving into text files"
+    sys.stdout.flush()
     for sent in xrange(0, len(sento_finale)):
         for br in xrange(0,len(sento_finale[sent])):
             if (br+1)==len(sento_finale[sent]):
@@ -538,6 +560,7 @@ if __name__=="__main__":
     f.close()
 
     print "Saving into second_conv-layer-output-prob.txt"
+    sys.stdout.flush()
     f = open("second_conv-layer-output-prob.txt","w") #opens file with name of "test.txt"
     for p_sent in p_sento_finale:
         for br in xrange(0,len(p_sent)):
