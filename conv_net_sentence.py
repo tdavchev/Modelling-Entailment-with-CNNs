@@ -72,9 +72,10 @@ def train_conv_net(datasets,
                     ("learn_decay",lr_decay), ("conv_non_linear", conv_non_linear), ("non_static", non_static)
                     ,("sqr_norm_lim",sqr_norm_lim),("shuffle_batch",shuffle_batch)]
     print parameters
-
+    sys.stdout.flush()
     #define model architecture
     print("define model architecture")
+    sys.stdout.flush()
     index = T.lscalar()
     x = T.matrix('x')
     y = T.ivector('y')
@@ -98,6 +99,7 @@ def train_conv_net(datasets,
     classifier = MLPDropout(rng, input=layer1_input, layer_sizes=hidden_units, activations=activations, dropout_rates=dropout_rate)
     #define parameters of the model and update functions using adadelta
     print "define parameters of the model and update functions using adadelta"
+    sys.stdout.flush()
     params = classifier.params
     for conv_layer in conv_layers:
         params += conv_layer.params
@@ -113,6 +115,7 @@ def train_conv_net(datasets,
     #shuffle dataset and assign to mini batches. if dataset size is not a multiple of mini batches, replicate
     #extra data (at random)
     print "shuffle dataset and assign to mini batches. if dataset size is not a multiple of mini batches, replicate"
+    sys.stdout.flush()
     np.random.seed(3435)
     if datasets[0].shape[0] % batch_size > 0:
         extra_data_num = batch_size - datasets[0].shape[0] % batch_size
@@ -126,6 +129,7 @@ def train_conv_net(datasets,
     n_train_batches = int(np.round(n_batches))
     #divide train set into train/val sets
     print "divide train set into train/val sets"
+    sys.stdout.flush()
     # test_set_x = datasets[2][:,:img_h]
     # test_set_y = np.asarray(datasets[2][:,-1],"int32")
     test_set_x = datasets[2][:,:img_h]
@@ -142,33 +146,26 @@ def train_conv_net(datasets,
 
     #compile theano functions to get train/val/test errors
     print "compile theano functions to get train/val/test errors"
+    sys.stdout.flush()
     val_model = theano.function([index], classifier.errors(y),
          givens={
             x: val_set_x[index * batch_size: (index + 1) * batch_size],
              y: val_set_y[index * batch_size: (index + 1) * batch_size]},
                                 allow_input_downcast=True)
 
+    print "na maika ti v putkata"
+    sys.stdout.flush()
+
     test_model = theano.function([index], classifier.errors(y),
              givens={
                 x: train_set_x[index * batch_size: (index + 1) * batch_size],
                  y: train_set_y[index * batch_size: (index + 1) * batch_size]},
                                  allow_input_downcast=True)
-    train_model = theano.function([index], [layer0_input, cost, p_y_given_x, params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], layer1_input], updates=grad_updates,
+    train_model = theano.function([index], [cost, p_y_given_x, layer1_input], updates=grad_updates,
           givens={
             x: train_set_x[index*batch_size:(index+1)*batch_size],
               y: train_set_y[index*batch_size:(index+1)*batch_size]},
                                   allow_input_downcast = True)
-    # trains_params = theano.function([index], params,
-    #       givens={
-    #         x: train_set_x[index * batch_size: (index + 1) * batch_size],
-    #           y: train_set_y[index * batch_size: (index + 1) * batch_size]},
-    #                                allow_input_downcast=True)
-
-    # trains_weights = theano.function([index], weights,
-    #       givens={
-    #         x: train_set_x[index * batch_size: (index + 1) * batch_size],
-    #           y: train_set_y[index * batch_size: (index + 1) * batch_size]},
-    #                                allow_input_downcast=True)
     test_pred_layers = []
     test_size = test_set_x.shape[0]
     test_layer0_input = Words[T.cast(x.flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
@@ -199,29 +196,10 @@ def train_conv_net(datasets,
              outputs, p_y_given_xs, weights1,weights2,weights3,weights4,bias1 = [],[],[],[],[],[],[]
         if shuffle_batch:
             for minibatch_index in np.random.permutation(range(n_train_batches)):
-                [layer0, cost_epoch, p_y_given_x, W, b, W2, b2, W3, b3, W4, b4, layer0_output] = train_model(minibatch_index) #2-4 conv 1 is output
+                [cost_epoch, p_y_given_x, layer1_input] = train_model(minibatch_index) #2-4 conv 1 is output
                 if epoch - 1 == n_epochs-1:
-                    print "layer0:", len(layer0), len(layer0[0])
-                    takeW = False
-                    if idx == 0:
-                        r = np.random.rand()
-                        if r > 0.8:
-                            takeW = True
-                        if takeW:
-                            idx_set.append(minibatch_index)
-                            weights1.append(W)
-                            bias1.append(b)
-                            weights2.append(W2)
-                            weights3.append(W3)
-                            weights4.append(W4)
-                    elif minibatch_index in idx_set:
-                        weights1.append(W)
-                        bias1.append(b)
-                        weights2.append(W2)
-                        weights3.append(W3)
-                        weights4.append(W4)
                     p_y_given_xs.append(p_y_given_x)
-                    outputs.append(layer0_output)
+                    outputs.append(layer1_input)
                 set_zero(zero_vec)
         else:
             for minibatch_index in xrange(n_train_batches):
@@ -232,65 +210,12 @@ def train_conv_net(datasets,
         val_losses = [val_model(i) for i in xrange(n_val_batches)]
         val_perf = 1- np.mean(val_losses)
         print('epoch: %i, training time: %.2f secs, train perf: %.2f %%, val perf: %.2f %%' % (epoch, time.time()-start_time, train_perf * 100., val_perf*100.))
+        sys.stdout.flush()
         if val_perf >= best_val_perf:
             best_val_perf = val_perf
             test_loss = test_model_all(test_set_x,test_set_y)
             test_perf = 1- test_loss
-    # new_input, f_p_y_given_xs, f_weights1, f_weights2, f_weights3, f_weights4, f_bias1, f_bias2, f_bias3, f_bias4 = [],[],[],[],[],[],[],[],[],[]
-    # count = 0
-    # print("vlizam v cikula s addvaneto na neshta")
-    # for br in xrange(0,len(outputs)):
-    #     count += 1
-    #     if new_input == []:
-    #         new_input = outputs[br]
-    #         f_p_y_given_xs =p_y_given_xs[br]
-    #         print("purviq cikul uspeshen")
-    #         #f_weights1 = weights1[br]
-    #         #f_weights2 = weights2[br]
-    #         #f_weights3 = weights3[br]
-    #         #f_weights4 = weights4[br]
-    #         #f_bias1 = bias1[br]
-    #         #f_bias2 = bias2[br]
-    #         #f_bias3 = bias3[br]
-    #         #f_bias4 = bias4[br]
-    #     else:
-    #         output = np.asarray(outputs[br])
-    #         p_y_given_x = np.asarray(p_y_given_xs[br])
-    #         #weight1 = np.asarray(weights1[br])
-    #         #weight2 = np.asarray(weights2[br])
-    #         #weight3 = np.asarray(weights3[br])
-    #         #weight4 = np.asarray(weights4[br])
-    #         #bia1 = np.asarray(bias1[br])
-    #         #bia2 = np.asarray(bias2[br])
-    #         #bia3 = np.asarray(bias3[br])
-    #         #bia4 = np.asarray(bias4[br])
-    #
-    #         new_input = np.concatenate((new_input,outputs[br]),axis=0)
-    #         f_p_y_given_xs = np.concatenate((f_p_y_given_xs,p_y_given_xs[br]),axis=0)
-    #         #f_weights1 = np.concatenate((f_weights1,weights1[br]),axis=0)
-    #         #f_weights2 = np.concatenate((f_weights2,weights2[br]),axis=0)
-    #         #f_weights3 = np.concatenate((f_weights3,weights3[br]),axis=0)
-    #         #f_weights4 = np.concatenate((f_weights4,weights4[br]),axis=0)
-    #         #f_bias1 = np.concatenate((f_bias1,bias1[br]),axis=0)
-    #         #f_bias2 = np.concatenate((f_bias2,bias2[br]),axis=0)
-    #         #f_bias3 = np.concatenate((f_bias3,bias3[br]),axis=0)
-    #         #f_bias4 = np.concatenate((f_bias4,bias4[br]),axis=0)
-    #     print("izlezoh ot cikula")
-
-        # new_input = np.asarray(new_input)
-        # f_p_y_given_xs = np.asarray(f_p_y_given_xs)
-        #f_weights1 = np.asarray(f_weights1)
-        #f_weights2 = np.asarray(f_weights2)
-        #f_weights3 = np.asarray(f_weights3)
-        #f_weights4 = np.asarray(f_weights4)
-        #f_bias1 = np.asarray(f_bias1)
-        #f_bias2 = np.asarray(f_bias2)
-        #f_bias3 = np.asarray(f_bias3)
-        #f_bias4 = np.asarray(f_bias4)
-
-
-    print("izlizam ot funkciata")
-    return test_perf, outputs, p_y_given_xs, weights1, weights2, weights3, weights4, bias1, idx_set
+    return test_perf, outputs, p_y_given_xs
 
 def shared_dataset(data_xy, borrow=True):
         """ Function that loads the dataset into shared variables
@@ -435,40 +360,52 @@ if __name__=="__main__":
         print "----------------------"
         print("        CNN {0}       ".format(idx))
         print "----------------------"
-        datasets = make_idx_data(revs, word_idx_map, 0, max_l=81,k=300, filter_h=5)
+        sys.stdout.flush()
+        datasets = make_idx_data(revs, word_idx_map, idx, max_l=81,k=300, filter_h=5)
+        print "datasets configured."
+        sys.stdout.flush()
         if idx == 0:
-            perf, first_sent,f_p_y_given_xs1,f_weights11,f_weights21,f_weights31,f_weights41,f_bias11, idx_set = train_conv_net(datasets,
-                          U,
-                          lr_decay=0.95,
-                          filter_hs=[3,4,5],
-                          # filter_hs=[5,6,7],
-                          conv_non_linear=conv_non_linear,
-                          hidden_units=[100,3],
-                          shuffle_batch=True,
-                          n_epochs=25,
-                          sqr_norm_lim=9,
-                          non_static=non_static,
-                          batch_size=batch_size,
-                          dropout_rate=[dropout_rate])
+            print conv_non_linear
+            sys.stdout.flush()
+            print non_static, batch_size,dropout_rate
+            sys.stdout.flush()
+            perf, first_sent, f_p_y_given_xs1 = train_conv_net(datasets, U, lr_decay=0.95, filter_hs=[3,4,5], conv_non_linear=conv_non_linear, hidden_units=[100,3], shuffle_batch=True, n_epochs=25, sqr_norm_lim=9, non_static=non_static, batch_size=batch_size, dropout_rate=[dropout_rate])
+            perf, second_sent,f_p_y_given_xs2 = train_conv_net(datasets,
+                   U,
+                   idx,
+                   img_w=300,
+                   filter_hs=[3,4,5],
+                   hidden_units=[100,3],
+                   dropout_rate=[0.5],
+                   shuffle_batch=True,
+                   n_epochs=25,
+                   batch_size=50,
+                   lr_decay = 0.95,
+                   conv_non_linear="relu",
+                   activations=[Iden],
+                   sqr_norm_lim=9,
+                   non_static=True)
             print"subrah kvot mi trqbvashe"
             sys.stdout.flush()
         else:
             print "vikam sledvashtata funkcia"
             sys.stdout.flush()
-            perf, second_sent,f_p_y_given_xs2,f_weights12,f_weights22,f_weights32,f_weights42,f_bias12, idx_set = train_conv_net(datasets,
-                          U,
-                          lr_decay=0.95,
-                          filter_hs=[3,4,5],
-                          # filter_hs=[5,6,7],
-                          conv_non_linear=conv_non_linear,
-                          hidden_units=[100,3],
-                          shuffle_batch=True,
-                          n_epochs=25,
-                          sqr_norm_lim=9,
-                          non_static=non_static,
-                          batch_size=batch_size,
-                          dropout_rate=[dropout_rate])
-
+            #perf, second_sent,f_p_y_given_xs2 = train_conv_net(datasets, U, lr_decay=0.95, filter_hs=[3,4,5], conv_non_linear=conv_non_linear, hidden_units=[100,3], shuffle_batch=True, n_epochs=25, sqr_norm_lim=9, non_static=non_static, batch_size=batch_size, dropout_rate=[dropout_rate])
+            perf, second_sent, f_p_y_given_xs2 = train_conv_net(datasets,
+                   U,
+                   idx,
+                   img_w=300,
+                   filter_hs=[3,4,5],
+                   hidden_units=[100,3],
+                   dropout_rate=[0.5],
+                   shuffle_batch=True,
+                   n_epochs=25,
+                   batch_size=50,
+                   lr_decay = 0.95,
+                   conv_non_linear="relu",
+                   activations=[Iden],
+                   sqr_norm_lim=9,
+                   non_static=True)
         print "perf: " + str(perf)
         sys.stdout.flush()
         results.append(perf)
@@ -477,20 +414,6 @@ if __name__=="__main__":
 
     print "concatenating the two sentences"
     sys.stdout.flush()
-    # concatenating runs out of memory so just spit them on a file
-    #first_sent = np.asarray(first_sent)
-    #f_p_y_given_xs1 = np.asarray(f_p_y_given_xs1)
-    #sentence = []
-    #p_sentence = []
-    #second_sent = np.asarray(second_sent)
-    #f_p_y_given_xs2 = np.asarray(f_p_y_given_xs2)
-    #for s1, s2 in first_sent, second_sent:
-    #    sentence = np.concatenate((s1,s2),axis=1)
-
-    #for p1, p2 in f_p_y_given_xs1, f_p_y_given_xs2:
-    #    p_sentence = np.concatenate((p1,p2),axis=1)
-
-    sento_finale = []
     p_sento_finale = []
     for ind in xrange(0,len(first_sent)):
        off = []
@@ -500,10 +423,6 @@ if __name__=="__main__":
        p_sento_finale.append(p_off)
     print "first sentences concatenated."
     sys.stdout.flush()
-
-    # print "Making pickles..."
-    # sys.stdout.flush()
-    # process.build_me(f_weights11,f_weights21,f_weights31,f_weights41,f_bias11,f_weights12,f_weights22,f_weights32,f_weights42,f_bias12)
 
     f = open("first_conv-layer-output.txt","w")
     print "Saving into text files"
@@ -522,12 +441,12 @@ if __name__=="__main__":
     print "Saving into first_conv-layer-output-prob.txt"
     sys.stdout.flush()
     f = open("first_conv-layer-output-prob.txt","w") #opens file with name of "test.txt"
-    for p_sent in p_sento_finale:
-        for br in xrange(0,len(p_sent)):
-            if (br+1)==len(p_sent):
-                f.write('%d' % p_sent[br])
+    for p_sent in xrange(0, len(p_sento_finale)):
+        for br in xrange(0,len(p_sento_finale[p_sent])):
+            if (br+1)==len(p_sento_finale[p_sent]):
+                f.write('%d' % p_sento_finale[p_sent][br])
             else:
-                f.write('%10.6f ' % p_sent[br])
+                f.write('%10.6f ' % p_sento_finale[p_sent][br])
 
         f.write("\n")
 
