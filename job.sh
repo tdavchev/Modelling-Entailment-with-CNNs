@@ -7,4 +7,9 @@ export MLP_WDIR=/home/s1045064/dissertation
 cd /home/s1045064/dissertation/repo-diss/sentence-classification/
 source /home/s1045064/dissertation/venv/bin/activate
 
-THEANO_FLAGS="device=gpu$MLP_GPU" python /home/s1045064/dissertation/repo-diss/sentence-classification/conv_net_sentence.py -static -word2vec #$MLP_NH $MLP_R
+#THEANO_FLAGS="device=gpu$MLP_GPU" python /home/s1045064/dissertation/repo-diss/sentence-classification/conv_net_sentence.py -static -word2vec #$MLP_NH $MLP_R
+echo "$BATCH_SIZE, $DROPOUT, $CNL"
+THEANO_FLAGS="device=gpu$GPU_NO" python /home/s1045064/dissertation/repo-diss/sentence-classification/conv_net_sentence_singleCNN.py -static -word2vec $BATCH_SIZE $DROPOUT $CNL
+
+#THEANO_FLAGS="device=gpu$GPU_NO" python /home/s1045064/dissertation/repo-diss/sentence-classification/conv_net_sentence.py -static -word2vec $BATCH_SIZE $DROPOUT $CNL
+
