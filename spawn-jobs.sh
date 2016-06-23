@@ -5,7 +5,14 @@
 #       for cnl in "relu" "tanh"; do
 #          echo "Starting job with batch size: $bs, dropout: $dropout, conv_non_linear: $cnl"
 echo "$1,$2,$3"
-qsub -v BATCH_SIZE=$1,DROPOUT=$2,CNL=$3,GPU_NO=$4 job.sh
+if [ $1 -eq 0] then
+	echo "pederas"
+	# qsub -v BATCH_SIZE=$1,DROPOUT=$2,CNL=$3,GPU_NO=$4,MODEL=$5 job.sh
+else 
+	echo "pichaga"
+	# qsub -v BATCH_SIZE_F=$1,DROPOUT_F=$2,CNL_F=$3,GPU_NO=$4,MODEL=$5,BATCH_SIZE_S=$6,DROPOUT_S=$7,CNL_S=$8
+fi
+
 #       done       
 #    done
 # done

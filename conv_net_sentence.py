@@ -332,11 +332,21 @@ if __name__=="__main__":
     sys.stdout.flush()
     mode= sys.argv[1]
     word_vectors = sys.argv[2]
-    batch_size = sys.argv[3]
-    batch_size = int(batch_size)
-    dropout_rate = sys.argv[4]
-    dropout_rate = float(dropout_rate)
-    conv_non_linear = sys.argv[5]
+
+    # First CNN
+    batch_size_f = sys.argv[3]
+    batch_size_f = int(batch_size_f)
+    dropout_rate_f = sys.argv[4]
+    dropout_rate_f = float(dropout_rate_f)
+    conv_non_linear_f = sys.argv[5]
+    
+    # Second CNN
+    batch_size_s = sys.argv[3]
+    batch_size_s = int(batch_size_s)
+    dropout_rate_s = sys.argv[4]
+    dropout_rate_s = float(dropout_rate_s)
+    conv_non_linear_s = sys.argv[5]
+
     if mode=="-nonstatic":
         print "model architecture: CNN-non-static"
         sys.stdout.flush()
@@ -377,12 +387,12 @@ if __name__=="__main__":
                    img_w=300,
                    filter_hs=[3,4,5],
                    hidden_units=[100,3],
-                   dropout_rate=[dropout_rate],
+                   dropout_rate=[dropout_rate_f],
                    shuffle_batch=True,
                    n_epochs=25,
-                   batch_size=batch_size,
+                   batch_size=batch_size_f,
                    lr_decay = 0.95,
-                   conv_non_linear=conv_non_linear,
+                   conv_non_linear=conv_non_linear_f,
                    activations=[Iden],
                    sqr_norm_lim=9,
                    non_static=True)
@@ -398,12 +408,12 @@ if __name__=="__main__":
                    img_w=300,
                    filter_hs=[3,4,5],
                    hidden_units=[100,3],
-                   dropout_rate=[dropout_rate],
+                   dropout_rate=[dropout_rate_s],
                    shuffle_batch=True,
                    n_epochs=25,
-                   batch_size=batch_size,
+                   batch_size=batch_size_s,
                    lr_decay = 0.95,
-                   conv_non_linear=conv_non_linear,
+                   conv_non_linear=conv_non_linear_s,
                    activations=[Iden],
                    sqr_norm_lim=9,
                    non_static=True)
@@ -416,6 +426,7 @@ if __name__=="__main__":
     print "concatenating the two sentences"
     sys.stdout.flush()
     p_sento_finale = []
+    sento_finale = []
     for ind in xrange(0,len(first_sent)):
        off = []
        off = np.append(first_sent[ind],(datasets[0][ind,-1]))
