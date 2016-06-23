@@ -321,7 +321,7 @@ def make_idx_data(revs, word_idx_map, cur_idx, max_l=81, k=300, filter_h=5):
     test = np.array(test,dtype="int")
     valid = np.array(valid,dtype="int")
 
-    return [train[:100], valid[:10], test[:10]]
+    return [train, valid, test]
 
 if __name__=="__main__":
     print "loading data..."
@@ -377,12 +377,12 @@ if __name__=="__main__":
                    img_w=300,
                    filter_hs=[3,4,5],
                    hidden_units=[100,3],
-                   dropout_rate=[0.5],
+                   dropout_rate=[dropout_rate],
                    shuffle_batch=True,
                    n_epochs=25,
-                   batch_size=50,
+                   batch_size=batch_size,
                    lr_decay = 0.95,
-                   conv_non_linear="relu",
+                   conv_non_linear=conv_non_linear,
                    activations=[Iden],
                    sqr_norm_lim=9,
                    non_static=True)
@@ -398,12 +398,12 @@ if __name__=="__main__":
                    img_w=300,
                    filter_hs=[3,4,5],
                    hidden_units=[100,3],
-                   dropout_rate=[0.5],
+                   dropout_rate=[dropout_rate],
                    shuffle_batch=True,
                    n_epochs=25,
-                   batch_size=50,
+                   batch_size=batch_size,
                    lr_decay = 0.95,
-                   conv_non_linear="relu",
+                   conv_non_linear=conv_non_linear,
                    activations=[Iden],
                    sqr_norm_lim=9,
                    non_static=True)
