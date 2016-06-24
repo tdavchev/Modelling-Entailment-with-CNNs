@@ -318,12 +318,12 @@ def make_idx_data(revs, word_idx_map, cur_idx, max_l=81, k=300, filter_h=5):
     test = np.array(test,dtype="int")
     valid = np.array(valid,dtype="int")
 
-    return [train[:100], valid[:10], test[:10]]
+    return [train, valid, test]
 
 if __name__=="__main__":
     print "loading data..."
     sys.stdout.flush()
-    x = cPickle.load(open("snli-GloVesplitintwo.p","rb"))
+    x = cPickle.load(open("snli-glove-splitintwo18062016.p","rb"))
     revs, W, W2, word_idx_map, vocab = x[0], x[1], x[2], x[3], x[4]
     print "data loaded!"
     sys.stdout.flush()
@@ -440,7 +440,7 @@ if __name__=="__main__":
     print "first sentences concatenated. {0}".format(len(first_sent[0]))
     sys.stdout.flush()
 
-    f = open("first_conv-layer-output.txt","w")
+    f = open("first_conv-layer-output2.txt","w")
     print "Saving into text files"
     sys.stdout.flush()
     for sent in xrange(0, len(sento_finale)):
@@ -454,9 +454,9 @@ if __name__=="__main__":
 
     f.close()
 
-    print "Saving into first_conv-layer-output-prob.txt"
+    print "Saving into first_conv-layer-output-prob2.txt"
     sys.stdout.flush()
-    f = open("first_conv-layer-output-prob.txt","w") #opens file with name of "test.txt"
+    f = open("first_conv-layer-output-prob2.txt","w") #opens file with name of "test.txt"
     for p_sent in xrange(0, len(p_sento_finale)):
         for br in xrange(0,len(p_sento_finale[p_sent])):
             if (br+1)==len(p_sento_finale[p_sent]):
@@ -482,7 +482,7 @@ if __name__=="__main__":
     print "second sentences concatenated. {0}".format(len(second_sent))
     sys.stdout.flush()
     print "concatenating the two sentences"
-    f = open("second_conv-layer-output.txt","w")
+    f = open("second_conv-layer-output2.txt","w")
     print "Saving into text files"
     sys.stdout.flush()
     for sent in xrange(0, len(sento_finale)):
@@ -498,7 +498,7 @@ if __name__=="__main__":
 
     print "Saving into second_conv-layer-output-prob.txt"
     sys.stdout.flush()
-    f = open("second_conv-layer-output-prob.txt","w") #opens file with name of "test.txt"
+    f = open("second_conv-layer-output-prob2.txt","w") #opens file with name of "test.txt"
     for p_sent in p_sento_finale:
         for br in xrange(0,len(p_sent)):
             if (br+1)==len(p_sent):
