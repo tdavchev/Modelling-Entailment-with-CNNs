@@ -36,7 +36,6 @@ def Iden(x):
 
 def train_conv_net(datasets,
                    U,
-                   idx,
                    img_w=300,
                    filter_hs=[3,4,5],
                    hidden_units=[100,3],
@@ -119,7 +118,7 @@ def train_conv_net(datasets,
     np.random.seed(3435)
     if datasets[0].shape[0] % batch_size > 0:
         extra_data_num = batch_size - datasets[0].shape[0] % batch_size
-        train_set = np.random.permutation(datasets[0])
+        train_set = np.random.permutation(datasets[0]) # no need to store ... I use seed so it will be always the same
         extra_data = train_set[:extra_data_num]
         new_data=np.append(datasets[0],extra_data,axis=0)
     else:
@@ -187,11 +186,6 @@ def train_conv_net(datasets,
     val_perf = 0
     test_perf = 0
     cost_epoch = 0
-    idx_set = []
-    ks = []
-    if idx == 1:
-        for item in idx_set:
-            ks.append(item[0])
     while (epoch < n_epochs):
         start_time = time.time()
         epoch = epoch + 1
@@ -202,7 +196,7 @@ def train_conv_net(datasets,
                 [cost_epoch, p_y_given_x, layer1_input] = train_model(minibatch_index) #2-4 conv 1 is output
                 if epoch - 1 == n_epochs-1:
                     p_y_given_xs.append(p_y_given_x)
-                    outputs.append(layer1_input[0])
+                    outputs.append(layer1_input)
                 set_zero(zero_vec)
         else:
             for minibatch_index in xrange(n_train_batches):
@@ -329,7 +323,7 @@ def make_idx_data(revs, word_idx_map, cur_idx, max_l=81, k=300, filter_h=5):
 if __name__=="__main__":
     print "loading data..."
     sys.stdout.flush()
-    x = cPickle.load(open("snli-glove-splitintwo18062016.p","rb"))
+    x = cPickle.load(open("snli-GloVesplitintwo.p","rb"))
     revs, W, W2, word_idx_map, vocab = x[0], x[1], x[2], x[3], x[4]
     print "data loaded!"
     sys.stdout.flush()
@@ -386,7 +380,6 @@ if __name__=="__main__":
             # perf, first_sent, f_p_y_given_xs1 = train_conv_net(datasets, U, lr_decay=0.95, filter_hs=[3,4,5], conv_non_linear=conv_non_linear, hidden_units=[100,3], shuffle_batch=True, n_epochs=25, sqr_norm_lim=9, non_static=non_static, batch_size=batch_size, dropout_rate=[dropout_rate])
             perf, first_sent, f_p_y_given_xs1 = train_conv_net(datasets,
                    U,
-                   idx,
                    img_w=300,
                    filter_hs=[3,4,5],
                    hidden_units=[100,3],
@@ -411,7 +404,6 @@ if __name__=="__main__":
             #perf, second_sent,f_p_y_given_xs2 = train_conv_net(datasets, U, lr_decay=0.95, filter_hs=[3,4,5], conv_non_linear=conv_non_linear, hidden_units=[100,3], shuffle_batch=True, n_epochs=25, sqr_norm_lim=9, non_static=non_static, batch_size=batch_size, dropout_rate=[dropout_rate])
             perf, second_sent, f_p_y_given_xs2 = train_conv_net(datasets,
                    U,
-                   idx,
                    img_w=300,
                    filter_hs=[3,4,5],
                    hidden_units=[100,3],
@@ -434,13 +426,17 @@ if __name__=="__main__":
     sys.stdout.flush()
     p_sento_finale = []
     sento_finale = []
+
     print "first_sent: len {0}".format(len(first_sent))
     for ind in xrange(0,len(first_sent[0])):
-       off = []
-       off = np.append(first_sent[0][ind],(datasets[0][ind,-1]))
-       p_off = np.append(first_sent[0][ind],(datasets[0][ind,-1]))
-       sento_finale.append(off)
-       p_sento_finale.append(p_off)
+        if len(datasets[0]) > ind:
+            off = []
+            p_off = []
+            off = np.append(first_sent[0][ind],datasets[0][ind,-1])
+            p_off = np.append(first_sent[0][ind],(datasets[0][ind,-1]))
+            sento_finale.append(off)
+            p_sento_finale.append(p_off)
+    
     print "first sentences concatenated. {0}".format(len(first_sent[0]))
     sys.stdout.flush()
 
@@ -476,11 +472,13 @@ if __name__=="__main__":
     p_sento_finale = []
 
     for ind in xrange(0,len(second_sent)):
-       off = []
-       off = np.append(second_sent[ind],(datasets[0][ind,-1]))
-       p_off = np.append(second_sent[ind],(datasets[0][ind,-1]))
-       sento_finale.append(off)
-       p_sento_finale.append(p_off)
+       if len(datasets[0]) < ind:
+            off = []
+            p_off = []
+            off = np.append(second_sent[0][ind],(datasets[0][ind,-1]))
+            p_off = np.append(second_sent[0][ind],(datasets[0][ind,-1]))
+            sento_finale.append(off)
+            p_sento_finale.append(p_off)
     print "second sentences concatenated. {0}".format(len(second_sent))
     sys.stdout.flush()
     print "concatenating the two sentences"
