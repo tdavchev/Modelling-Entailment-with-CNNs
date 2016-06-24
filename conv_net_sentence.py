@@ -124,6 +124,8 @@ def train_conv_net(datasets,
         new_data=np.append(datasets[0],extra_data,axis=0)
     else:
         new_data = datasets[0]
+    print "datasets.shape {0}".format(datasets[0].shape)
+    sys.stdout.flush()
     new_data = np.random.permutation(new_data)
     n_batches = new_data.shape[0]/batch_size
     n_train_batches = int(np.round(n_batches))
@@ -179,6 +181,7 @@ def train_conv_net(datasets,
 
     #start training over mini-batches
     print '... training'
+    sys.stdout.flush()
     epoch = 0
     best_val_perf = 0
     val_perf = 0
@@ -199,7 +202,7 @@ def train_conv_net(datasets,
                 [cost_epoch, p_y_given_x, layer1_input] = train_model(minibatch_index) #2-4 conv 1 is output
                 if epoch - 1 == n_epochs-1:
                     p_y_given_xs.append(p_y_given_x)
-                    outputs.append(layer1_input)
+                    outputs.append(layer1_input[0])
                 set_zero(zero_vec)
         else:
             for minibatch_index in xrange(n_train_batches):
@@ -321,7 +324,7 @@ def make_idx_data(revs, word_idx_map, cur_idx, max_l=81, k=300, filter_h=5):
     test = np.array(test,dtype="int")
     valid = np.array(valid,dtype="int")
 
-    return [train, valid, test]
+    return [train[:100], valid[:10], test[:10]]
 
 if __name__=="__main__":
     print "loading data..."
@@ -341,11 +344,11 @@ if __name__=="__main__":
     conv_non_linear_f = sys.argv[5]
     
     # Second CNN
-    batch_size_s = sys.argv[3]
+    batch_size_s = sys.argv[6]
     batch_size_s = int(batch_size_s)
-    dropout_rate_s = sys.argv[4]
+    dropout_rate_s = sys.argv[7]
     dropout_rate_s = float(dropout_rate_s)
-    conv_non_linear_s = sys.argv[5]
+    conv_non_linear_s = sys.argv[8]
 
     if mode=="-nonstatic":
         print "model architecture: CNN-non-static"
@@ -376,12 +379,12 @@ if __name__=="__main__":
         print "datasets configured."
         sys.stdout.flush()
         if idx == 0:
-            print conv_non_linear
+            print conv_non_linear_f
             sys.stdout.flush()
-            print non_static, batch_size,dropout_rate
+            print non_static, batch_size_f,dropout_rate_f, len(datasets[0])
             sys.stdout.flush()
             # perf, first_sent, f_p_y_given_xs1 = train_conv_net(datasets, U, lr_decay=0.95, filter_hs=[3,4,5], conv_non_linear=conv_non_linear, hidden_units=[100,3], shuffle_batch=True, n_epochs=25, sqr_norm_lim=9, non_static=non_static, batch_size=batch_size, dropout_rate=[dropout_rate])
-            perf, second_sent,f_p_y_given_xs2 = train_conv_net(datasets,
+            perf, first_sent, f_p_y_given_xs1 = train_conv_net(datasets,
                    U,
                    idx,
                    img_w=300,
@@ -400,6 +403,10 @@ if __name__=="__main__":
             sys.stdout.flush()
         else:
             print "vikam sledvashtata funkcia"
+            sys.stdout.flush()
+            print conv_non_linear_s
+            sys.stdout.flush()
+            print non_static, batch_size_s,dropout_rate_s
             sys.stdout.flush()
             #perf, second_sent,f_p_y_given_xs2 = train_conv_net(datasets, U, lr_decay=0.95, filter_hs=[3,4,5], conv_non_linear=conv_non_linear, hidden_units=[100,3], shuffle_batch=True, n_epochs=25, sqr_norm_lim=9, non_static=non_static, batch_size=batch_size, dropout_rate=[dropout_rate])
             perf, second_sent, f_p_y_given_xs2 = train_conv_net(datasets,
@@ -422,18 +429,19 @@ if __name__=="__main__":
         results.append(perf)
         print str(np.mean(results))
         sys.stdout.flush()
-
-    print "concatenating the two sentences"
+    
+    #print "concatenating the two sentences {0}".format(len(first_sent[0]))
     sys.stdout.flush()
     p_sento_finale = []
     sento_finale = []
-    for ind in xrange(0,len(first_sent)):
+    print "first_sent: len {0}".format(len(first_sent))
+    for ind in xrange(0,len(first_sent[0])):
        off = []
-       off = np.append(first_sent[ind],(datasets[0][ind,-1]))
-       p_off = np.append(first_sent[ind],(datasets[0][ind,-1]))
+       off = np.append(first_sent[0][ind],(datasets[0][ind,-1]))
+       p_off = np.append(first_sent[0][ind],(datasets[0][ind,-1]))
        sento_finale.append(off)
        p_sento_finale.append(p_off)
-    print "first sentences concatenated."
+    print "first sentences concatenated. {0}".format(len(first_sent[0]))
     sys.stdout.flush()
 
     f = open("first_conv-layer-output.txt","w")
@@ -473,9 +481,9 @@ if __name__=="__main__":
        p_off = np.append(second_sent[ind],(datasets[0][ind,-1]))
        sento_finale.append(off)
        p_sento_finale.append(p_off)
-    print "second sentences concatenated."
+    print "second sentences concatenated. {0}".format(len(second_sent))
     sys.stdout.flush()
-
+    print "concatenating the two sentences"
     f = open("second_conv-layer-output.txt","w")
     print "Saving into text files"
     sys.stdout.flush()
