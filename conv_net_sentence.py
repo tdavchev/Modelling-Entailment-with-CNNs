@@ -82,6 +82,7 @@ def train_conv_net(datasets,
     zero_vec_tensor = T.vector()
     zero_vec = np.zeros(img_w)
     set_zero = theano.function([zero_vec_tensor], updates=[(Words, T.set_subtensor(Words[0,:], zero_vec_tensor))], allow_input_downcast=True)
+    hmm = Words[T.cast(x.flatten(),dtype="int32")]
     layer0_input = Words[T.cast(x.flatten(),dtype="int32")].reshape((x.shape[0],1,x.shape[1],Words.shape[1]))
     conv_layers = []
     layer1_inputs = []
@@ -162,7 +163,7 @@ def train_conv_net(datasets,
                 x: train_set_x[index * batch_size: (index + 1) * batch_size],
                  y: train_set_y[index * batch_size: (index + 1) * batch_size]},
                                  allow_input_downcast=True)
-    train_model = theano.function([index], [cost, p_y_given_x, layer1_input], updates=grad_updates,
+    train_model = theano.function([index], [cost, p_y_given_x, layer1_input, hmm], updates=grad_updates,
           givens={
             x: train_set_x[index*batch_size:(index+1)*batch_size],
               y: train_set_y[index*batch_size:(index+1)*batch_size]},
@@ -193,7 +194,7 @@ def train_conv_net(datasets,
              outputs, p_y_given_xs = [],[]
         if shuffle_batch:
             for minibatch_index in np.random.permutation(range(n_train_batches)):
-                [cost_epoch, p_y_given_x, layer1_input] = train_model(minibatch_index) #2-4 conv 1 is output
+                [cost_epoch, p_y_given_x, layer1_input, hm] = train_model(minibatch_index) #2-4 conv 1 is output
                 if epoch - 1 == n_epochs-1:
                     p_y_given_xs.append(p_y_given_x)
                     outputs.append(layer1_input)
@@ -213,7 +214,7 @@ def train_conv_net(datasets,
             test_loss = test_model_all(test_set_x,test_set_y)
             test_perf = 1- test_loss
 
-    return test_perf, outputs, p_y_given_xs
+    return test_perf, outputs, p_y_given_xs, hm
 
 def shared_dataset(data_xy, borrow=True):
         """ Function that loads the dataset into shared variables
@@ -318,12 +319,54 @@ def make_idx_data(revs, word_idx_map, cur_idx, max_l=81, k=300, filter_h=5):
     test = np.array(test,dtype="int")
     valid = np.array(valid,dtype="int")
 
-    return [train, valid, test]
+    return [train[:400], valid[:40], test[:40]]
+
+def store_sent(batches, num, datasets):
+    p_sento_finale = []
+    sento_finale = []
+    print "sentence {0} batch len {1}".format(num, len(batches))
+    for batch in xrange(0, len(batches)):
+        for sentence_id in xrange(0,len(batches[batch])):
+            if len(datasets[0]) > sentence_id:
+                off = []
+                p_off = []
+                off = np.append(batches[batch][sentence_id],datasets[0][sentence_id,-1])
+                p_off = np.append(batches[batch][sentence_id],(datasets[0][sentence_id,-1]))
+                sento_finale.append(off)
+                p_sento_finale.append(p_off)
+
+    print "sentences in {0} concatenated. {1}".format(num, len(first_sent[0]))
+    sys.stdout.flush()
+
+    return sento_finale, p_sento_finale
+
+def file_save(sentences, file_name):
+    file = file_name+".txt"
+    f = open(file,"w")
+    print "Saving into text files"
+    sys.stdout.flush()
+    for sent in xrange(0, len(sentences)):
+        for br in xrange(0,len(sentences[sent])):
+            if (br+1)==len(sentences[sent]):
+                f.write('%d' % sentences[sent][br])
+            else:
+                f.write('%10.6f ' % sentences[sent][br])
+
+        f.write("\n")
+    f.close()
+
+def store_output(first_sent, second_sent, datasets):
+    s1, p1 = store_sent(first_sent, 0, datasets)
+    s2, p2 = store_sent(second_sent, 1, datasets)
+    file_save(s1, "first_conv-layer-output")
+    file_save(p1, "first_conv-layer-output-prob")
+    file_save(s1, "second_conv-layer-output")
+    file_save(p1, "second_conv-layer-output-prob")
 
 if __name__=="__main__":
     print "loading data..."
     sys.stdout.flush()
-    x = cPickle.load(open("snli-glove-splitintwo18062016.p","rb"))
+    x = cPickle.load(open("snli-GloVesplitintwo.p","rb"))
     revs, W, W2, word_idx_map, vocab = x[0], x[1], x[2], x[3], x[4]
     print "data loaded!"
     sys.stdout.flush()
@@ -377,8 +420,7 @@ if __name__=="__main__":
             sys.stdout.flush()
             print non_static, batch_size_f,dropout_rate_f, len(datasets[0])
             sys.stdout.flush()
-            # perf, first_sent, f_p_y_given_xs1 = train_conv_net(datasets, U, lr_decay=0.95, filter_hs=[3,4,5], conv_non_linear=conv_non_linear, hidden_units=[100,3], shuffle_batch=True, n_epochs=25, sqr_norm_lim=9, non_static=non_static, batch_size=batch_size, dropout_rate=[dropout_rate])
-            perf, first_sent, f_p_y_given_xs1 = train_conv_net(datasets,
+            perf, first_sent, f_p_y_given_xs1, hm = train_conv_net(datasets,
                    U,
                    img_w=300,
                    filter_hs=[3,4,5],
@@ -401,8 +443,7 @@ if __name__=="__main__":
             sys.stdout.flush()
             print non_static, batch_size_s,dropout_rate_s
             sys.stdout.flush()
-            #perf, second_sent,f_p_y_given_xs2 = train_conv_net(datasets, U, lr_decay=0.95, filter_hs=[3,4,5], conv_non_linear=conv_non_linear, hidden_units=[100,3], shuffle_batch=True, n_epochs=25, sqr_norm_lim=9, non_static=non_static, batch_size=batch_size, dropout_rate=[dropout_rate])
-            perf, second_sent, f_p_y_given_xs2 = train_conv_net(datasets,
+            perf2, second_sent, f_p_y_given_xs2 = train_conv_net(datasets,
                    U,
                    img_w=300,
                    filter_hs=[3,4,5],
@@ -422,90 +463,6 @@ if __name__=="__main__":
         print str(np.mean(results))
         sys.stdout.flush()
     
+    store_output(first_sent, second_sent, datasets)
     #print "concatenating the two sentences {0}".format(len(first_sent[0]))
     sys.stdout.flush()
-    p_sento_finale = []
-    sento_finale = []
-
-    print "first_sent: len {0}".format(len(first_sent))
-    for ind in xrange(0,len(first_sent[0])):
-        if len(datasets[0]) > ind:
-            off = []
-            p_off = []
-            off = np.append(first_sent[0][ind],datasets[0][ind,-1])
-            p_off = np.append(first_sent[0][ind],(datasets[0][ind,-1]))
-            sento_finale.append(off)
-            p_sento_finale.append(p_off)
-    
-    print "first sentences concatenated. {0}".format(len(first_sent[0]))
-    sys.stdout.flush()
-
-    f = open("first_conv-layer-output2.txt","w")
-    print "Saving into text files"
-    sys.stdout.flush()
-    for sent in xrange(0, len(sento_finale)):
-        for br in xrange(0,len(sento_finale[sent])):
-            if (br+1)==len(sento_finale[sent]):
-                f.write('%d' % sento_finale[sent][br])
-            else:
-                f.write('%10.6f ' % sento_finale[sent][br])
-
-        f.write("\n")
-
-    f.close()
-
-    print "Saving into first_conv-layer-output-prob2.txt"
-    sys.stdout.flush()
-    f = open("first_conv-layer-output-prob2.txt","w") #opens file with name of "test.txt"
-    for p_sent in xrange(0, len(p_sento_finale)):
-        for br in xrange(0,len(p_sento_finale[p_sent])):
-            if (br+1)==len(p_sento_finale[p_sent]):
-                f.write('%d' % p_sento_finale[p_sent][br])
-            else:
-                f.write('%10.6f ' % p_sento_finale[p_sent][br])
-
-        f.write("\n")
-
-    f.close()
-
-    sento_finale = []
-    p_sento_finale = []
-
-    for ind in xrange(0,len(second_sent)):
-       if len(datasets[0]) < ind:
-            off = []
-            p_off = []
-            off = np.append(second_sent[0][ind],(datasets[0][ind,-1]))
-            p_off = np.append(second_sent[0][ind],(datasets[0][ind,-1]))
-            sento_finale.append(off)
-            p_sento_finale.append(p_off)
-    print "second sentences concatenated. {0}".format(len(second_sent))
-    sys.stdout.flush()
-    print "concatenating the two sentences"
-    f = open("second_conv-layer-output2.txt","w")
-    print "Saving into text files"
-    sys.stdout.flush()
-    for sent in xrange(0, len(sento_finale)):
-        for br in xrange(0,len(sento_finale[sent])):
-            if (br+1)==len(sento_finale[sent]):
-                f.write('%d' % sento_finale[sent][br])
-            else:
-                f.write('%10.6f ' % sento_finale[sent][br])
-
-        f.write("\n")
-
-    f.close()
-
-    print "Saving into second_conv-layer-output-prob.txt"
-    sys.stdout.flush()
-    f = open("second_conv-layer-output-prob2.txt","w") #opens file with name of "test.txt"
-    for p_sent in p_sento_finale:
-        for br in xrange(0,len(p_sent)):
-            if (br+1)==len(p_sent):
-                f.write('%d' % p_sent[br])
-            else:
-                f.write('%10.6f ' % p_sent[br])
-
-        f.write("\n")
-
-    f.close()
