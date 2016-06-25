@@ -82,7 +82,6 @@ def train_conv_net(datasets,
     zero_vec_tensor = T.vector()
     zero_vec = np.zeros(img_w)
     set_zero = theano.function([zero_vec_tensor], updates=[(Words, T.set_subtensor(Words[0,:], zero_vec_tensor))], allow_input_downcast=True)
-    hmm = Words[T.cast(x.flatten(),dtype="int32")]
     layer0_input = Words[T.cast(x.flatten(),dtype="int32")].reshape((x.shape[0],1,x.shape[1],Words.shape[1]))
     conv_layers = []
     layer1_inputs = []
@@ -163,7 +162,7 @@ def train_conv_net(datasets,
                 x: train_set_x[index * batch_size: (index + 1) * batch_size],
                  y: train_set_y[index * batch_size: (index + 1) * batch_size]},
                                  allow_input_downcast=True)
-    train_model = theano.function([index], [cost, p_y_given_x, layer1_input, hmm], updates=grad_updates,
+    train_model = theano.function([index], [cost, p_y_given_x, layer1_input], updates=grad_updates,
           givens={
             x: train_set_x[index*batch_size:(index+1)*batch_size],
               y: train_set_y[index*batch_size:(index+1)*batch_size]},
@@ -194,7 +193,7 @@ def train_conv_net(datasets,
              outputs, p_y_given_xs = [],[]
         if shuffle_batch:
             for minibatch_index in np.random.permutation(range(n_train_batches)):
-                [cost_epoch, p_y_given_x, layer1_input, hm] = train_model(minibatch_index) #2-4 conv 1 is output
+                [cost_epoch, p_y_given_x, layer1_input] = train_model(minibatch_index) #2-4 conv 1 is output
                 if epoch - 1 == n_epochs-1:
                     p_y_given_xs.append(p_y_given_x)
                     outputs.append(layer1_input)
@@ -214,7 +213,7 @@ def train_conv_net(datasets,
             test_loss = test_model_all(test_set_x,test_set_y)
             test_perf = 1- test_loss
 
-    return test_perf, outputs, p_y_given_xs, hm
+    return test_perf, outputs, p_y_given_xs
 
 def shared_dataset(data_xy, borrow=True):
         """ Function that loads the dataset into shared variables
@@ -420,7 +419,7 @@ if __name__=="__main__":
             sys.stdout.flush()
             print non_static, batch_size_f,dropout_rate_f, len(datasets[0])
             sys.stdout.flush()
-            perf, first_sent, f_p_y_given_xs1, hm = train_conv_net(datasets,
+            perf, first_sent, f_p_y_given_xs1 = train_conv_net(datasets,
                    U,
                    img_w=300,
                    filter_hs=[3,4,5],
