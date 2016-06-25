@@ -1,0 +1,10 @@
+200, 0.0, relu, 150, 0.0, relu
+Separated Sentences Case
+loading data...
+data loaded!
+model architecture: CNN-static
+using: word2vec vectors
+----------------------
+        CNN 0       
+----------------------
+datasets configured.

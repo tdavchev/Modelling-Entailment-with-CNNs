@@ -1,0 +1,7 @@
+Using gpu device 0: GeForce GTX TITAN X (CNMeM is enabled with initial size: 95.0% of memory, cuDNN not available)
+Traceback (most recent call last):
+  File "/home/s1045064/dissertation/repo-diss/sentence-classification/conv_net_sentence.py", line 402, in <module>
+    non_static=True)
+  File "/home/s1045064/dissertation/repo-diss/sentence-classification/conv_net_sentence.py", line 97, in train_conv_net
+    print "aaaaaa {0}".format(len(layer1_input))
+TypeError: object of type 'TensorVariable' has no len()
