@@ -1,0 +1,97 @@
+200, 0.0, relu, 150, 0.0, relu
+Separated Sentences Case
+loading data...
+data loaded!
+model architecture: CNN-static
+using: word2vec vectors
+----------------------
+        CNN 0       
+----------------------
+datasets configured.
+relu
+False 200 0.0 10
+[('image shape', 89, 300), ('filter shape', [(100, 1, 3, 300), (100, 1, 4, 300), (100, 1, 5, 300)]), ('hidden_units', [100, 3]), ('dropout', [0.0]), ('batch_size', 200), ('non_static', True), ('learn_decay', 0.95), ('conv_non_linear', 'relu'), ('non_static', True), ('sqr_norm_lim', 9), ('shuffle_batch', True)]
+define model architecture
+define parameters of the model and update functions using adadelta
+shuffle dataset and assign to mini batches. if dataset size is not a multiple of mini batches, replicate
+datasets.shape (10, 90)
+divide train set into train/val sets
+compile theano functions to get train/val/test errors
+na maika ti v putkata
+... training
+epoch: 1, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 2, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 3, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 4, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 5, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 6, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 7, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 8, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 9, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 10, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 11, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 12, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 13, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 14, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 15, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 16, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 17, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 18, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 19, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 20, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 21, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 22, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 23, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 24, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 25, training time: 0.00 secs, train perf: nan %, val perf: nan %
+subrah kvot mi trqbvashe
+perf: 0
+0.0
+using: word2vec vectors
+----------------------
+        CNN 1       
+----------------------
+datasets configured.
+vikam sledvashtata funkcia
+relu
+False 150 0.0
+[('image shape', 89, 300), ('filter shape', [(100, 1, 3, 300), (100, 1, 4, 300), (100, 1, 5, 300)]), ('hidden_units', [100, 3]), ('dropout', [0.0]), ('batch_size', 150), ('non_static', True), ('learn_decay', 0.95), ('conv_non_linear', 'relu'), ('non_static', True), ('sqr_norm_lim', 9), ('shuffle_batch', True)]
+define model architecture
+define parameters of the model and update functions using adadelta
+shuffle dataset and assign to mini batches. if dataset size is not a multiple of mini batches, replicate
+datasets.shape (10, 90)
+divide train set into train/val sets
+compile theano functions to get train/val/test errors
+na maika ti v putkata
+... training
+epoch: 1, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 2, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 3, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 4, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 5, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 6, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 7, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 8, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 9, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 10, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 11, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 12, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 13, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 14, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 15, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 16, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 17, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 18, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 19, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 20, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 21, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 22, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 23, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 24, training time: 0.00 secs, train perf: nan %, val perf: nan %
+epoch: 25, training time: 0.00 secs, train perf: nan %, val perf: nan %
+perf: 0
+0.0
+first sentences concatenated.
+Saving into text files
+Saving into first_conv-layer-output-prob.txt
+second sentences concatenated.

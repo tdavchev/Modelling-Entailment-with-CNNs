@@ -1,0 +1,171 @@
+200, 0.0, relu, 150, 0.0, relu
+Separated Sentences Case
+loading data...
+data loaded!
+model architecture: CNN-static
+using: word2vec vectors
+----------------------
+        CNN 0       
+----------------------
+datasets configured.
+relu
+False 200 0.0 100
+[('image shape', 89, 300), ('filter shape', [(100, 1, 3, 300), (100, 1, 4, 300), (100, 1, 5, 300)]), ('hidden_units', [100, 3]), ('dropout', [0.0]), ('batch_size', 200), ('non_static', True), ('learn_decay', 0.95), ('conv_non_linear', 'relu'), ('non_static', True), ('sqr_norm_lim', 9), ('shuffle_batch', True)]
+define model architecture
+define parameters of the model and update functions using adadelta
+shuffle dataset and assign to mini batches. if dataset size is not a multiple of mini batches, replicate
+datasets.shape (100, 90)
+divide train set into train/val sets
+compile theano functions to get train/val/test errors
+na maika ti v putkata
+... training
+epoch: 1, training time: 0.10 secs, train perf: 35.00 %, val perf: nan %
+epoch: 2, training time: 0.09 secs, train perf: 35.00 %, val perf: nan %
+epoch: 3, training time: 0.09 secs, train perf: 35.00 %, val perf: nan %
+epoch: 4, training time: 0.09 secs, train perf: 35.00 %, val perf: nan %
+epoch: 5, training time: 0.09 secs, train perf: 35.00 %, val perf: nan %
+epoch: 6, training time: 0.09 secs, train perf: 35.00 %, val perf: nan %
+epoch: 7, training time: 0.09 secs, train perf: 35.00 %, val perf: nan %
+epoch: 8, training time: 0.09 secs, train perf: 35.00 %, val perf: nan %
+epoch: 9, training time: 0.09 secs, train perf: 36.00 %, val perf: nan %
+epoch: 10, training time: 0.09 secs, train perf: 36.00 %, val perf: nan %
+epoch: 11, training time: 0.09 secs, train perf: 36.00 %, val perf: nan %
+epoch: 12, training time: 0.09 secs, train perf: 36.00 %, val perf: nan %
+epoch: 13, training time: 0.09 secs, train perf: 36.00 %, val perf: nan %
+epoch: 14, training time: 0.09 secs, train perf: 36.00 %, val perf: nan %
+epoch: 15, training time: 0.09 secs, train perf: 36.00 %, val perf: nan %
+epoch: 16, training time: 0.09 secs, train perf: 36.00 %, val perf: nan %
+epoch: 17, training time: 0.09 secs, train perf: 36.00 %, val perf: nan %
+epoch: 18, training time: 0.09 secs, train perf: 36.00 %, val perf: nan %
+epoch: 19, training time: 0.09 secs, train perf: 36.00 %, val perf: nan %
+epoch: 20, training time: 0.09 secs, train perf: 36.00 %, val perf: nan %
+epoch: 21, training time: 0.09 secs, train perf: 36.00 %, val perf: nan %
+epoch: 22, training time: 0.09 secs, train perf: 36.00 %, val perf: nan %
+epoch: 23, training time: 0.09 secs, train perf: 35.00 %, val perf: nan %
+epoch: 24, training time: 0.09 secs, train perf: 36.00 %, val perf: nan %
+tuk sum shtoooo [[ 0.10856736  0.102966    0.04434717 ...,  0.08523641  0.09571168
+   0.04070883]
+ [ 0.08912841  0.04729581  0.01503429 ...,  0.07308466  0.04452274
+   0.06987935]
+ [ 0.07874092  0.01915795  0.07871846 ...,  0.20398057  0.00849394
+   0.22174804]
+ ..., 
+ [ 0.06762064  0.1350846   0.03325371 ...,  0.16137524  0.05314238
+   0.05422867]
+ [ 0.07606583  0.20871565  0.07013822 ...,  0.08523641  0.09571168
+   0.07612588]
+ [ 0.10856736  0.102966    0.04434717 ...,  0.08523641  0.09571168
+   0.04070883]][[ 0.06158583  0.06904811  0.18084894 ...,  0.08614382  0.14707509
+   0.09431361]
+ [ 0.07921909  0.05941171  0.14280939 ...,  0.06699668  0.05947963
+   0.16123427]
+ [ 0.05261983  0.08523301  0.03394906 ...,  0.21970831  0.01105274
+   0.03053457]
+ ..., 
+ [ 0.14124914  0.05544179  0.17587855 ...,  0.09485939  0.02550534
+   0.16141315]
+ [ 0.0941629   0.0578709   0.14708953 ...,  0.0790004   0.08511798
+   0.17803399]
+ [ 0.06158583  0.06904811  0.18084894 ...,  0.08614382  0.14707509
+   0.09431361]][[ 0.09661365  0.20991875  0.17297372 ...,  0.09710414  0.09573328
+   0.23419245]
+ [ 0.03227202  0.16635969  0.24282911 ...,  0.09189197  0.10532408
+   0.18414411]
+ [ 0.17642432  0.044817    0.05871078 ...,  0.10274732  0.12469167
+   0.05932594]
+ ..., 
+ [ 0.05428416  0.24347882  0.19347422 ...,  0.08282548  0.17068954
+   0.2602545 ]
+ [ 0.06893221  0.24952884  0.29915091 ...,  0.0693374   0.06613331
+   0.30937237]
+ [ 0.09661365  0.20991875  0.17297372 ...,  0.09710414  0.09573328
+   0.23419245]]
+1
+epoch: 25, training time: 0.13 secs, train perf: 35.00 %, val perf: nan %
+subrah kvot mi trqbvashe
+perf: 0
+0.0
+using: word2vec vectors
+----------------------
+        CNN 1       
+----------------------
+datasets configured.
+vikam sledvashtata funkcia
+relu
+False 150 0.0
+[('image shape', 89, 300), ('filter shape', [(100, 1, 3, 300), (100, 1, 4, 300), (100, 1, 5, 300)]), ('hidden_units', [100, 3]), ('dropout', [0.0]), ('batch_size', 150), ('non_static', True), ('learn_decay', 0.95), ('conv_non_linear', 'relu'), ('non_static', True), ('sqr_norm_lim', 9), ('shuffle_batch', True)]
+define model architecture
+define parameters of the model and update functions using adadelta
+shuffle dataset and assign to mini batches. if dataset size is not a multiple of mini batches, replicate
+datasets.shape (100, 90)
+divide train set into train/val sets
+compile theano functions to get train/val/test errors
+na maika ti v putkata
+... training
+epoch: 1, training time: 0.07 secs, train perf: 35.33 %, val perf: nan %
+epoch: 2, training time: 0.07 secs, train perf: 35.33 %, val perf: nan %
+epoch: 3, training time: 0.07 secs, train perf: 35.33 %, val perf: nan %
+epoch: 4, training time: 0.07 secs, train perf: 38.00 %, val perf: nan %
+epoch: 5, training time: 0.07 secs, train perf: 50.67 %, val perf: nan %
+epoch: 6, training time: 0.07 secs, train perf: 62.00 %, val perf: nan %
+epoch: 7, training time: 0.07 secs, train perf: 62.67 %, val perf: nan %
+epoch: 8, training time: 0.07 secs, train perf: 72.67 %, val perf: nan %
+epoch: 9, training time: 0.07 secs, train perf: 84.00 %, val perf: nan %
+epoch: 10, training time: 0.07 secs, train perf: 85.33 %, val perf: nan %
+epoch: 11, training time: 0.07 secs, train perf: 46.00 %, val perf: nan %
+epoch: 12, training time: 0.07 secs, train perf: 38.00 %, val perf: nan %
+epoch: 13, training time: 0.07 secs, train perf: 34.00 %, val perf: nan %
+epoch: 14, training time: 0.07 secs, train perf: 57.33 %, val perf: nan %
+epoch: 15, training time: 0.07 secs, train perf: 90.00 %, val perf: nan %
+epoch: 16, training time: 0.07 secs, train perf: 92.67 %, val perf: nan %
+epoch: 17, training time: 0.07 secs, train perf: 93.33 %, val perf: nan %
+epoch: 18, training time: 0.07 secs, train perf: 94.00 %, val perf: nan %
+epoch: 19, training time: 0.07 secs, train perf: 93.33 %, val perf: nan %
+epoch: 20, training time: 0.07 secs, train perf: 89.33 %, val perf: nan %
+epoch: 21, training time: 0.07 secs, train perf: 84.67 %, val perf: nan %
+epoch: 22, training time: 0.07 secs, train perf: 92.67 %, val perf: nan %
+epoch: 23, training time: 0.07 secs, train perf: 95.33 %, val perf: nan %
+epoch: 24, training time: 0.07 secs, train perf: 96.67 %, val perf: nan %
+tuk sum shtoooo [[ 0.          0.04012899  0.04847934 ...,  0.33834389  0.0219167
+   0.29603738]
+ [ 0.18257764  0.04819354  0.24068365 ...,  0.189781    0.09749696
+   0.11207818]
+ [ 0.19319364  0.          0.         ...,  0.14848888  0.          0.00786031]
+ ..., 
+ [ 0.19083171  0.          0.         ...,  0.          0.          0.12212618]
+ [ 0.0495654   0.          0.13508767 ...,  0.19010827  0.          0.04710557]
+ [ 0.13804565  0.01266373  0.00944782 ...,  0.31281126  0.01744186
+   0.02700255]][[ 0.05017643  0.13464488  0.         ...,  0.18422616  0.01005616
+   0.21475266]
+ [ 0.19655427  0.10772955  0.28165627 ...,  0.72506076  0.12115578
+   0.21401986]
+ [ 0.20466821  0.          0.00307901 ...,  0.36015666  0.          0.0265186 ]
+ ..., 
+ [ 0.03286534  0.03221931  0.00186942 ...,  0.24876043  0.01064942
+   0.07079263]
+ [ 0.078918    0.04303284  0.24445359 ...,  0.42057365  0.13567291
+   0.11925851]
+ [ 0.28804225  0.28498161  0.         ...,  1.03697073  0.15885271
+   0.11924522]][[ 0.          0.38161507  0.368498   ...,  0.10119607  0.31197953
+   0.3834967 ]
+ [ 0.0749668   0.35652372  0.57032019 ...,  0.07277977  0.15529247
+   0.14605108]
+ [ 0.          0.0211672   0.1753011  ...,  0.40315035  0.          0.23895617]
+ ..., 
+ [ 0.          0.00346082  0.10498971 ...,  0.74488223  0.00992025
+   0.18424189]
+ [ 0.          0.13431656  0.17117363 ...,  0.26558197  0.09508511
+   0.23155247]
+ [ 0.          0.10585024  0.25253731 ...,  0.81917936  0.09574849
+   0.35661626]]
+1
+epoch: 25, training time: 0.07 secs, train perf: 100.00 %, val perf: nan %
+perf: 0
+0.0
+first sentences concatenated.
+Saving into text files
+Saving into first_conv-layer-output-prob.txt
+second sentences concatenated.
+concatenating the two sentences 300
+Saving into text files
+Saving into second_conv-layer-output-prob.txt

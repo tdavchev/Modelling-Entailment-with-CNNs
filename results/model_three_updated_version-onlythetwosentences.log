@@ -1,0 +1,93 @@
+Using gpu device 0: GeForce GTX TITAN X (CNMeM is disabled, cuDNN not available)
+loading data... data loaded!
+model architecture: CNN-static
+using: word2vec vectors
+----------------------
+        CNN 0       
+----------------------
+[('image shape', 89, 300), ('filter shape', [(100, 1, 3, 300), (100, 1, 4, 300), (100, 1, 5, 300)]), ('hidden_units', [100, 3]), ('dropout', [0.5]), ('batch_size', 50), ('non_static', False), ('learn_decay', 0.95), ('conv_non_linear', 'relu'), ('non_static', False), ('sqr_norm_lim', 9), ('shuffle_batch', True)]
+define model architecture
+define parameters of the model and update functions using adadelta
+shuffle dataset and assign to mini batches. if dataset size is not a multiple of mini batches, replicate
+divide train set into train/val sets
+compile theano functions to get train/val/test errors
+... training
+epoch: 1, training time: 305.11 secs, train perf: 33.38 %, val perf: 33.71 %
+epoch: 2, training time: 306.37 secs, train perf: 33.43 %, val perf: 33.91 %
+epoch: 3, training time: 303.77 secs, train perf: 33.39 %, val perf: 33.81 %
+epoch: 4, training time: 307.02 secs, train perf: 33.34 %, val perf: 33.30 %
+epoch: 5, training time: 305.78 secs, train perf: 33.34 %, val perf: 33.28 %
+epoch: 6, training time: 305.98 secs, train perf: 33.43 %, val perf: 34.17 %
+epoch: 7, training time: 306.44 secs, train perf: 33.34 %, val perf: 33.30 %
+epoch: 8, training time: 301.51 secs, train perf: 33.44 %, val perf: 34.42 %
+epoch: 9, training time: 304.86 secs, train perf: 33.34 %, val perf: 33.18 %
+epoch: 10, training time: 302.53 secs, train perf: 33.34 %, val perf: 33.29 %
+epoch: 11, training time: 308.86 secs, train perf: 33.34 %, val perf: 33.34 %
+epoch: 12, training time: 301.96 secs, train perf: 33.34 %, val perf: 33.27 %
+epoch: 13, training time: 300.75 secs, train perf: 33.44 %, val perf: 34.33 %
+epoch: 14, training time: 305.82 secs, train perf: 33.23 %, val perf: 32.37 %
+epoch: 15, training time: 301.21 secs, train perf: 33.44 %, val perf: 34.36 %
+epoch: 16, training time: 302.75 secs, train perf: 33.34 %, val perf: 33.25 %
+epoch: 17, training time: 295.50 secs, train perf: 33.44 %, val perf: 34.38 %
+epoch: 18, training time: 297.26 secs, train perf: 33.44 %, val perf: 34.23 %
+epoch: 19, training time: 295.56 secs, train perf: 33.22 %, val perf: 32.35 %
+epoch: 20, training time: 296.09 secs, train perf: 33.22 %, val perf: 32.35 %
+epoch: 21, training time: 299.51 secs, train perf: 33.44 %, val perf: 34.20 %
+epoch: 22, training time: 295.63 secs, train perf: 33.44 %, val perf: 34.36 %
+epoch: 23, training time: 297.76 secs, train perf: 33.22 %, val perf: 32.35 %
+epoch: 24, training time: 295.62 secs, train perf: 33.44 %, val perf: 34.38 %
+epoch: 25, training time: 474.69 secs, train perf: 33.34 %, val perf: 33.30 %
+izlizam ot funkciata
+subrah kvot mi trqbvashe
+perf: 0.3405
+0.3405
+using: word2vec vectors
+----------------------
+        CNN 1       
+----------------------
+vikam sledvashtata funkcia
+[('image shape', 89, 300), ('filter shape', [(100, 1, 3, 300), (100, 1, 4, 300), (100, 1, 5, 300)]), ('hidden_units', [100, 3]), ('dropout', [0.5]), ('batch_size', 50), ('non_static', False), ('learn_decay', 0.95), ('conv_non_linear', 'relu'), ('non_static', False), ('sqr_norm_lim', 9), ('shuffle_batch', True)]
+define model architecture
+define parameters of the model and update functions using adadelta
+shuffle dataset and assign to mini batches. if dataset size is not a multiple of mini batches, replicate
+divide train set into train/val sets
+compile theano functions to get train/val/test errors
+... training
+epoch: 1, training time: 488.64 secs, train perf: 64.51 %, val perf: 63.87 %
+epoch: 2, training time: 484.42 secs, train perf: 65.52 %, val perf: 64.23 %
+epoch: 3, training time: 495.20 secs, train perf: 66.57 %, val perf: 64.89 %
+epoch: 4, training time: 494.80 secs, train perf: 66.64 %, val perf: 64.91 %
+epoch: 5, training time: 442.22 secs, train perf: 67.54 %, val perf: 65.04 %
+epoch: 6, training time: 439.31 secs, train perf: 68.09 %, val perf: 65.84 %
+epoch: 7, training time: 427.77 secs, train perf: 68.41 %, val perf: 65.51 %
+epoch: 8, training time: 431.55 secs, train perf: 69.04 %, val perf: 65.70 %
+epoch: 9, training time: 430.62 secs, train perf: 69.30 %, val perf: 65.94 %
+epoch: 10, training time: 439.44 secs, train perf: 69.25 %, val perf: 65.21 %
+epoch: 11, training time: 442.55 secs, train perf: 69.95 %, val perf: 66.29 %
+epoch: 12, training time: 430.34 secs, train perf: 70.27 %, val perf: 66.14 %
+epoch: 13, training time: 445.88 secs, train perf: 70.37 %, val perf: 66.20 %
+epoch: 14, training time: 428.13 secs, train perf: 70.58 %, val perf: 66.07 %
+epoch: 15, training time: 443.51 secs, train perf: 70.95 %, val perf: 66.06 %
+epoch: 16, training time: 428.50 secs, train perf: 71.18 %, val perf: 66.33 %
+epoch: 17, training time: 445.20 secs, train perf: 71.32 %, val perf: 66.35 %
+epoch: 18, training time: 436.64 secs, train perf: 71.46 %, val perf: 65.95 %
+epoch: 19, training time: 441.12 secs, train perf: 71.64 %, val perf: 65.84 %
+epoch: 20, training time: 439.22 secs, train perf: 71.83 %, val perf: 66.05 %
+epoch: 21, training time: 433.52 secs, train perf: 72.13 %, val perf: 65.57 %
+epoch: 22, training time: 445.41 secs, train perf: 72.23 %, val perf: 65.75 %
+epoch: 23, training time: 428.53 secs, train perf: 71.70 %, val perf: 65.60 %
+epoch: 24, training time: 448.01 secs, train perf: 72.50 %, val perf: 65.68 %
+epoch: 25, training time: 436.09 secs, train perf: 72.67 %, val perf: 66.01 %
+izlizam ot funkciata
+perf: 0.6591
+0.6591
+concatenating the two sentences
+first sentences concatenated.
+Making pickles...
+Pickling...
+dataset created!
+Saving into text files
+Saving into first_conv-layer-output-prob.txt
+second sentences concatenated.
+Saving into text files
+Saving into second_conv-layer-output-prob.txt

@@ -1,0 +1,5 @@
+Using gpu device 0: GeForce GTX TITAN X (CNMeM is enabled with initial size: 95.0% of memory, cuDNN not available)
+Traceback (most recent call last):
+  File "/home/s1045064/dissertation/repo-diss/sentence-classification/conv_net_sentence.py", line 326, in <module>
+    x = cPickle.load(open("snli--glove-splitintwo18062016.p","rb"))
+IOError: [Errno 2] No such file or directory: 'snli--glove-splitintwo18062016.p'

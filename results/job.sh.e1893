@@ -1,0 +1,5 @@
+Using gpu device 0: GeForce GTX TITAN X (CNMeM is enabled with initial size: 95.0% of memory, cuDNN not available)
+Traceback (most recent call last):
+  File "/home/s1045064/dissertation/repo-diss/sentence-classification/conv_net_sentence.py", line 372, in <module>
+    perf, first_sent, f_p_y_given_xs1 = train_conv_net(datasets, U, lr_decay=0.95, filter_hs=[3,4,5], conv_non_linear=conv_non_linear, hidden_units=[100,3], shuffle_batch=True, n_epochs=25, sqr_norm_lim=9, non_static=non_static, batch_size=batch_size, dropout_rate=[dropout_rate])
+TypeError: train_conv_net() takes at least 3 arguments (12 given)
