@@ -162,9 +162,9 @@ def make_idx_data_cv(revs, cv):
 def one_hot(data):
     one_hots = []
     for idx in xrange(0,len(data)):
-        if data[idx] == 0:
+        if int(data[idx][0]) == 0:
             one_hots.append([1,0,0])
-        elif data[idx] == 1:
+        elif int(data[idx][0]) == 1:
             one_hots.append([0,1,0])
         else:
             one_hots.append([0,0,1])
@@ -215,7 +215,32 @@ if __name__=="__main__":
         print "--------------------------"
 
         trX, trY, teX, teY = make_idx_data_cv(revs, i)
+        data = []
+        for y in xrange(0, trX.shape[0]):
+            data.append(np.append(trX[y],trY[y]))
 
+        if data.shape[0] % batch_size > 0:
+            extra_data_num = batch_size - data.shape[0] % batch_size
+            train_set = np.random.permutation(data)
+            extra_data = train_set[:extra_data_num]
+            new_data=np.append(data,extra_data,axis=0)
+        else:
+            new_data = data
+
+        new_data = np.random.permutation(new_data)
+        n_batches = new_data.shape[0]/batch_size
+        n_train_batches = int(np.round(n_batches*0.9))
+
+        train_set = new_data[:n_train_batches*batch_size,:]
+        val_set = new_data[n_train_batches*batch_size:,:]
+
+        trX = train_set[:,:-1]
+        trY = train_set[:,-1]
+        valX = val_set[:,:-1]
+        valY = val_set[:,-1]
+
+        n_val_batches = n_batches - n_train_batches
+    
         #trX = zero_pad(trX)
         #teX = zero_pad(teX)
 
@@ -223,9 +248,11 @@ if __name__=="__main__":
         # teX = teX.reshape(-1,1,24,25)
         trX = trX.reshape(-1,1,25,24)
         teX = teX.reshape(-1,1,25,24)
+        valX = valX.reshape(-1,1,25,24)
 
         trY = one_hot(trY)
         teY = one_hot(teY)
+        valY = one_hot(valY)
 
         X = T.ftensor4()
         Y = T.fmatrix()
@@ -233,8 +260,8 @@ if __name__=="__main__":
         w = init_weights((32, 1, 4, 4))
         w2 = init_weights((64, 32, 4, 4))
         w3 = init_weights((128, 64, 4, 4))
-        w4 = init_weights((128 * 2 * 2, 256))
-        w_o = init_weights((256, 3))
+        w4 = init_weights((128 * 2 * 2, 625))
+        w_o = init_weights((625, 3))
 
         noise_l1, noise_l2, noise_l3, noise_l4, noise_py_x = model(X, w, w2, w3, w4, 0.2, 0.5)
         l1, l2, l3, l4, py_x = model(X, w, w2, w3, w4, 0., 0.)
@@ -249,28 +276,41 @@ if __name__=="__main__":
         predict = theano.function(inputs=[X], outputs=y_x, allow_input_downcast=True)
 
 
-        if trX.shape[0] % batch_size > 0:
-            extra_data_num = batch_size - trX.shape[0] % batch_size
-            new_data = []
-            new_labels = []
-            for k in xrange(0, extra_data_num):
-                idx = random.randint(0,trX.shape[0])
-                new_data.append(trX[idx])
-                new_labels.append(trY[idx])
-            trX=np.append(trX,new_data,axis=0)
-            trY=np.append(trY,new_labels,axis=0)
-
+        # if trX.shape[0] % batch_size > 0:
+        #     extra_data_num = batch_size - trX.shape[0] % batch_size
+        #     new_data = []
+        #     new_labels = []
+        #     for k in xrange(0, extra_data_num):
+        #         idx = random.randint(0,trX.shape[0])
+        #         new_data.append(trX[idx])
+        #         new_labels.append(trY[idx])
+        #     trX=np.append(trX,new_data,axis=0)
+        #     trY=np.append(trY,new_labels,axis=0)
+        best_val_perf = 0
         alph = 'ABCDEFGHIJKLMNOPQRSTYVWXYZ'
         for epoch in range(25):
-            num_mini_batch = np.ceil(len(trX)/batch_size)
+            start_time = time.time()
+            # num_mini_batch = np.ceil(len(trX)/batch_size)
             print epoch,
-            for start, end in zip(list(range(0,len(trX), batch_size)), list(range(batch_size, len(trX),batch_size))):
+            # for start, end in zip(list(range(0,len(trX), batch_size)), list(range(batch_size, len(trX),batch_size))):
+            # random permutation
+            for minibatch_index in np.random.permutation(range(n_train_batches)):
                 cost = train(trX[start:end], trY[start:end])
-                if (start/batch_size) % np.ceil(num_mini_batch/20) == 0:
+                if (start/batch_size) % np.ceil(n_train_batches/20) == 0:
                     print(alph[epoch%len(alph)]),
                     sys.stdout.flush()
-            print(np.mean(np.argmax(teY, axis=1) == predict(teX)))
-	    sys.stdout.flush()
+            train_losses = np.argmax(trY, axis=1) == predict(trX)
+            train_perf = 1 - np.mean(train_losses)
+            val_losses = np.argmax(valY, axis=1) == predict(valX)
+            val_perf = 1 - np.mean(val_losses)
+            print('epoch: %i, training time: %.2f secs, train perf: %.2f %%, val perf: %.2f %%' % (epoch, time.time()-start_time, train_perf * 100., val_perf*100.))
+            sys.stdout.flush()
+            if val_perf >= best_val_perf:
+                best_val_perf = val_perf
+                test_loss = test_loss = np.mean(np.argmax(teY, axis=1) == predict(teX))
+                test_perf = 1- test_loss
+
+        print "cv: " + str(i) + ", perf: " + str(test_perf)
 
     with open('snli.weights','wb') as f:
         pickle.dump(params, f)
