@@ -94,10 +94,8 @@ def train_conv_net(datasets,
     for i in xrange(len(filter_hs)):
         filter_shape = filter_shapes[i]
         pool_size = pool_sizes[i]
-        print "first cnn {0}".format(i)
         conv_layer = LeNetConvPoolLayer(rng, input=first_layer0_input,image_shape=(batch_size, 1, img_h, img_w),
                                 filter_shape=filter_shape, poolsize=pool_size, non_linear=conv_non_linear)
-        print "after lenet first cnn {0}".format(i)
         layer1_input = conv_layer.output.flatten(2)
         first_conv_layers.append(conv_layer)
         layer1_inputs.append(layer1_input)
@@ -108,20 +106,14 @@ def train_conv_net(datasets,
     for i in xrange(len(filter_hs)):
         filter_shape = filter_shapes[i]
         pool_size = pool_sizes[i]
-        print "second cnn {0}".format(i)
         conv_layer = LeNetConvPoolLayer(rng, input=second_layer0_input,image_shape=(batch_size, 1, img_h, img_w),
                                 filter_shape=filter_shape, poolsize=pool_size, non_linear=conv_non_linear)
-        print "after lenet second cnn {0}".format(i)
         layer1_input = conv_layer.output.flatten(2)
         second_conv_layers.append(conv_layer)
         layer1_inputs.append(layer1_input)
 
 
     layer1_input = T.concatenate(layer1_inputs,1)
-
-    print layer1_input
-    print layer1_input.shape
-
 
     hidden_units[0] = feature_maps*len(filter_hs)*2 # 600
 
@@ -373,7 +365,6 @@ def make_idx_data(revs, word_idx_map, max_l=81, k=300, filter_h=5):
     sent = []
     count = 0
     for idx in xrange(0,len(revs)):
-        # print idx%2
         if ((idx % 2)==0):
             sent = get_idx_from_sent(revs[idx]["text"], word_idx_map, max_l, k, filter_h)
         else:
