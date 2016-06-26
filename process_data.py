@@ -4,7 +4,7 @@ from collections import defaultdict
 import sys, re
 import pandas as pd
 
-def process(sentence, idx, rev, label, file_type, vocab, clean_string=True):
+def process(idx, rev, label, file_type, vocab, clean_string=True):
     """
     Defines a label, text, num_words and type for each sentence
     label in [0,1,2]
@@ -17,9 +17,11 @@ def process(sentence, idx, rev, label, file_type, vocab, clean_string=True):
         orig_rev = clean_str(" ".join(rev))
     else:
         orig_rev = " ".join(rev).lower()
+
     words = set(orig_rev.split())
     for word in words:
         vocab[word] += 1
+
     datum  = {"label":label, 
               "text": orig_rev,                             
               "num_words": len(orig_rev.split()),
@@ -35,6 +37,8 @@ def add_logic(file, file_type, revs, vocab, split_sent, clean_string=True):
     """
     with open(file, "rb") as f:
         for line in f:
+            # sentence = []
+            # label = []
             data = line.split("\t")
             label = data[0]
             label = label.strip()
@@ -47,10 +51,10 @@ def add_logic(file, file_type, revs, vocab, split_sent, clean_string=True):
                 sentence[1] = sentence[1].strip()
             
             if type(sentence) == list:
-                for idx in xrange(len(sentence)):
+                for idx in xrange(2):
                     rev = []
                     rev.append(sentence[idx])
-                    datum, vocab = process(sentence,idx ,rev, label, file_type, vocab, clean_string)
+                    datum, vocab = process(idx ,rev, label, file_type, vocab, clean_string)
                     revs.append(datum)
             else:
                 rev = []
@@ -58,8 +62,6 @@ def add_logic(file, file_type, revs, vocab, split_sent, clean_string=True):
                 datum, vocab = process(sentence, 0,rev, label, file_type, vocab, clean_string)
                 revs.append(datum)
 
-            
-   
     return revs,vocab
 
 
@@ -204,6 +206,6 @@ if __name__=="__main__":
     rand_vecs = {}
     add_unknown_words(rand_vecs, vocab)
     W2, _ = get_W(rand_vecs)
-    cPickle.dump([revs, W, W2, word_idx_map, vocab], open("snli-GloVe.p", "wb"))
+    cPickle.dump([revs, W, W2, word_idx_map, vocab], open("snli-GloVe-Split.p", "wb"))
     print "dataset created!"
     
