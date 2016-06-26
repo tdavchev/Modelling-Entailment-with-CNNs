@@ -175,7 +175,7 @@ def one_hot(data):
 
 
 if __name__=="__main__":
-    batch_size = 100
+    batch_size = 200
     print "loading data...",
     # obtain the two sentences
 
@@ -206,7 +206,7 @@ if __name__=="__main__":
     revs = build_data_cv(input_data,labels)
     
     results = []
-    r = range(0,1) # used in cross validation
+    r = range(0,10) # used in cross validation
 
     for i in r:
 
