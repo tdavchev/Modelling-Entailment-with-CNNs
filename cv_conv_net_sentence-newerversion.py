@@ -216,13 +216,13 @@ if __name__=="__main__":
 
         trX, trY, teX, teY = make_idx_data_cv(revs, i)
 
-        trX = zero_pad(trX)
-        teX = zero_pad(teX)
+        #trX = zero_pad(trX)
+        #teX = zero_pad(teX)
 
         # trX = trX.reshape(-1,1,24,25)
         # teX = teX.reshape(-1,1,24,25)
-        trX = trX.reshape(-1,1,28,28)
-        teX = teX.reshape(-1,1,28,28)
+        trX = trX.reshape(-1,1,25,24)
+        teX = teX.reshape(-1,1,25,24)
 
         trY = one_hot(trY)
         teY = one_hot(teY)
@@ -233,8 +233,8 @@ if __name__=="__main__":
         w = init_weights((32, 1, 4, 4))
         w2 = init_weights((64, 32, 4, 4))
         w3 = init_weights((128, 64, 4, 4))
-        w4 = init_weights((128 * 2 * 2, 512))
-        w_o = init_weights((512, 3))
+        w4 = init_weights((128 * 2 * 2, 256))
+        w_o = init_weights((256, 3))
 
         noise_l1, noise_l2, noise_l3, noise_l4, noise_py_x = model(X, w, w2, w3, w4, 0.2, 0.5)
         l1, l2, l3, l4, py_x = model(X, w, w2, w3, w4, 0., 0.)
@@ -243,7 +243,7 @@ if __name__=="__main__":
 
         cost = T.mean(T.nnet.categorical_crossentropy(noise_py_x, Y))
         params = [w, w2, w3, w4, w_o]
-        updates = RMSprop(cost, params, lr=0.001)
+        updates = RMSprop(cost, params, lr=0.01)
 
         train = theano.function(inputs=[X, Y], outputs=cost, updates=updates, allow_input_downcast=True)
         predict = theano.function(inputs=[X], outputs=y_x, allow_input_downcast=True)
@@ -270,6 +270,7 @@ if __name__=="__main__":
                     print(alph[epoch%len(alph)]),
                     sys.stdout.flush()
             print(np.mean(np.argmax(teY, axis=1) == predict(teX)))
+	    sys.stdout.flush()
 
     with open('snli.weights','wb') as f:
         pickle.dump(params, f)
