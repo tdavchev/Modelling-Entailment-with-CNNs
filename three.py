@@ -236,6 +236,7 @@ def train_conv_net(datasets,
                                   allow_input_downcast = True)
     test_pred_layers = []
     test_size = test_set_x.shape[0]
+    img_h = (len(datasets[0][0])-1)/2
     first_test_layer0_input = Words[T.cast(x[:,:89].flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
     second_test_layer0_input = Words[T.cast(x[:,89:].flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
 
