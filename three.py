@@ -489,6 +489,8 @@ if __name__=="__main__":
            activations=[Iden],
            sqr_norm_lim=9,
            non_static=True)
+    
+    results.append(perf)
     print str(np.mean(results))
     sys.stdout.flush()
     
