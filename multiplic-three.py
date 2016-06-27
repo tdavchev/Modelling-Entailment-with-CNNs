@@ -144,7 +144,7 @@ def train_conv_net(datasets,
     for filter_h in filter_hs:
         filter_shapes.append((feature_maps, 1, filter_h, filter_w))
         pool_sizes.append((img_h-filter_h+1, img_w-filter_w+1))
-        
+
     third_layer0_input = layer1_cnn_input.reshape((layer1_cnn_input.shape[0],1,layer1_cnn_input.shape[1],layer1_cnn_input.shape[2]))
 
     third_conv_layers = []
@@ -248,6 +248,8 @@ def train_conv_net(datasets,
                                   allow_input_downcast = True)
     
     test_pred_layers = []
+    test_one_pred_layers = []
+    test_two_pred_layers = []
     img_h = (len(datasets[0][0])-1)/2
     test_size = test_set_x.shape[0]
     test_layer0_input_one = Words[T.cast(x[:,:89].flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
@@ -255,14 +257,14 @@ def train_conv_net(datasets,
     
     for conv_layer in first_conv_layers:
         test_layer0_output = conv_layer.predict(test_layer0_input_one, test_size)
-        test_pred_layers.append(test_layer0_output.flatten(2))
+        test_one_pred_layers.append(test_layer0_output.flatten(2))
 
     for conv_layer in second_conv_layers:
         test_layer0_output = conv_layer.predict(test_layer0_input_two, test_size)
-        test_pred_layers.append(test_layer0_output.flatten(2))
+        test_two_pred_layers.append(test_layer0_output.flatten(2))
 
     test_lista =[]
-    test_layer1_input = T.mul(one_layers,two_layers)
+    test_layer1_input = T.mul(test_one_pred_layers,test_two_pred_layers)
     for idx in xrange(0,3):
         lista.append(test_layer1_input[idx])
     test_layer1_input = T.concatenate(lista,1)
@@ -271,12 +273,12 @@ def train_conv_net(datasets,
     # test_layer1_input = T.concatenate(test_pred_layers, 1)
     # test_layer1_cnn_input = test_layer1_input.reshape((-1,12,50)) # ratio
     test_layer1_cnn_input = test_layer1_input.reshape((-1,10,30)) 
-    third_layer0_input = layer1_cnn_input.reshape((layer1_cnn_input.shape[0],1,layer1_cnn_input.shape[1],layer1_cnn_input.shape[2]))
+    test_third_layer0_input = test_layer1_cnn_input.reshape((test_layer1_cnn_input.shape[0],1,test_layer1_cnn_input.shape[1],test_layer1_cnn_input.shape[2]))
 
     # TESTING THIRD CNN
     test_pred_layers = []
     for conv_layer in third_conv_layers:
-        test_layer0_output = conv_layer.predict(third_layer0_input, test_size)
+        test_layer0_output = conv_layer.predict(test_third_layer0_input, test_size)
         test_pred_layers.append(test_layer0_output.flatten(2))
 
     test_layer1_input = []
@@ -314,6 +316,7 @@ def train_conv_net(datasets,
         sys.stdout.flush()
         if val_perf >= best_val_perf:
             best_val_perf = val_perf
+            print "aha"
             test_loss = test_model_all(test_set_x,test_set_y)
             test_perf = 1- test_loss
 
@@ -455,7 +458,7 @@ def make_idx_data(revs, word_idx_map, max_l=81, k=300, filter_h=5):
     test = np.array(test,dtype="int")
     valid = np.array(valid,dtype="int")
 
-    return [train[:100], valid[:10], test[:10]]
+    return [train, valid, test]
 
 def store_sent(batches, num, datasets):
     p_sento_finale = []
