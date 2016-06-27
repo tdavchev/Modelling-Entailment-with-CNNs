@@ -144,11 +144,7 @@ def train_conv_net(datasets,
     for filter_h in filter_hs:
         filter_shapes.append((feature_maps, 1, filter_h, filter_w))
         pool_sizes.append((img_h-filter_h+1, img_w-filter_w+1))
-    parameters = [("image shape",img_h,img_w),("filter shape",filter_shapes), ("hidden_units",hidden_units),
-                  ("dropout", dropout_rate), ("batch_size",batch_size),("non_static", non_static),
-                    ("learn_decay",lr_decay), ("conv_non_linear", conv_non_linear), ("non_static", non_static)
-                    ,("sqr_norm_lim",sqr_norm_lim),("shuffle_batch",shuffle_batch)]
-
+        
     third_layer0_input = layer1_cnn_input.reshape((layer1_cnn_input.shape[0],1,layer1_cnn_input.shape[1],layer1_cnn_input.shape[2]))
 
     third_conv_layers = []
@@ -219,7 +215,7 @@ def train_conv_net(datasets,
     sys.stdout.flush()
     # test_set_x = datasets[2][:,:img_h]
     # test_set_y = np.asarray(datasets[2][:,-1],"int32")
-    test_set_x = datasets[2][:,:(img_h*2)]
+    test_set_x = datasets[2][:,:-1]
     test_set_y = np.asarray(datasets[2][:,-1],"int32")
     train_set = new_data[:,:]
     val_set = datasets[1]#[n_train_batches*batch_size:,:]
@@ -250,22 +246,20 @@ def train_conv_net(datasets,
             x: train_set_x[index*batch_size:(index+1)*batch_size],
               y: train_set_y[index*batch_size:(index+1)*batch_size]},
                                   allow_input_downcast = True)
+    
     test_pred_layers = []
-    one_test_pred_layers, two_test_pred_layers = [], []
+    img_h = (len(datasets[0][0])-1)/2
     test_size = test_set_x.shape[0]
-    first_test_layer0_input = Words[T.cast(x[:,:89].flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
-    second_test_layer0_input = Words[T.cast(x[:,89:].flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
-
-    # TESTING FIRST CNN
+    test_layer0_input_one = Words[T.cast(x[:,:89].flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
+    test_layer0_input_two = Words[T.cast(x[:,89:].flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
+    
     for conv_layer in first_conv_layers:
-        test_layer0_output = conv_layer.predict(first_test_layer0_input, test_size)
-        one_test_pred_layers.append(test_layer0_output.flatten(2))
+        test_layer0_output = conv_layer.predict(test_layer0_input_one, test_size)
+        test_pred_layers.append(test_layer0_output.flatten(2))
 
-
-    # TESTING SECOND CNN
     for conv_layer in second_conv_layers:
-        test_layer0_output = conv_layer.predict(second_test_layer0_input, test_size)
-        two_test_pred_layers.append(test_layer0_output.flatten(2))
+        test_layer0_output = conv_layer.predict(test_layer0_input_two, test_size)
+        test_pred_layers.append(test_layer0_output.flatten(2))
 
     test_lista =[]
     test_layer1_input = T.mul(one_layers,two_layers)
