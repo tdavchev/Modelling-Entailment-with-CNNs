@@ -81,10 +81,10 @@ def train_conv_net(datasets,
     zero_vec_tensor = T.vector()
     zero_vec = np.zeros(img_w)
     set_zero = theano.function([zero_vec_tensor], updates=[(Words, T.set_subtensor(Words[0,:], zero_vec_tensor))], allow_input_downcast=True)
+    
+
     first_layer0_input = Words[T.cast(x[:,:89].flatten(),dtype="int32")].reshape((x.shape[0],1,(x.shape[1]/2),Words.shape[1]))
     second_layer0_input = Words[T.cast(x[:,89:].flatten(),dtype="int32")].reshape((x.shape[0],1,(x.shape[1]/2),Words.shape[1]))
-    first_conv_layers = []
-    second_conv_layers = []
     layer1_inputs = []
 
     # FIRST CNN
@@ -96,7 +96,6 @@ def train_conv_net(datasets,
         conv_layer = LeNetConvPoolLayer(rng, input=first_layer0_input,image_shape=(batch_size, 1, img_h, img_w),
                                 filter_shape=filter_shape, poolsize=pool_size, non_linear=conv_non_linear)
         layer1_input = conv_layer.output.flatten(2)
-        first_conv_layers.append(conv_layer)
         layer1_inputs.append(layer1_input)
 
 
@@ -108,7 +107,6 @@ def train_conv_net(datasets,
         conv_layer = LeNetConvPoolLayer(rng, input=second_layer0_input,image_shape=(batch_size, 1, img_h, img_w),
                                 filter_shape=filter_shape, poolsize=pool_size, non_linear=conv_non_linear)
         layer1_input = conv_layer.output.flatten(2)
-        second_conv_layers.append(conv_layer)
         layer1_inputs.append(layer1_input)
 
 
@@ -128,11 +126,7 @@ def train_conv_net(datasets,
     for filter_h in filter_hs:
         filter_shapes.append((feature_maps, 1, filter_h, filter_w))
         pool_sizes.append((img_h-filter_h+1, img_w-filter_w+1))
-    parameters = [("image shape",img_h,img_w),("filter shape",filter_shapes), ("hidden_units",hidden_units),
-                  ("dropout", dropout_rate), ("batch_size",batch_size),("non_static", non_static),
-                    ("learn_decay",lr_decay), ("conv_non_linear", conv_non_linear), ("non_static", non_static)
-                    ,("sqr_norm_lim",sqr_norm_lim),("shuffle_batch",shuffle_batch)]
-
+    
     third_layer0_input = layer1_cnn_input.reshape((layer1_cnn_input.shape[0],1,layer1_cnn_input.shape[1],layer1_cnn_input.shape[2]))
 
     third_conv_layers = []
@@ -234,39 +228,81 @@ def train_conv_net(datasets,
             x: train_set_x[index*batch_size:(index+1)*batch_size],
               y: train_set_y[index*batch_size:(index+1)*batch_size]},
                                   allow_input_downcast = True)
+
+
     test_pred_layers = []
-    test_size = test_set_x.shape[0]
     img_h = (len(datasets[0][0])-1)/2
-    first_test_layer0_input = Words[T.cast(x[:,:89].flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
-    second_test_layer0_input = Words[T.cast(x[:,89:].flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
-
-    # TESTING FIRST CNN
-    for conv_layer in first_conv_layers:
-        test_layer0_output = conv_layer.predict(first_test_layer0_input, test_size)
-        test_pred_layers.append(test_layer0_output.flatten(2))
-
-
-    # TESTING SECOND CNN
-    for conv_layer in second_conv_layers:
-        test_layer0_output = conv_layer.predict(second_test_layer0_input, test_size)
-        test_pred_layers.append(test_layer0_output.flatten(2))
-
-    test_layer1_input = T.concatenate(test_pred_layers, 1)
-    test_layer1_cnn_input = test_layer1_input.reshape((-1,12,50)) # ration 
-    third_layer0_input = layer1_cnn_input.reshape((test_layer1_cnn_input.shape[0],1,test_layer1_cnn_input.shape[1],test_layer1_cnn_input.shape[2]))
-
-    # TESTING THIRD CNN
-    test_pred_layers = []
-    for conv_layer in third_conv_layers:
-        test_layer0_output = conv_layer.predict(third_layer0_input, 2*test_size)
-        test_pred_layers.append(test_layer0_output.flatten(2))
-
-    test_layer1_input = []
-    test_layer1_input = T.concatenate(test_pred_layers, 1)
+    test_size = test_set_x.shape[0]
+    test_layer0_input_one = Words[T.cast(x[:,:89].flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
+    test_layer0_input_two = Words[T.cast(x[:,89:].flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
     
-    test_y_pred = classifier.predict(test_layer1_input)
+    for conv_layer in first_conv_layers:
+        test_layer0_output = conv_layer.predict(test_layer0_input_one, test_size)
+        test_pred_layers.append(test_layer0_output.flatten(2))
+
+    for conv_layer in second_conv_layers:
+        test_layer0_output = conv_layer.predict(test_layer0_input_two, test_size)
+        test_pred_layers.append(test_layer0_output.flatten(2))
+
+    test_layer1_input = T.concatenate(test_pred_layers, 1)
+    test_layer1_cnn_input = test_layer1_input.reshape((-1,12,50))
+
+
+    img_w = 50
+    img_h = 12
+
+    test_layer0_input_three = test_layer1_cnn_input.reshape((test_layer1_cnn_input.shape[0],1,test_layer1_cnn_input.shape[1],test_layer1_cnn_input.shape[2]))
+
+    test_pred_layers = []
+
+    for conv_layer in third_conv_layers:
+        test_layer0_output = conv_layer.predict(test_layer0_input_three, test_size)
+        test_pred_layers.append(test_layer0_output.flatten(2))
+
+    ffwd_layer_input = T.concatenate(test_pred_layers,1)
+
+
+    test_y_pred = classifier.predict(ffwd_layer_input)
     test_error = T.mean(T.neq(test_y_pred, y))
     test_model_all = theano.function([x,y], test_error, allow_input_downcast = True)
+
+
+
+
+
+    # test_pred_layers = []
+    # test_size = test_set_x.shape[0]
+    # img_h = (len(datasets[0][0])-1)/2
+    # first_test_layer0_input = Words[T.cast(x[:,:89].flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
+    # second_test_layer0_input = Words[T.cast(x[:,89:].flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
+
+    # # TESTING FIRST CNN
+    # for conv_layer in first_conv_layers:
+    #     test_layer0_output = conv_layer.predict(first_test_layer0_input, test_size)
+    #     test_pred_layers.append(test_layer0_output.flatten(2))
+
+
+    # # TESTING SECOND CNN
+    # for conv_layer in second_conv_layers:
+    #     test_layer0_output = conv_layer.predict(second_test_layer0_input, test_size)
+    #     test_pred_layers.append(test_layer0_output.flatten(2))
+
+    # test_layer1_input = T.concatenate(test_pred_layers, 1)
+    # test_layer1_cnn_input = test_layer1_input.reshape((-1,12,50)) # ration 
+    # third_layer0_input = layer1_cnn_input.reshape((test_layer1_cnn_input.shape[0],1,test_layer1_cnn_input.shape[1],test_layer1_cnn_input.shape[2]))
+
+    # # TESTING THIRD CNN
+    # test_pred_layers = []
+    # for conv_layer in third_conv_layers:
+    #     test_layer0_output = conv_layer.predict(third_layer0_input, 2*test_size)
+    #     test_pred_layers.append(test_layer0_output.flatten(2))
+
+    # test_layer1_input = []
+    # test_layer1_input = T.concatenate(test_pred_layers, 1)
+    
+    # test_y_pred = classifier.predict(test_layer1_input)
+    # test_error = T.mean(T.neq(test_y_pred, y))
+    # test_model_all = theano.function([x,y], test_error, allow_input_downcast = True)
 
     #start training over mini-batches
     print '... training'
