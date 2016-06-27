@@ -2,7 +2,6 @@
 Sample code for
 Convolutional Neural Networks for Sentence Classification
 http://arxiv.org/pdf/1408.5882v2.pdf
-
 Much of the code is modified from
 - deeplearning.net (for ConvNet classes)
 - https://github.com/mdenil/dropout (for dropout)
@@ -258,7 +257,7 @@ def train_conv_net(datasets,
     # TESTING THIRD CNN
     test_pred_layers = []
     for conv_layer in third_conv_layers:
-        test_layer0_output = conv_layer.predict(third_layer0_input, test_size)
+        test_layer0_output = conv_layer.predict(third_layer0_input, 2*test_size)
         test_pred_layers.append(test_layer0_output.flatten(2))
 
     test_layer1_input = []
@@ -303,7 +302,6 @@ def train_conv_net(datasets,
 
 def shared_dataset(data_xy, borrow=True):
         """ Function that loads the dataset into shared variables
-
         The reason we store our dataset in shared variables is to allow
         Theano to copy it into the GPU memory (when code is run on GPU).
         Since copying data into the GPU is slow, copying a minibatch everytime
