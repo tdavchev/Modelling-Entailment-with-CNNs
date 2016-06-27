@@ -132,7 +132,7 @@ def train_conv_net(datasets,
         pool_sizes.append((img_h-filter_h+1, img_w-filter_w+1))
     
     third_layer0_input = layer1_cnn_input.reshape((layer1_cnn_input.shape[0],1,layer1_cnn_input.shape[1],layer1_cnn_input.shape[2]))
-    
+
     third_conv_layers = []
     layer1_inputs = []
 
@@ -201,7 +201,7 @@ def train_conv_net(datasets,
     sys.stdout.flush()
     # test_set_x = datasets[2][:,:img_h]
     # test_set_y = np.asarray(datasets[2][:,-1],"int32")
-    test_set_x = datasets[2][:,:(img_h*2)]
+    test_set_x = datasets[2][:,:-1]
     test_set_y = np.asarray(datasets[2][:,-1],"int32")
     train_set = new_data[:,:]
     val_set = datasets[1]#[n_train_batches*batch_size:,:]
