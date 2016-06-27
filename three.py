@@ -165,7 +165,7 @@ def train_conv_net(datasets,
     sys.stdout.flush()
     # test_set_x = datasets[2][:,:img_h]
     # test_set_y = np.asarray(datasets[2][:,-1],"int32")
-    test_set_x = datasets[2][:,:img_h]
+    test_set_x = datasets[2][:,:(img_h*2)]
     test_set_y = np.asarray(datasets[2][:,-1],"int32")
     train_set = new_data[:,:]
     val_set = datasets[1]#[n_train_batches*batch_size:,:]
@@ -492,6 +492,6 @@ if __name__=="__main__":
     print str(np.mean(results))
     sys.stdout.flush()
     
-    store_output(first_sent, second_sent, datasets)
+    # store_output(first_sent, second_sent, datasets)
     #print "concatenating the two sentences {0}".format(len(first_sent[0]))
-    sys.stdout.flush()
+    # sys.stdout.flush()
