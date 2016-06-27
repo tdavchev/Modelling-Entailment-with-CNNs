@@ -253,7 +253,7 @@ def train_conv_net(datasets,
 
     test_layer1_input = T.concatenate(test_pred_layers, 1)
     test_layer1_cnn_input = test_layer1_input.reshape((-1,12,50)) # ration 
-    third_layer0_input = layer1_cnn_input.reshape((layer1_cnn_input.shape[0],1,layer1_cnn_input.shape[1],layer1_cnn_input.shape[2]))
+    third_layer0_input = layer1_cnn_input.reshape((test_layer1_cnn_input.shape[0],1,test_layer1_cnn_input.shape[1],test_layer1_cnn_input.shape[2]))
 
     # TESTING THIRD CNN
     test_pred_layers = []
