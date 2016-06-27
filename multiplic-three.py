@@ -550,20 +550,20 @@ if __name__=="__main__":
     sys.stdout.flush()
     print non_static, batch_size_f,dropout_rate_f, len(datasets[0])
     sys.stdout.flush()
-        perf= train_conv_net(datasets,
-           U,
-           img_w=300,
-           filter_hs=[3,4,5],
-           hidden_units=[100,3],
-           dropout_rate=[dropout_rate_f],
-           shuffle_batch=True,
-           n_epochs=25,
-           batch_size=batch_size_f,
-           lr_decay = 0.95,
-           conv_non_linear=conv_non_linear_f,
-           activations=[Iden],
-           sqr_norm_lim=9,
-           non_static=True)
+    perf= train_conv_net(datasets,
+       U,
+       img_w=300,
+       filter_hs=[3,4,5],
+       hidden_units=[100,3],
+       dropout_rate=[dropout_rate_f],
+       shuffle_batch=True,
+       n_epochs=25,
+       batch_size=batch_size_f,
+       lr_decay = 0.95,
+       conv_non_linear=conv_non_linear_f,
+       activations=[Iden],
+       sqr_norm_lim=9,
+       non_static=True)
 
 
     results.append(perf)
