@@ -114,10 +114,46 @@ def train_conv_net(datasets,
 
 
     layer1_input = T.concatenate(layer1_inputs,1)
+    # layer1_inputa = layer1_input.shape
+    layer1_cnn_input = layer1_input.reshape((-1,12,50))
 
-    hidden_units[0] = feature_maps*len(filter_hs)*2 # 600
+    # hidden_units[0] = feature_maps*len(filter_hs)*2 # 600
 
-    classifier = MLPDropout(rng, input=layer1_input, layer_sizes=hidden_units, activations=activations, dropout_rates=dropout_rate)
+    # keep relatively close ratio to 300/81
+    img_w = 50
+    img_h = 12
+    filter_w = img_w
+    feature_maps = hidden_units[0]
+    filter_shapes = []
+    pool_sizes = []
+    for filter_h in filter_hs:
+        filter_shapes.append((feature_maps, 1, filter_h, filter_w))
+        pool_sizes.append((img_h-filter_h+1, img_w-filter_w+1))
+    parameters = [("image shape",img_h,img_w),("filter shape",filter_shapes), ("hidden_units",hidden_units),
+                  ("dropout", dropout_rate), ("batch_size",batch_size),("non_static", non_static),
+                    ("learn_decay",lr_decay), ("conv_non_linear", conv_non_linear), ("non_static", non_static)
+                    ,("sqr_norm_lim",sqr_norm_lim),("shuffle_batch",shuffle_batch)]
+
+    third_layer0_input = layer1_cnn_input.reshape((layer1_cnn_input.shape[0],1,layer1_cnn_input.shape[1],layer1_cnn_input.shape[2]))
+
+    third_conv_layers = []
+    layer1_inputs = []
+
+    for i in xrange(len(filter_hs)):
+        filter_shape = filter_shapes[i]
+        pool_size = pool_sizes[i]
+        conv_layer = LeNetConvPoolLayer(rng, input=third_layer0_input,image_shape=(batch_size, 1, img_h, img_w),
+                                filter_shape=filter_shape, poolsize=pool_size, non_linear=conv_non_linear)
+        layer1_input = conv_layer.output.flatten(2)
+        third_conv_layers.append(conv_layer)
+        layer1_inputs.append(layer1_input)
+
+    ffwd_layer_input = T.concatenate(layer1_inputs,1)
+    
+
+    hidden_units[0] = feature_maps*len(filter_hs) # 300
+
+    classifier = MLPDropout(rng, input=ffwd_layer_input, layer_sizes=hidden_units, activations=activations, dropout_rates=dropout_rate)
     #define parameters of the model and update functions using adadelta
     print "define parameters of the model and update functions using adadelta"
     sys.stdout.flush()
@@ -128,6 +164,9 @@ def train_conv_net(datasets,
         params += conv_layer.params
 
     for conv_layer in second_conv_layers:
+        params += conv_layer.params
+
+    for conv_layer in third_conv_layers:
         params += conv_layer.params
 
     if non_static:
@@ -212,8 +251,19 @@ def train_conv_net(datasets,
         test_layer0_output = conv_layer.predict(second_test_layer0_input, test_size)
         test_pred_layers.append(test_layer0_output.flatten(2))
 
-
     test_layer1_input = T.concatenate(test_pred_layers, 1)
+    test_layer1_cnn_input = test_layer1_input.reshape((-1,12,50)) # ration 
+    third_layer0_input = layer1_cnn_input.reshape((layer1_cnn_input.shape[0],1,layer1_cnn_input.shape[1],layer1_cnn_input.shape[2]))
+
+    # TESTING THIRD CNN
+    test_pred_layers = []
+    for conv_layer in third_conv_layers:
+        test_layer0_output = conv_layer.predict(third_layer0_input, test_size)
+        test_pred_layers.append(test_layer0_output.flatten(2))
+
+    test_layer1_input = []
+    test_layer1_input = T.concatenate(test_pred_layers, 1)
+    
     test_y_pred = classifier.predict(test_layer1_input)
     test_error = T.mean(T.neq(test_y_pred, y))
     test_model_all = theano.function([x,y], test_error, allow_input_downcast = True)
@@ -231,7 +281,8 @@ def train_conv_net(datasets,
         epoch = epoch + 1
         if shuffle_batch:
             for minibatch_index in np.random.permutation(range(n_train_batches)):
-                cost_epoch = train_model(minibatch_index) #2-4 conv 1 is output
+                # cost_epoch = train_model(minibatch_index) #2-4 conv 1 is output
+                cost_epoch = train_model(minibatch_index)
                 set_zero(zero_vec)
         else:
             for minibatch_index in xrange(n_train_batches):
@@ -386,7 +437,7 @@ def make_idx_data(revs, word_idx_map, max_l=81, k=300, filter_h=5):
     test = np.array(test,dtype="int")
     valid = np.array(valid,dtype="int")
 
-    return [train[:100], valid[:10], test[:10]]
+    return [train, valid, test]
 
 def store_sent(batches, num, datasets):
     p_sento_finale = []
@@ -489,7 +540,8 @@ if __name__=="__main__":
            activations=[Iden],
            sqr_norm_lim=9,
            non_static=True)
-    
+
+
     results.append(perf)
     print str(np.mean(results))
     sys.stdout.flush()
