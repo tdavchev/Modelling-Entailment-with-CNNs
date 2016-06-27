@@ -85,6 +85,8 @@ def train_conv_net(datasets,
 
     first_layer0_input = Words[T.cast(x[:,:89].flatten(),dtype="int32")].reshape((x.shape[0],1,(x.shape[1]/2),Words.shape[1]))
     second_layer0_input = Words[T.cast(x[:,89:].flatten(),dtype="int32")].reshape((x.shape[0],1,(x.shape[1]/2),Words.shape[1]))
+    first_conv_layers = []
+    second_conv_layers = []
     layer1_inputs = []
 
     # FIRST CNN
@@ -96,6 +98,7 @@ def train_conv_net(datasets,
         conv_layer = LeNetConvPoolLayer(rng, input=first_layer0_input,image_shape=(batch_size, 1, img_h, img_w),
                                 filter_shape=filter_shape, poolsize=pool_size, non_linear=conv_non_linear)
         layer1_input = conv_layer.output.flatten(2)
+        first_conv_layers.append(conv_layer)
         layer1_inputs.append(layer1_input)
 
 
@@ -107,6 +110,7 @@ def train_conv_net(datasets,
         conv_layer = LeNetConvPoolLayer(rng, input=second_layer0_input,image_shape=(batch_size, 1, img_h, img_w),
                                 filter_shape=filter_shape, poolsize=pool_size, non_linear=conv_non_linear)
         layer1_input = conv_layer.output.flatten(2)
+        second_conv_layers.append(conv_layer)
         layer1_inputs.append(layer1_input)
 
 
@@ -128,7 +132,7 @@ def train_conv_net(datasets,
         pool_sizes.append((img_h-filter_h+1, img_w-filter_w+1))
     
     third_layer0_input = layer1_cnn_input.reshape((layer1_cnn_input.shape[0],1,layer1_cnn_input.shape[1],layer1_cnn_input.shape[2]))
-
+    
     third_conv_layers = []
     layer1_inputs = []
 
