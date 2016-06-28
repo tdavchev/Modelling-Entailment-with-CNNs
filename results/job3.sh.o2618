@@ -1,6 +1,0 @@
-Single Sentence Casei CNN 2
-200, 0.5, relu
-loading data...
-data loaded!
-model architecture: CNN-static
-using: word2vec vectors
