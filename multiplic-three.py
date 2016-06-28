@@ -547,6 +547,7 @@ if __name__=="__main__":
     conv_non_linear_f = sys.argv[5]
     modeOp = sys.argv[6]
     lr_decay = sys.argv[7]
+    lr_decay = float(lr_decay)
     
 
     if mode=="-nonstatic":
