@@ -16,28 +16,18 @@ divide train set into train/val sets
 compile theano functions to get train/val/test errors
 ... training
 epoch: 1, training time: 471.92 secs, train perf: 64.48 %, val perf: 63.92 %
-aha
 epoch: 2, training time: 473.13 secs, train perf: 70.66 %, val perf: 69.37 %
-aha
 epoch: 3, training time: 473.49 secs, train perf: 72.03 %, val perf: 70.61 %
-aha
 epoch: 4, training time: 473.92 secs, train perf: 76.93 %, val perf: 74.21 %
-aha
 epoch: 5, training time: 474.20 secs, train perf: 78.28 %, val perf: 75.02 %
-aha
 epoch: 6, training time: 474.01 secs, train perf: 79.25 %, val perf: 75.21 %
-aha
 epoch: 7, training time: 473.68 secs, train perf: 81.40 %, val perf: 76.23 %
-aha
 epoch: 8, training time: 473.43 secs, train perf: 82.23 %, val perf: 76.19 %
 epoch: 9, training time: 473.25 secs, train perf: 82.82 %, val perf: 76.09 %
 epoch: 10, training time: 473.37 secs, train perf: 84.33 %, val perf: 76.51 %
-aha
 epoch: 11, training time: 473.29 secs, train perf: 85.62 %, val perf: 76.43 %
 epoch: 12, training time: 472.96 secs, train perf: 86.13 %, val perf: 76.82 %
-aha
 epoch: 13, training time: 472.79 secs, train perf: 87.44 %, val perf: 76.89 %
-aha
 epoch: 14, training time: 472.70 secs, train perf: 86.96 %, val perf: 76.01 %
 epoch: 15, training time: 472.50 secs, train perf: 88.82 %, val perf: 76.37 %
 epoch: 16, training time: 472.48 secs, train perf: 88.88 %, val perf: 75.76 %
