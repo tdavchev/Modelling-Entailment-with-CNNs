@@ -546,6 +546,7 @@ if __name__=="__main__":
     dropout_rate_f = float(dropout_rate_f)
     conv_non_linear_f = sys.argv[5]
     modeOp = sys.argv[6]
+    lr_decay = sys.argv[7]
     
 
     if mode=="-nonstatic":
@@ -584,14 +585,14 @@ if __name__=="__main__":
        shuffle_batch=True,
        n_epochs=25,
        batch_size=batch_size_f,
-       lr_decay = 0.95,
+       lr_decay = lr_decay,
        conv_non_linear=conv_non_linear_f,
        activations=[Iden],
        sqr_norm_lim=9,
        non_static=True,
        modeOp=modeOp,
-       alpha=0.75,
-       beta=1.5)
+       alpha=1,
+       beta=1)
 
 
     results.append(perf)
