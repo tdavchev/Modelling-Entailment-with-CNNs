@@ -130,22 +130,22 @@ def train_conv_net(datasets,
         layer1_input = T.mul(one_layers,two_layers)
     elif modeOp == "add":
         layer1_input = T.add(alpha*one_layers,beta*two_layers)
-    else:
-        for idx in xrange(len(one_layers)):
-            batch = []
-            for batch_item_no in xrange(0 len(one_layers[idx])):
-                row_from_batch = []
-                for i in xrange(0, len(one_layers[idx][batch_item_no])):
-                    u = i + 1
-                    row_from_batch.append(one_layers[idx][batch_item_no][i]*two_layers[idx][batch_item_no][:-u])
+    # else:
+    #     for idx in xrange(len(one_layers)):
+    #         batch = []
+    #         for batch_item_no in xrange(0 len(one_layers[idx])):
+    #             row_from_batch = []
+    #             for i in xrange(0, len(one_layers[idx][batch_item_no])):
+    #                 u = i + 1
+    #                 row_from_batch.append(one_layers[idx][batch_item_no][i]*two_layers[idx][batch_item_no][:-u])
 
-                batch.append(row_from_batch)
+    #             batch.append(row_from_batch)
                 
-            layer1_input.append(batch)
+    #         layer1_input.append(batch)
 
-    for idx in xrange(0,3):
-        lista.append(layer1_input[idx])
-    layer1_input = T.concatenate(lista,1)
+    # for idx in xrange(0,3):
+    #     lista.append(layer1_input[idx])
+    # layer1_input = T.concatenate(lista,1)
 
     layer1_cnn_input = layer1_input.reshape((-1,10,30))
 
