@@ -125,10 +125,23 @@ def train_conv_net(datasets,
 
     # elementwise multiplication
     lista =[]
+    layer1_input = []
     if modeOp == "mul":
         layer1_input = T.mul(one_layers,two_layers)
     elif modeOp == "add":
-        layer1_input = T.add(one_layers,two_layers)
+        layer1_input = T.add(alpha*one_layers,beta*two_layers)
+    else:
+        for idx in xrange(len(one_layers)):
+            batch = []
+            for batch_item_no in xrange(0 len(one_layers[idx])):
+                row_from_batch = []
+                for i in xrange(0, len(one_layers[idx][batch_item_no])):
+                    u = i + 1
+                    row_from_batch.append(one_layers[idx][batch_item_no][i]*two_layers[idx][batch_item_no][:-u])
+
+                batch.append(row_from_batch)
+                
+            layer1_input.append(batch)
 
     for idx in xrange(0,3):
         lista.append(layer1_input[idx])
@@ -273,7 +286,7 @@ def train_conv_net(datasets,
     if modeOp == "mul":
         test_pred_layers_mul = T.mul(test_pred_layers_one,test_pred_layers_two)
     elif modeOp == "add":
-        test_pred_layers_mul = T.add(test_pred_layers_one,test_pred_layers_two)
+        test_pred_layers_mul = T.add(alpha*test_pred_layers_one,beta*test_pred_layers_two)
 
     test_pred_layers = []
     for idx in xrange(0,3):
@@ -331,7 +344,6 @@ def train_conv_net(datasets,
         sys.stdout.flush()
         if val_perf >= best_val_perf:
             best_val_perf = val_perf
-            print "aha"
             test_loss = test_model_all(test_set_x,test_set_y)
             test_perf = 1- test_loss
 
