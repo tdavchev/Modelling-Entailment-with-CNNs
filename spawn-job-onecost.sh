@@ -1,7 +1,7 @@
 #!/bin/bash:
 GPU=0
-for bs in 150 200 250; do  #10 25 50 100 200; do
-   for dropout in 0.5 0.2 0.1 0.0; do
+for bs in 200; do  #150 250; do
+   for dropout in 0.2 ; do # 0.5 0.1 0.0
         for cnl in "relu" "tanh"; do
         	for lr_decay in 0.9 0.95 1; do
         		for mode in add mul; do
