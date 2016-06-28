@@ -47,10 +47,10 @@ def train_conv_net(datasets,
                    conv_non_linear="relu",
                    activations=[Iden],
                    sqr_norm_lim=9,
-                   non_static=True,
-                   mode="mul",
+                   modeOp="mul",
                    alpha=1,
-                   beta=1):
+                   beta=1,
+                   non_static=True):
     """
     Train a simple conv net
     img_h = sentence length (padded where necessary)
@@ -125,9 +125,9 @@ def train_conv_net(datasets,
 
     # elementwise multiplication
     lista =[]
-    if mode == "mul":
+    if modeOp == "mul":
         layer1_input = T.mul(one_layers,two_layers)
-    elif mode == "add":
+    elif modeOp == "add":
         layer1_input = T.add(one_layers,two_layers)
 
     for idx in xrange(0,3):
@@ -270,9 +270,9 @@ def train_conv_net(datasets,
         test_layer0_output = conv_layer.predict(test_layer0_input_two, test_size)
         test_pred_layers_two.append(test_layer0_output.flatten(2))
 
-    if mode == "mul":
+    if modeOp == "mul":
         test_pred_layers_mul = T.mul(test_pred_layers_one,test_pred_layers_two)
-    elif mode == "add":
+    elif modeOp == "add":
         test_pred_layers_mul = T.add(test_pred_layers_one,test_pred_layers_two)
 
     test_pred_layers = []
@@ -533,7 +533,7 @@ if __name__=="__main__":
     dropout_rate_f = sys.argv[4]
     dropout_rate_f = float(dropout_rate_f)
     conv_non_linear_f = sys.argv[5]
-    mode = sys.argv[6]
+    modeOp = sys.argv[6]
     
 
     if mode=="-nonstatic":
@@ -577,7 +577,7 @@ if __name__=="__main__":
        activations=[Iden],
        sqr_norm_lim=9,
        non_static=True,
-       mode=mode,
+       modeOp=modeOp,
        alpha=0.75,
        beta=1.5)
 
