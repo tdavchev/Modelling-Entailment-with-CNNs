@@ -579,7 +579,7 @@ if __name__=="__main__":
        non_static=True,
        mode=mode,
        alpha=0.75,
-       beta=2)
+       beta=1.5)
 
 
     results.append(perf)
