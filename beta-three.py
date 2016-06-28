@@ -186,7 +186,7 @@ def train_conv_net(datasets,
     train_model = build_train_model(index, batch_size, cost, grad_updates, train_set_x, train_set_y, x, y)
 
     img_h = (len(datasets[0][0])-1)/2
-    ffwd_layer_input = build_test(img_h, test_set_x.shape[0], Words, [first_conv_layers, second_conv_layers, third_conv_layers])
+    ffwd_layer_input = build_test(img_h, test_set_x.shape[0], Words, [first_conv_layers, second_conv_layers, third_conv_layers],x)
 
     test_y_pred = classifier.predict(ffwd_layer_input)
     test_error = T.mean(T.neq(test_y_pred, y))
@@ -291,7 +291,7 @@ def update_params(classifier, conv_layers):
 
     return params
 
-def build_test(img_h, test_size, Words, conv_layers):
+def build_test(img_h, test_size, Words, conv_layers,x):
     test_pred_layers = []
     # img_h = (len(datasets[0][0])-1)/2
     # test_size = test_set_x.shape[0]
@@ -509,19 +509,19 @@ if __name__=="__main__":
     revs, W, W2, word_idx_map, vocab = x[0], x[1], x[2], x[3], x[4]
     print "data loaded!"
     sys.stdout.flush()
-    # mode= sys.argv[1]
-    # word_vectors = sys.argv[2]
-    mode = "-nonstatic"
-    word_vectors = "-word2vec"
-    batch_size_f = 50
-    dropout_rate_f = 0.5
-    conv_non_linear_f = "relu"
-    # # Parameters
-    # batch_size_f = sys.argv[3]
-    # batch_size_f = int(batch_size_f)
-    # dropout_rate_f = sys.argv[4]
-    # dropout_rate_f = float(dropout_rate_f)
-    # conv_non_linear_f = sys.argv[5]
+    mode= sys.argv[1]
+    word_vectors = sys.argv[2]
+    # mode = "-nonstatic"
+    # word_vectors = "-word2vec"
+    # batch_size_f = 50
+    # dropout_rate_f = 0.5
+    # conv_non_linear_f = "relu"
+    # Parameters
+    batch_size_f = sys.argv[3]
+    batch_size_f = int(batch_size_f)
+    dropout_rate_f = sys.argv[4]
+    dropout_rate_f = float(dropout_rate_f)
+    conv_non_linear_f = sys.argv[5]
     
 
     if mode=="-nonstatic":
@@ -534,7 +534,7 @@ if __name__=="__main__":
         non_static=False
     first_sent = [] # note currently takes the output of the convolution layers and not the predictions
     second_sent = [] # I need to try it with predictions as well
-    # execfile("conv_net_classes.py")
+    execfile("conv_net_classes.py")
     if word_vectors=="-rand":
         print "using: random vectors"
         sys.stdout.flush()
