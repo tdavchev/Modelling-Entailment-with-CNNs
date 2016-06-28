@@ -1,0 +1,4 @@
+ERROR (theano.sandbox.cuda): ERROR: Not using GPU. Initialisation of device 2 failed:
+initCnmem: cnmemInit call failed! Reason=CNMEM_STATUS_OUT_OF_MEMORY. numdev=1
+
+Using gpu device 0: GeForce GTX TITAN X (CNMeM is enabled with initial size: 85.0% of memory, cuDNN not available)
