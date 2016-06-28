@@ -122,7 +122,8 @@ def train_conv_net(datasets,
 
     # elementwise multiplication
     lista =[]
-    layer1_input = T.mul(one_layers,two_layers)
+    # layer1_input = T.mul(one_layers,two_layers)
+    layer1_input = T.add(one_layers,two_layers)
     for idx in xrange(0,3):
         lista.append(layer1_input[idx])
     layer1_input = T.concatenate(lista,1)
@@ -263,7 +264,8 @@ def train_conv_net(datasets,
         test_layer0_output = conv_layer.predict(test_layer0_input_two, test_size)
         test_pred_layers_two.append(test_layer0_output.flatten(2))
 
-    test_pred_layers_mul = T.mul(test_pred_layers_one,test_pred_layers_two)
+    # test_pred_layers_mul = T.mul(test_pred_layers_one,test_pred_layers_two)
+    test_pred_layers_mul = T.add(test_pred_layers_one,test_pred_layers_two)
 
     test_pred_layers = []
     for idx in xrange(0,3):
