@@ -47,7 +47,10 @@ def train_conv_net(datasets,
                    conv_non_linear="relu",
                    activations=[Iden],
                    sqr_norm_lim=9,
-                   non_static=True):
+                   non_static=True,
+                   mode="mul",
+                   alpha=1,
+                   beta=1):
     """
     Train a simple conv net
     img_h = sentence length (padded where necessary)
@@ -69,7 +72,7 @@ def train_conv_net(datasets,
     parameters = [("image shape",img_h,img_w),("filter shape",filter_shapes), ("hidden_units",hidden_units),
                   ("dropout", dropout_rate), ("batch_size",batch_size),("non_static", non_static),
                     ("learn_decay",lr_decay), ("conv_non_linear", conv_non_linear), ("non_static", non_static)
-                    ,("sqr_norm_lim",sqr_norm_lim),("shuffle_batch",shuffle_batch)]
+                    ,("sqr_norm_lim",sqr_norm_lim),("shuffle_batch",shuffle_batch),("mode",mode)]
     print parameters
     sys.stdout.flush()
     #define model architecture
@@ -126,7 +129,7 @@ def train_conv_net(datasets,
         layer1_input = T.mul(one_layers,two_layers)
     elif mode == "add":
         layer1_input = T.add(one_layers,two_layers)
-        
+
     for idx in xrange(0,3):
         lista.append(layer1_input[idx])
     layer1_input = T.concatenate(lista,1)
@@ -147,7 +150,7 @@ def train_conv_net(datasets,
     pool_sizes = []
     for filter_h in filter_hs:
         filter_shapes.append((feature_maps, 1, filter_h, filter_w))
-        pool_sizes.append((img_h-filter_h+1, img_w-filter_w+1))
+        pool_sizes.append((img_h-f  ilter_h+1, img_w-filter_w+1))
 
     third_layer0_input = layer1_cnn_input.reshape((layer1_cnn_input.shape[0],1,layer1_cnn_input.shape[1],layer1_cnn_input.shape[2]))
 
@@ -530,6 +533,7 @@ if __name__=="__main__":
     dropout_rate_f = sys.argv[4]
     dropout_rate_f = float(dropout_rate_f)
     conv_non_linear_f = sys.argv[5]
+    mode = sys.argv[6]
     
 
     if mode=="-nonstatic":
@@ -572,7 +576,10 @@ if __name__=="__main__":
        conv_non_linear=conv_non_linear_f,
        activations=[Iden],
        sqr_norm_lim=9,
-       non_static=True)
+       non_static=True,
+       mode=mode,
+       alpha=0.75,
+       beta=2)
 
 
     results.append(perf)
