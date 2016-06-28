@@ -143,9 +143,9 @@ def train_conv_net(datasets,
                 
     #         layer1_input.append(batch)
 
-    # for idx in xrange(0,3):
-    #     lista.append(layer1_input[idx])
-    # layer1_input = T.concatenate(lista,1)
+    for idx in xrange(0,3):
+        lista.append(layer1_input[idx])
+    layer1_input = T.concatenate(lista,1)
 
     layer1_cnn_input = layer1_input.reshape((-1,10,30))
 
