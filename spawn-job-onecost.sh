@@ -64,20 +64,20 @@ do
 		GPU=0
 	fi
 	let "count=$count+1"
-	randomNum 100 10
+	randomNum 65 10
 	dropout=$?
 	echo "Dropout is --- $dropout"
 	randomNum 100 10
 	lr_decay=$?
 	echo "Random number for lr_decay --- $lr_decay"
-	randomNum 100 10
+	randomNum 50 10
 	alpha=$?
 	let "beta=100-$alpha"
 	echo "Setting alpha and beta to --- $alpha, $beta"
 	activationNum
 	activation=$?
 	echo "Activation num: $activation"
-	randomNum 10 1
+	randomNum 10 7
 	sqr_norm_lim=$?
 	echo "sqr_norm_lim --- $sqr_norm_lim"
 	echo "Starting job with batch size: $bs, dropout: $dropout, conv_non_linear: $cnl lr_decay: $lr_decay in mode: $mode on GPU: $GPU"
