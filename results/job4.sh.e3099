@@ -1,0 +1,11 @@
+Using gpu device 2: GeForce GTX TITAN X (CNMeM is enabled with initial size: 50.0% of memory, cuDNN not available)
+INFO (theano.gof.compilelock): Waiting for existing lock by process '150046' (I am process '150047')
+INFO (theano.gof.compilelock): To manually release the lock, delete /tmp/s1045064/theano/compiledir_Linux-3.10-el7.x86_64-x86_64-with-redhat-7.2-Nitrogen-x86_64-2.7.5-64/lock_dir
+INFO (theano.gof.compilelock): Waiting for existing lock by process '150046' (I am process '150047')
+INFO (theano.gof.compilelock): To manually release the lock, delete /tmp/s1045064/theano/compiledir_Linux-3.10-el7.x86_64-x86_64-with-redhat-7.2-Nitrogen-x86_64-2.7.5-64/lock_dir
+INFO (theano.gof.compilelock): Waiting for existing lock by process '150046' (I am process '150047')
+INFO (theano.gof.compilelock): To manually release the lock, delete /tmp/s1045064/theano/compiledir_Linux-3.10-el7.x86_64-x86_64-with-redhat-7.2-Nitrogen-x86_64-2.7.5-64/lock_dir
+INFO (theano.gof.compilelock): Waiting for existing lock by process '150046' (I am process '150047')
+INFO (theano.gof.compilelock): To manually release the lock, delete /tmp/s1045064/theano/compiledir_Linux-3.10-el7.x86_64-x86_64-with-redhat-7.2-Nitrogen-x86_64-2.7.5-64/lock_dir
+INFO (theano.gof.compilelock): Waiting for existing lock by process '150046' (I am process '150047')
+INFO (theano.gof.compilelock): To manually release the lock, delete /tmp/s1045064/theano/compiledir_Linux-3.10-el7.x86_64-x86_64-with-redhat-7.2-Nitrogen-x86_64-2.7.5-64/lock_dir
