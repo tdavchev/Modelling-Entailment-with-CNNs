@@ -601,6 +601,7 @@ if __name__=="__main__":
     batch_size_f = int(batch_size_f)
     dropout_rate_f = sys.argv[4]
     dropout_rate_f = float(dropout_rate_f)
+    dropout_rate_f /= 100 
     conv_non_linear_f = sys.argv[5]
     modeOp = sys.argv[6]
     lr_decay = sys.argv[7]
