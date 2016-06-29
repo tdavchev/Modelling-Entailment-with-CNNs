@@ -646,7 +646,7 @@ if __name__=="__main__":
     sys.stdout.flush()
     print non_static, batch_size_f,dropout_rate_f, len(datasets[0])
     sys.stdout.flush()
-    activations = [Relu, Sigmoid, Tanh, Iden]
+    activations = [ReLU, Sigmoid, Tanh, Iden]
     perf= train_conv_net(datasets,
        U,
        img_w=300,
