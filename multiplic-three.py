@@ -596,37 +596,37 @@ if __name__=="__main__":
     word_vectors = sys.argv[2]
 
     # Parameters
-    # batch_size_f = sys.argv[3]
-    # batch_size_f = int(batch_size_f)
-    # dropout_rate_f = sys.argv[4]
-    # dropout_rate_f = float(dropout_rate_f)
-    # dropout_rate_f /= 100 
-    # conv_non_linear_f = sys.argv[5]
-    # modeOp = sys.argv[6]
-    # lr_decay = sys.argv[7]
-    # lr_decay = float(lr_decay)
-    # lr_decay /= 100
-    # alpha = sys.argv[8]
-    # alpha = float(alpha)
-    # alpha /= 100
-    # beta = sys.argv[9]
-    # beta = float(beta)
-    # beta /= 100
-    # whichAct = sys.argv[10]
-    # whichAct = int(whichAct)-1
-    # sqr_norm_lim = sys.argv[11]
-    # sqr_norm_lim = int(sqr_norm_lim)
+    batch_size_f = sys.argv[3]
+    batch_size_f = int(batch_size_f)
+    dropout_rate_f = sys.argv[4]
+    dropout_rate_f = float(dropout_rate_f)
+    dropout_rate_f /= 100 
+    conv_non_linear_f = sys.argv[5]
+    modeOp = sys.argv[6]
+    lr_decay = sys.argv[7]
+    lr_decay = float(lr_decay)
+    lr_decay /= 100
+    alpha = sys.argv[8]
+    alpha = float(alpha)
+    alpha /= 100
+    beta = sys.argv[9]
+    beta = float(beta)
+    beta /= 100
+    whichAct = sys.argv[10]
+    whichAct = int(whichAct)-1
+    sqr_norm_lim = sys.argv[11]
+    sqr_norm_lim = int(sqr_norm_lim)
 
     # # Test Params
-    batch_size_f = 75
-    dropout_rate_f = 0.5
-    conv_non_linear_f = "relu"
-    modeOp = "mul"
-    lr_decay = 0.95
-    alpha = 1
-    beta = 1
-    whichAct = 3
-    sqr_norm_lim = 9
+    # batch_size_f = 75
+    # dropout_rate_f = 0.5
+    # conv_non_linear_f = "relu"
+    # modeOp = "add"
+    # lr_decay = 0.95
+    # alpha = 1
+    # beta = 1
+    # whichAct = 3
+    # sqr_norm_lim = 9
 
     
 
@@ -662,19 +662,19 @@ if __name__=="__main__":
        U,
        img_w=300,
        filter_hs=[3,4,5],
-       hidden_units=[200,3],
-       dropout_rate=[0.2],
+       hidden_units=[100,3],
+       dropout_rate=[dropout_rate_f],
        shuffle_batch=True,
        n_epochs=25,
-       batch_size=200,
-       lr_decay = 0.95,
-       conv_non_linear='relu',
-       activations=[Iden],
-       sqr_norm_lim=9,
+       batch_size=batch_size_f,
+       lr_decay = lr_decay,
+       conv_non_linear=conv_non_linear_f,
+       activations=[activations[whichAct]],
+       sqr_norm_lim=sqr_norm_lim,
        non_static=non_static,
-       modeOp="mul",
-       alpha=1,
-       beta=1)
+       modeOp=modeOp,
+       alpha=alpha,
+       beta=beta)
 
 
     results.append(perf)
