@@ -173,7 +173,6 @@ def train_conv_net(datasets,
     layer1_input = T.concatenate(lista,1)
 
     layer1_cnn_input = layer1_input.reshape((-1,10,30))
-    wup = layer1_cnn_input.shape
 
     # hidden_units[0] = feature_maps*len(filter_hs)*2 # 600
 
@@ -287,7 +286,7 @@ def train_conv_net(datasets,
                 x: train_set_x[index * batch_size: (index + 1) * batch_size],
                  y: train_set_y[index * batch_size: (index + 1) * batch_size]},
                                  allow_input_downcast=True)
-    train_model = theano.function([index], [cost,wup], updates=grad_updates,
+    train_model = theano.function([index], cost, updates=grad_updates,
           givens={
             x: train_set_x[index*batch_size:(index+1)*batch_size],
               y: train_set_y[index*batch_size:(index+1)*batch_size]},
@@ -362,8 +361,7 @@ def train_conv_net(datasets,
         if shuffle_batch:
             for minibatch_index in np.random.permutation(range(n_train_batches)):
                 # cost_epoch = train_model(minibatch_index) #2-4 conv 1 is output
-                cost_epoch,wup = train_model(minibatch_index)
-                print wup
+                cost_epoch = train_model(minibatch_index)
                 set_zero(zero_vec)
         else:
             for minibatch_index in xrange(n_train_batches):
@@ -606,6 +604,7 @@ if __name__=="__main__":
     modeOp = sys.argv[6]
     lr_decay = sys.argv[7]
     lr_decay = float(lr_decay)
+    lr_decay /= 100
     alpha = sys.argv[8]
     alpha = float(alpha)
     alpha /= 100
@@ -616,6 +615,17 @@ if __name__=="__main__":
     whichAct = int(whichAct)-1
     sqr_norm_lim = sys.argv[11]
     sqr_norm_lim = int(sqr_norm_lim)
+
+    # # Test Params
+    # batch_size_f = 50
+    # dropout_rate_f = 0.5
+    # conv_non_linear_f = "relu"
+    # modeOp = "convc"
+    # lr_decay = 0.95
+    # alpha = 1
+    # beta = 1
+    # whichAct = 3
+    # sqr_norm_lim = 9
 
     
 
