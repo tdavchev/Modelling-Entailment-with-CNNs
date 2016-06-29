@@ -542,7 +542,7 @@ def make_idx_data(revs, word_idx_map, max_l=81, k=300, filter_h=5):
     test = np.array(test,dtype="int")
     valid = np.array(valid,dtype="int")
 
-    return [train[:100], valid[:10], test[:10]]
+    return [train, valid, test]
 
 def store_sent(batches, num, datasets):
     p_sento_finale = []
@@ -657,7 +657,7 @@ if __name__=="__main__":
        batch_size=batch_size_f,
        lr_decay = lr_decay,
        conv_non_linear=conv_non_linear_f,
-       activations=activations[whichAct],
+       activations=[activations[whichAct]],
        sqr_norm_lim=sqr_norm_lim,
        non_static=non_static,
        modeOp=modeOp,
