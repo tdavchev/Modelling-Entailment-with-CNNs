@@ -33,9 +33,9 @@ number=$RANDOM
 	#+ (right shifts out everything except last binary digit).
 	if [ "$number" -eq $T ]
 	then
-  		return "Relu"
+  		return $1
 	else
-  		return "FALSE"
+  		return $2
 	fi
 
 	echo
@@ -62,8 +62,10 @@ do
 	GPU=$((GPU+1))
 	if [ $GPU -eq 3 ]; then
 		GPU=0
-	fi
+	fia
 	let "count=$count+1"
+	randomBinary "add" "mul"
+	mode=$?
 	randomNum 65 10
 	dropout=$?
 	echo "Dropout is --- $dropout"
