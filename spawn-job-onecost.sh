@@ -14,10 +14,10 @@ for bs in 50; do  #150 250; do
 		          		echo "Starting Model 2 with 3 CNNs"
 						qsub -v BATCH_SIZE_F=$1,DROPOUT_F=$2,CNL_F=$3,GPU_NO=$4 job3.sh
 					else
-						if [ $lr_decay -neq 0.9 ] && [ $cnl -neq "relu" ] && [ $mode -neq "mul" ]; then
-							if [ $lr_decay -neq 0.9 ] && [ $cnl -neq "relu" ] [ $mode -neq "add" ]; then
-								if [ $lr_decay -neq 0.95 ] && [ $cnl -neq "relu" ] [ $mode -neq "mul" ]; then
-									if [ $lr_decay -neq 0.9 ] && [ $cnl -neq "tanh" ] && [ $mode -neq "mul" ]; then
+						if [ $lr_decay -ne 0.9 ] && [ $cnl -ne "relu" ] && [ $mode -ne "mul" ]; then
+							if [ $lr_decay -ne 0.9 ] && [ $cnl -ne "relu" ] [ $mode -ne "add" ]; then
+								if [ $lr_decay -ne 0.95 ] && [ $cnl -ne "relu" ] [ $mode -ne "mul" ]; then
+									if [ $lr_decay -ne 0.9 ] && [ $cnl -ne "tanh" ] && [ $mode -ne "mul" ]; then
 										echo "Starting Model 3 with MODE $mode"
 										qsub -v BATCH_SIZE_F=$bs,DROPOUT_F=$dropout,CNL_F=$cnl,GPU_NO=$GPU,MODE=$mode,LR_DECAY=$lr_decay job4.sh
 									fi
