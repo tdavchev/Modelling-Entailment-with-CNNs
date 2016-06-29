@@ -27,49 +27,49 @@ for bs in 50; do  #150 250; do
 				$mode="add"
 				echo "Starting job with batch size: $bs, dropout: $dropout, conv_non_linear: $cnl lr_decay: $lr_decay in mode: $mode on GPU: $GPU"
 				echo "Starting Model 3 with MODE $mode"
-				$FIRST='qsub -v BATCH_SIZE_F=$bs,DROPOUT_F=$dropout,CNL_F=$cnl,GPU_NO=$GPU,MODE=$mode,LR_DECAY=$lr_decay job4.sh'
+				$FIRST=qsub -v BATCH_SIZE_F=$bs,DROPOUT_F=$dropout,CNL_F=$cnl,GPU_NO=$GPU,MODE=$mode,LR_DECAY=$lr_decay job4.sh
 				echo $FIRST
 				$cnl="tanh"
 				$lr_decay=0.95
 				$mode="add"
 				echo "Starting job with batch size: $bs, dropout: $dropout, conv_non_linear: $cnl lr_decay: $lr_decay in mode: $mode on GPU: $GPU"
 				echo "Starting Model 3 with MODE $mode"
-				$SECOND='qsub -v BATCH_SIZE_F=$bs,DROPOUT_F=$dropout,CNL_F=$cnl,GPU_NO=$GPU,MODE=$mode,LR_DECAY=$lr_decay job4.sh'
+				$SECOND=qsub -v BATCH_SIZE_F=$bs,DROPOUT_F=$dropout,CNL_F=$cnl,GPU_NO=$GPU,MODE=$mode,LR_DECAY=$lr_decay job4.sh
 				echo $SECOND
 				$cnl="tanh"
 				$lr_decay=0.95
 				$mode="mul"
 				echo "Starting job with batch size: $bs, dropout: $dropout, conv_non_linear: $cnl lr_decay: $lr_decay in mode: $mode on GPU: $GPU"
 				echo "Starting Model 3 with MODE $mode"
-				$THIRD='qsub -v BATCH_SIZE_F=$bs,DROPOUT_F=$dropout,CNL_F=$cnl,GPU_NO=$GPU,MODE=$mode,LR_DECAY=$lr_decay job4.sh'
+				$THIRD=qsub -v BATCH_SIZE_F=$bs,DROPOUT_F=$dropout,CNL_F=$cnl,GPU_NO=$GPU,MODE=$mode,LR_DECAY=$lr_decay job4.sh
 				echo $THIRD
 				$cnl="tanh"
 				$lr_decay=0.94
 				$mode="mul"
 				echo "Starting job with batch size: $bs, dropout: $dropout, conv_non_linear: $cnl lr_decay: $lr_decay in mode: $mode on GPU: $GPU"
 				echo "Starting Model 3 with MODE $mode"
-				$FOURTH='qsub -W depend=afterok:$FIRST -v BATCH_SIZE_F=$bs,DROPOUT_F=$dropout,CNL_F=$cnl,GPU_NO=$GPU,MODE=$mode,LR_DECAY=$lr_decay job4.sh'
+				$FOURTH=qsub -W depend=afterok:$FIRST -v BATCH_SIZE_F=$bs,DROPOUT_F=$dropout,CNL_F=$cnl,GPU_NO=$GPU,MODE=$mode,LR_DECAY=$lr_decay job4.sh
 				echo $FOURTH
 				$cnl="tanh"
 				$lr_decay=0.94
 				$mode="add"
 				echo "Starting job with batch size: $bs, dropout: $dropout, conv_non_linear: $cnl lr_decay: $lr_decay in mode: $mode on GPU: $GPU"
 				echo "Starting Model 3 with MODE $mode"
-				$FIFTH='qsub -W depend=afterok:$SECOND -v BATCH_SIZE_F=$bs,DROPOUT_F=$dropout,CNL_F=$cnl,GPU_NO=$GPU,MODE=$mode,LR_DECAY=$lr_decay job4.sh'
+				$FIFTH=qsub -W depend=afterok:$SECOND -v BATCH_SIZE_F=$bs,DROPOUT_F=$dropout,CNL_F=$cnl,GPU_NO=$GPU,MODE=$mode,LR_DECAY=$lr_decay job4.sh
 				echo $FIFTH
 				$cnl="relu"
 				$lr_decay=0.94
 				$mode="add"
 				echo "Starting job with batch size: $bs, dropout: $dropout, conv_non_linear: $cnl lr_decay: $lr_decay in mode: $mode on GPU: $GPU"
 				echo "Starting Model 3 with MODE $mode"
-				$SIXTH='qsub -W depend=afterok:$THIRD -v BATCH_SIZE_F=$bs,DROPOUT_F=$dropout,CNL_F=$cnl,GPU_NO=$GPU,MODE=$mode,LR_DECAY=$lr_decay job4.sh'
+				$SIXTH=qsub -W depend=afterok:$THIRD -v BATCH_SIZE_F=$bs,DROPOUT_F=$dropout,CNL_F=$cnl,GPU_NO=$GPU,MODE=$mode,LR_DECAY=$lr_decay job4.sh
 				echo $SIXTH
 				$cnl="relu"
 				$lr_decay=0.94
 				$mode="mul"
 				echo "Starting job with batch size: $bs, dropout: $dropout, conv_non_linear: $cnl lr_decay: $lr_decay in mode: $mode on GPU: $GPU"
 				echo "Starting Model 3 with MODE $mode"
-				$SEVENTH='qsub -v BATCH_SIZE_F=$bs,DROPOUT_F=$dropout,CNL_F=$cnl,GPU_NO=$GPU,MODE=$mode,LR_DECAY=$lr_decay job4.sh'
+				$SEVENTH=qsub -v BATCH_SIZE_F=$bs,DROPOUT_F=$dropout,CNL_F=$cnl,GPU_NO=$GPU,MODE=$mode,LR_DECAY=$lr_decay job4.sh
 				echo $SEVENTH
 				# 			fi
 				# 		fi
