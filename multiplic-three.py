@@ -129,7 +129,14 @@ def train_conv_net(datasets,
     if modeOp == "mul":
         layer1_input = T.mul(one_layers,two_layers)
     elif modeOp == "add":
-        layer1_input = T.add(alpha*one_layers,beta*two_layers)
+        a = np.ndarray(shape=(len(one_layers),batch_size,feature_maps), dtype='float32')
+        a.fill(alpha)
+        b = np.ndarray(shape=(len(two_layers),batch_size,feature_maps), dtype='float32')
+        b.fill(beta)
+        one_layers = T.mul(one_layers,a)
+        two_layers = T.mul(two_layers,b)
+        layer1_input = T.add(one_layers,two_layers)
+
     # else:
     #     for idx in xrange(len(one_layers)):
     #         batch = []
@@ -286,7 +293,13 @@ def train_conv_net(datasets,
     if modeOp == "mul":
         test_pred_layers_mul = T.mul(test_pred_layers_one,test_pred_layers_two)
     elif modeOp == "add":
-        test_pred_layers_mul = T.add(alpha*test_pred_layers_one,beta*test_pred_layers_two)
+        test_a = np.ndarray(shape=(len(test_pred_layers_one),batch_size,feature_maps), dtype='float32')
+        test_a.fill(alpha)
+        test_b = np.ndarray(shape=(len(test_pred_layers_two),batch_size,feature_maps), dtype='float32')
+        test_b.fill(beta)
+        test_pred_layers_one = T.mul(test_pred_layers_one,test_a)
+        test_pred_layers_two = T.mul(test_pred_layers_two,test_b)
+        test_pred_layers_mul = T.add(test_pred_layers_one,test_pred_layers_two)
 
     test_pred_layers = []
     for idx in xrange(0,3):
@@ -485,7 +498,7 @@ def make_idx_data(revs, word_idx_map, max_l=81, k=300, filter_h=5):
     test = np.array(test,dtype="int")
     valid = np.array(valid,dtype="int")
 
-    return [train, valid, test]
+    return [train[:1000], valid[:100], test[:100]]
 
 def store_sent(batches, num, datasets):
     p_sento_finale = []
@@ -592,8 +605,8 @@ if __name__=="__main__":
        sqr_norm_lim=9,
        non_static=True,
        modeOp=modeOp,
-       alpha=1,
-       beta=1)
+       alpha=0.4,
+       beta=0.6)
 
 
     results.append(perf)
