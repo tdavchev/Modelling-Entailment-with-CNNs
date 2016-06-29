@@ -13,6 +13,7 @@ import numpy as np
 from collections import defaultdict, OrderedDict
 import theano
 import theano.tensor as T
+import theano.tensor.signal.conv
 import re
 import warnings
 import sys
@@ -72,7 +73,7 @@ def train_conv_net(datasets,
     parameters = [("image shape",img_h,img_w),("filter shape",filter_shapes), ("hidden_units",hidden_units),
                   ("dropout", dropout_rate), ("batch_size",batch_size),("non_static", non_static),
                     ("learn_decay",lr_decay), ("conv_non_linear", conv_non_linear), ("non_static", non_static)
-                    ,("sqr_norm_lim",sqr_norm_lim),("shuffle_batch",shuffle_batch),("mode",mode), ("alpha",alpha),("beta",beta)]
+                    ,("sqr_norm_lim",sqr_norm_lim),("shuffle_batch",shuffle_batch),("mode",modeOp), ("alpha",alpha),("beta",beta)]
     print parameters
     sys.stdout.flush()
     #define model architecture
@@ -104,7 +105,7 @@ def train_conv_net(datasets,
         layer1_input = conv_layer.output.flatten(2)
         first_conv_layers.append(conv_layer)
         one_layers.append(layer1_input)
-        # layer1_inputs.append(layer1_input)
+        layer1_inputs.append(layer1_input)
 
 
     # SECOND CNN
@@ -117,11 +118,17 @@ def train_conv_net(datasets,
         layer1_input = conv_layer.output.flatten(2)
         second_conv_layers.append(conv_layer)
         two_layers.append(layer1_input)
-        # layer1_inputs.append(layer1_input)
+        layer1_inputs.append(layer1_input)
 
 
     # layer1_input = T.concatenate(layer1_inputs,1)
     # layer1_cnn_input = layer1_input.reshape((-1,12,50))
+    # entry_one = T.dmatrix()
+    # entry_two = T.dmatrix()
+
+    entry_one = T.dmatrix()
+    entry_two = T.dmatrix()
+    cc = theano.function([entry_one, entry_two], circular_crosscorelation(entry_one, entry_two), allow_input_downcast = True)
 
     # elementwise multiplication
     lista =[]
@@ -136,25 +143,37 @@ def train_conv_net(datasets,
         one_layers = T.mul(one_layers,a)
         two_layers = T.mul(two_layers,b)
         layer1_input = T.add(one_layers,two_layers)
-
     # else:
-    #     for idx in xrange(len(one_layers)):
-    #         batch = []
-    #         for batch_item_no in xrange(0 len(one_layers[idx])):
-    #             row_from_batch = []
-    #             for i in xrange(0, len(one_layers[idx][batch_item_no])):
-    #                 u = i + 1
-    #                 row_from_batch.append(one_layers[idx][batch_item_no][i]*two_layers[idx][batch_item_no][:-u])
+    #     layer1_input = T.concatenate(layer1_inputs,1)
+    #     layer1_cnn_input = layer1_input.reshape((-1,600))
+    #     for idx in xrange(0, len(datasets[0])):
+    #         cc(layer1_cnn_input[idx][:300],layer1_input[idx][300:])
 
-    #             batch.append(row_from_batch)
-                
-    #         layer1_input.append(batch)
 
+
+            
+        # for idx in xrange(0,3):
+        #     # cross_c = theano.function([one_layers[idx], two_layers[idx]], circular_crosscorelation(a, b))
+
+        #     a = T.cast(one_layers[idx].flatten(),dtype="int32")
+        #     b = T.cast(two_layers[idx].flatten(),dtype="int32")
+        #     of, updates = theano.scan(fn=lambda a,b:circular_crosscorelation(a,b),
+        #         outputs_info=T.ones_like(a),
+        #             non_sequences=[a,b],
+        #             n_steps=1)
+        #     result = of[-1]
+        #     cross_c = theano.function(inputs=[a,b], outputs=result, updates=updates)
+        #     blah,updates = cross_c(a,b)
+        #     layer1_input.append(blah)
+
+
+        # !!!!!!!!! IMPORTANT UNCOMMENT !!!!!!!
     for idx in xrange(0,3):
         lista.append(layer1_input[idx])
     layer1_input = T.concatenate(lista,1)
 
     layer1_cnn_input = layer1_input.reshape((-1,10,30))
+    wup = layer1_cnn_input.shape
 
     # hidden_units[0] = feature_maps*len(filter_hs)*2 # 600
 
@@ -268,7 +287,7 @@ def train_conv_net(datasets,
                 x: train_set_x[index * batch_size: (index + 1) * batch_size],
                  y: train_set_y[index * batch_size: (index + 1) * batch_size]},
                                  allow_input_downcast=True)
-    train_model = theano.function([index], cost, updates=grad_updates,
+    train_model = theano.function([index], [cost,wup], updates=grad_updates,
           givens={
             x: train_set_x[index*batch_size:(index+1)*batch_size],
               y: train_set_y[index*batch_size:(index+1)*batch_size]},
@@ -343,7 +362,8 @@ def train_conv_net(datasets,
         if shuffle_batch:
             for minibatch_index in np.random.permutation(range(n_train_batches)):
                 # cost_epoch = train_model(minibatch_index) #2-4 conv 1 is output
-                cost_epoch = train_model(minibatch_index)
+                cost_epoch,wup = train_model(minibatch_index)
+                print wup
                 set_zero(zero_vec)
         else:
             for minibatch_index in xrange(n_train_batches):
@@ -361,6 +381,30 @@ def train_conv_net(datasets,
             test_perf = 1- test_loss
 
     return test_perf
+
+def circular_crosscorelation(X, y):
+    """ 
+    Input:
+        symbols for X [n, m]
+        and y[m,]
+
+    Returns: 
+        symbol for circular cross corelation of each of row in X with 
+        cc[n, m]
+
+    http://blogs.candoerz.com/question/135995/circular-correlation-in-theano.aspx
+    """
+    n, m = X.shape
+    corr_expr = T.signal.conv.conv2d(X, y[::-1].reshape((1, -1)), image_shape=(1, m), border_mode='full')
+    corr_len = corr_expr.shape[1]
+    pad = m - corr_len%m
+    v_padded = T.concatenate([corr_expr, T.zeros((n, pad))], axis=1)
+    circ_corr_exp = T.sum(v_padded.reshape((n, v_padded.shape[1] / m, m)), axis=1)
+
+    return circ_corr_exp[:, ::-1]
+
+
+# print cc( np.array([[0, 6, 2, 10, 4]]), np.array([[1, 8, 4, 4, 0]]) )
 
 def shared_dataset(data_xy, borrow=True):
         """ Function that loads the dataset into shared variables
@@ -498,7 +542,7 @@ def make_idx_data(revs, word_idx_map, max_l=81, k=300, filter_h=5):
     test = np.array(test,dtype="int")
     valid = np.array(valid,dtype="int")
 
-    return [train[:1000], valid[:100], test[:100]]
+    return [train[:100], valid[:10], test[:10]]
 
 def store_sent(batches, num, datasets):
     p_sento_finale = []
@@ -561,6 +605,17 @@ if __name__=="__main__":
     modeOp = sys.argv[6]
     lr_decay = sys.argv[7]
     lr_decay = float(lr_decay)
+    alpha = sys.argv[8]
+    alpha = float(alpha)
+    alpha /= 100
+    beta = sys.argv[9]
+    beta = float(beta)
+    beta /= 100
+    whichAct = sys.argv[10]
+    whichAct = int(whichAct)-1
+    sqr_norm_lim = sys.argv[11]
+    sqr_norm_lim = int(sqr_norm_lim)
+
     
 
     if mode=="-nonstatic":
@@ -590,6 +645,7 @@ if __name__=="__main__":
     sys.stdout.flush()
     print non_static, batch_size_f,dropout_rate_f, len(datasets[0])
     sys.stdout.flush()
+    activations = [Relu, Sigmoid, Tanh, Iden]
     perf= train_conv_net(datasets,
        U,
        img_w=300,
@@ -601,12 +657,12 @@ if __name__=="__main__":
        batch_size=batch_size_f,
        lr_decay = lr_decay,
        conv_non_linear=conv_non_linear_f,
-       activations=[Iden],
-       sqr_norm_lim=9,
-       non_static=True,
+       activations=activations[whichAct],
+       sqr_norm_lim=sqr_norm_lim,
+       non_static=non_static,
        modeOp=modeOp,
-       alpha=0.4,
-       beta=0.6)
+       alpha=alpha,
+       beta=beta)
 
 
     results.append(perf)
