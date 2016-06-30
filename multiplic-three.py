@@ -133,6 +133,7 @@ def train_conv_net(datasets,
     # elementwise multiplication
     lista =[]
     layer1_input = []
+    layer1_inputtttttt = []
     if modeOp == "mul":
         layer1_input = T.mul(one_layers,two_layers)
     elif modeOp == "add":
@@ -143,36 +144,31 @@ def train_conv_net(datasets,
         one_layers = T.mul(one_layers,a)
         two_layers = T.mul(two_layers,b)
         layer1_input = T.add(one_layers,two_layers)
-    # else:
-    #     layer1_input = T.concatenate(layer1_inputs,1)
-    #     layer1_cnn_input = layer1_input.reshape((-1,600))
-    #     for idx in xrange(0, len(datasets[0])):
-    #         cc(layer1_cnn_input[idx][:300],layer1_input[idx][300:])
-
-
-
+    else:
+        # layer1_input = T.concatenate(layer1_inputs,1)
+        first = []
+        second = []
+        for idx in xrange(0,3):
+            first.append(one_layers[idx])
+            second.append(two_layers[idx])
+        layer1_one = T.concatenate(first,1)
+        layer1_two = T.concatenate(second,1)
+        corr_expr = T.signal.conv.conv2d(layer1_one, layer1_two[::-1].reshape((1, -1)), image_shape=(1, 300), border_mode='full')
+        corr_len = 300
+        pad = 300 - corr_len%300    
+        v_padded = T.concatenate([corr_expr, T.zeros((1, pad))], axis=1)
+        circ_corr_exp = T.sum(v_padded.reshape((1, v_padded.shape[1] / 300, 300)), axis=1)
+        o=circ_corr_exp[:, ::-1]
             
-        # for idx in xrange(0,3):
-        #     # cross_c = theano.function([one_layers[idx], two_layers[idx]], circular_crosscorelation(a, b))
 
-        #     a = T.cast(one_layers[idx].flatten(),dtype="int32")
-        #     b = T.cast(two_layers[idx].flatten(),dtype="int32")
-        #     of, updates = theano.scan(fn=lambda a,b:circular_crosscorelation(a,b),
-        #         outputs_info=T.ones_like(a),
-        #             non_sequences=[a,b],
-        #             n_steps=1)
-        #     result = of[-1]
-        #     cross_c = theano.function(inputs=[a,b], outputs=result, updates=updates)
-        #     blah,updates = cross_c(a,b)
-        #     layer1_input.append(blah)
+    layer1_cnn_input = o.reshape((-1,10,30))
 
 
         # !!!!!!!!! IMPORTANT UNCOMMENT !!!!!!!
-    for idx in xrange(0,3):
-        lista.append(layer1_input[idx])
-    layer1_input = T.concatenate(lista,1)
+    # for idx in xrange(0,3):
+    #     lista.append(layer1_inputtttttt[idx])
+    # layer1_input = T.concatenate(o,1)
 
-    layer1_cnn_input = layer1_input.reshape((-1,10,30))
 
     # hidden_units[0] = feature_maps*len(filter_hs)*2 # 600
 
@@ -318,13 +314,32 @@ def train_conv_net(datasets,
         test_pred_layers_one = T.mul(test_pred_layers_one,test_a)
         test_pred_layers_two = T.mul(test_pred_layers_two,test_b)
         test_pred_layers_mul = T.add(test_pred_layers_one,test_pred_layers_two)
+    else:
+        # layer1_input = T.concatenate(layer1_inputs,1)
+        test_layer_one = []
+        test_layer_two = []
+        for idx in xrange(0,3):
+            test_layer_one.append(test_pred_layers_one[idx])
+            test_layer_two.append(test_pred_layers_two[idx])
+        test_layer_one = T.concatenate(test_layer_one,1)
+        test_layer_two = T.concatenate(test_layer_two,1)
+        test_corr_expr = T.signal.conv.conv2d(test_layer_one, test_layer_two[::-1].reshape((1, -1)), image_shape=(1, 300), border_mode='full')
+        corr_len = 300
+        pad = 300 - corr_len%300    
+        test_v_padded = T.concatenate([test_corr_expr, T.zeros((1, pad))], axis=1)
+        test_circ_corr_exp = T.sum(test_v_padded.reshape((1, test_v_padded.shape[1] / 300, 300)), axis=1)
+        test_pred_layers=test_circ_corr_exp[:, ::-1]
+            
+    
+    test_layer1_cnn_input = layer1_cnn_input.reshape((-1,10,30))
 
     test_pred_layers = []
-    for idx in xrange(0,3):
-        test_pred_layers.append(test_pred_layers_mul[idx])
-
-    test_layer1_input = T.concatenate(test_pred_layers, 1)
-    test_layer1_cnn_input = test_layer1_input.reshape((-1,10,30))
+    if modeOp == "mul" or modeOp == "add":
+        for idx in xrange(0,3):
+            test_pred_layers.append(test_pred_layers_mul[idx])
+            
+        test_layer1_input = T.concatenate(test_pred_layers, 1)
+        test_layer1_cnn_input = test_layer1_input.reshape((-1,10,30))
 
 
     img_w = 30
@@ -392,6 +407,7 @@ def circular_crosscorelation(X, y):
 
     http://blogs.candoerz.com/question/135995/circular-correlation-in-theano.aspx
     """
+    print X.shape
     n, m = X.shape
     corr_expr = T.signal.conv.conv2d(X, y[::-1].reshape((1, -1)), image_shape=(1, m), border_mode='full')
     corr_len = corr_expr.shape[1]
@@ -596,37 +612,37 @@ if __name__=="__main__":
     word_vectors = sys.argv[2]
 
     # Parameters
-    batch_size_f = sys.argv[3]
-    batch_size_f = int(batch_size_f)
-    dropout_rate_f = sys.argv[4]
-    dropout_rate_f = float(dropout_rate_f)
-    dropout_rate_f /= 100 
-    conv_non_linear_f = sys.argv[5]
-    modeOp = sys.argv[6]
-    lr_decay = sys.argv[7]
-    lr_decay = float(lr_decay)
-    lr_decay /= 100
-    alpha = sys.argv[8]
-    alpha = float(alpha)
-    alpha /= 100
-    beta = sys.argv[9]
-    beta = float(beta)
-    beta /= 100
-    whichAct = sys.argv[10]
-    whichAct = int(whichAct)-1
-    sqr_norm_lim = sys.argv[11]
-    sqr_norm_lim = int(sqr_norm_lim)
+    # batch_size_f = sys.argv[3]
+    # batch_size_f = int(batch_size_f)
+    # dropout_rate_f = sys.argv[4]
+    # dropout_rate_f = float(dropout_rate_f)
+    # dropout_rate_f /= 100 
+    # conv_non_linear_f = sys.argv[5]
+    # modeOp = sys.argv[6]
+    # lr_decay = sys.argv[7]
+    # lr_decay = float(lr_decay)
+    # lr_decay /= 100
+    # alpha = sys.argv[8]
+    # alpha = float(alpha)
+    # alpha /= 100
+    # beta = sys.argv[9]
+    # beta = float(beta)
+    # beta /= 100
+    # whichAct = sys.argv[10]
+    # whichAct = int(whichAct)-1
+    # sqr_norm_lim = sys.argv[11]
+    # sqr_norm_lim = int(sqr_norm_lim)
 
     # # Test Params
-    # batch_size_f = 75
-    # dropout_rate_f = 0.5
-    # conv_non_linear_f = "relu"
-    # modeOp = "add"
-    # lr_decay = 0.95
-    # alpha = 1
-    # beta = 1
-    # whichAct = 3
-    # sqr_norm_lim = 9
+    batch_size_f = 75
+    dropout_rate_f = 0.5
+    conv_non_linear_f = "relu"
+    modeOp = "crossc"
+    lr_decay = 0.95
+    alpha = 1
+    beta = 1
+    whichAct = 3
+    sqr_norm_lim = 9
 
     
 
@@ -658,23 +674,40 @@ if __name__=="__main__":
     print non_static, batch_size_f,dropout_rate_f, len(datasets[0])
     sys.stdout.flush()
     activations = [ReLU, Sigmoid, Tanh, Iden]
+    # perf= train_conv_net(datasets,
+    #    U,
+    #    img_w=300,
+    #    filter_hs=[3,4,5],
+    #    hidden_units=[100,3],
+    #    dropout_rate=[dropout_rate_f],
+    #    shuffle_batch=True,
+    #    n_epochs=25,
+    #    batch_size=batch_size_f,
+    #    lr_decay = lr_decay,
+    #    conv_non_linear=conv_non_linear_f,
+    #    activations=[activations[whichAct]],
+    #    sqr_norm_lim=sqr_norm_lim,
+    #    non_static=non_static,
+    #    modeOp=modeOp,
+    #    alpha=alpha,
+    #    beta=beta)
     perf= train_conv_net(datasets,
        U,
        img_w=300,
        filter_hs=[3,4,5],
        hidden_units=[100,3],
-       dropout_rate=[dropout_rate_f],
+       dropout_rate=[0.29],
        shuffle_batch=True,
        n_epochs=25,
-       batch_size=batch_size_f,
-       lr_decay = lr_decay,
-       conv_non_linear=conv_non_linear_f,
-       activations=[activations[whichAct]],
-       sqr_norm_lim=sqr_norm_lim,
+       batch_size=200,
+       lr_decay = 0.93,
+       conv_non_linear='relu',
+       activations=[Tanh],
+       sqr_norm_lim=9,
        non_static=non_static,
-       modeOp=modeOp,
-       alpha=alpha,
-       beta=beta)
+       modeOp='add',
+       alpha=0.4,
+       beta=0.6)
 
 
     results.append(perf)
