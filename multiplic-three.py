@@ -73,7 +73,7 @@ def train_conv_net(datasets,
     parameters = [("image shape",img_h,img_w),("filter shape",filter_shapes), ("hidden_units",hidden_units),
                   ("dropout", dropout_rate), ("batch_size",batch_size),("non_static", non_static),
                     ("learn_decay",lr_decay), ("conv_non_linear", conv_non_linear), ("non_static", non_static)
-                    ,("sqr_norm_lim",sqr_norm_lim),("shuffle_batch",shuffle_batch),("mode",modeOp), ("alpha",alpha),("beta",beta)]
+                    ,("sqr_norm_lim",sqr_norm_lim),("shuffle_batch",shuffle_batch),("mode",modeOp), ("alpha",alpha),("beta",beta),("activations",activations)]
     print parameters
     sys.stdout.flush()
     #define model architecture
@@ -612,37 +612,37 @@ if __name__=="__main__":
     word_vectors = sys.argv[2]
 
     # Parameters
-    # batch_size_f = sys.argv[3]
-    # batch_size_f = int(batch_size_f)
-    # dropout_rate_f = sys.argv[4]
-    # dropout_rate_f = float(dropout_rate_f)
-    # dropout_rate_f /= 100 
-    # conv_non_linear_f = sys.argv[5]
-    # modeOp = sys.argv[6]
-    # lr_decay = sys.argv[7]
-    # lr_decay = float(lr_decay)
-    # lr_decay /= 100
-    # alpha = sys.argv[8]
-    # alpha = float(alpha)
-    # alpha /= 100
-    # beta = sys.argv[9]
-    # beta = float(beta)
-    # beta /= 100
-    # whichAct = sys.argv[10]
-    # whichAct = int(whichAct)-1
-    # sqr_norm_lim = sys.argv[11]
-    # sqr_norm_lim = int(sqr_norm_lim)
+    batch_size_f = sys.argv[3]
+    batch_size_f = int(batch_size_f)
+    dropout_rate_f = sys.argv[4]
+    dropout_rate_f = float(dropout_rate_f)
+    dropout_rate_f /= 100 
+    conv_non_linear_f = sys.argv[5]
+    modeOp = sys.argv[6]
+    lr_decay = sys.argv[7]
+    lr_decay = float(lr_decay)
+    lr_decay /= 100
+    alpha = sys.argv[8]
+    alpha = float(alpha)
+    alpha /= 100
+    beta = sys.argv[9]
+    beta = float(beta)
+    beta /= 100
+    whichAct = sys.argv[10]
+    whichAct = int(whichAct)-1
+    sqr_norm_lim = sys.argv[11]
+    sqr_norm_lim = int(sqr_norm_lim)
 
     # # Test Params
-    batch_size_f = 75
-    dropout_rate_f = 0.5
-    conv_non_linear_f = "relu"
-    modeOp = "crossc"
-    lr_decay = 0.95
-    alpha = 1
-    beta = 1
-    whichAct = 3
-    sqr_norm_lim = 9
+    #batch_size_f = 75
+    #dropout_rate_f = 0.5
+    #conv_non_linear_f = "relu"
+    #modeOp = "crossc"
+    #lr_decay = 0.95
+    #alpha = 1
+    #beta = 1
+    #whichAct = 3
+    #sqr_norm_lim = 9
 
     
 
@@ -674,23 +674,23 @@ if __name__=="__main__":
     print non_static, batch_size_f,dropout_rate_f, len(datasets[0])
     sys.stdout.flush()
     activations = [ReLU, Sigmoid, Tanh, Iden]
-    # perf= train_conv_net(datasets,
-    #    U,
-    #    img_w=300,
-    #    filter_hs=[3,4,5],
-    #    hidden_units=[100,3],
-    #    dropout_rate=[dropout_rate_f],
-    #    shuffle_batch=True,
-    #    n_epochs=25,
-    #    batch_size=batch_size_f,
-    #    lr_decay = lr_decay,
-    #    conv_non_linear=conv_non_linear_f,
-    #    activations=[activations[whichAct]],
-    #    sqr_norm_lim=sqr_norm_lim,
-    #    non_static=non_static,
-    #    modeOp=modeOp,
-    #    alpha=alpha,
-    #    beta=beta)
+    #perf= train_conv_net(datasets,
+    #   U,
+    #   img_w=300,
+    #   filter_hs=[3,4,5],
+    #   hidden_units=[100,3],
+    #   dropout_rate=[dropout_rate_f],
+    #   shuffle_batch=True,
+    #   n_epochs=25,
+    #   batch_size=batch_size_f,
+    #   lr_decay = lr_decay,
+    #   conv_non_linear=conv_non_linear_f,
+    #   activations=[activations[whichAct]],
+    #   sqr_norm_lim=sqr_norm_lim,
+    #   non_static=non_static,
+    #   modeOp=modeOp,
+    #   alpha=alpha,
+    #   beta=beta)
     perf= train_conv_net(datasets,
        U,
        img_w=300,
