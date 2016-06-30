@@ -1,0 +1,24 @@
+Using gpu device 2: GeForce GTX TITAN X (CNMeM is enabled with initial size: 50.0% of memory, cuDNN not available)
+Traceback (most recent call last):
+  File "/home/s1045064/dissertation/repo-diss/sentence-classification/multiplic-three.py", line 677, in <module>
+    beta=beta)
+  File "/home/s1045064/dissertation/repo-diss/sentence-classification/multiplic-three.py", line 378, in train_conv_net
+    test_loss = test_model_all(test_set_x,test_set_y)
+  File "/home/s1045064/dissertation/venv/lib/python2.7/site-packages/theano/compile/function_module.py", line 871, in __call__
+    storage_map=getattr(self.fn, 'storage_map', None))
+  File "/home/s1045064/dissertation/venv/lib/python2.7/site-packages/theano/gof/link.py", line 314, in raise_with_op
+    reraise(exc_type, exc_value, exc_trace)
+  File "/home/s1045064/dissertation/venv/lib/python2.7/site-packages/theano/compile/function_module.py", line 859, in __call__
+    outputs = self.fn()
+RuntimeError: GpuCorrMM failed to allocate working memory of 850000 x 1500
+
+Apply node that caused the error: GpuCorrMM_gradWeights{valid, (1, 1)}(GpuContiguous.0, GpuContiguous.0)
+Toposort index: 60
+Inputs types: [CudaNdarrayType(float32, (True, False, False, False)), CudaNdarrayType(float32, 4D)]
+Inputs shapes: [(1, 10000, 89, 300), (1, 100, 5, 300)]
+Inputs strides: [(0, 26700, 300, 1), (0, 1500, 300, 1)]
+Inputs values: ['not shown', 'not shown']
+Outputs clients: [[GpuDimShuffle{1,0,2,3}(GpuCorrMM_gradWeights{valid, (1, 1)}.0)]]
+
+HINT: Re-running with most Theano optimization disabled could give you a back-trace of when this node was created. This can be done with by setting the Theano flag 'optimizer=fast_compile'. If that does not work, Theano optimizations can be disabled with 'optimizer=None'.
+HINT: Use the Theano flag 'exception_verbosity=high' for a debugprint and storage map footprint of this apply node.
