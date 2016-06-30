@@ -161,14 +161,18 @@ def train_conv_net(datasets,
         o=circ_corr_exp[:, ::-1]
             
 
-    layer1_cnn_input = o.reshape((-1,10,30))
+    # layer1_cnn_input = o.reshape((-1,10,30))
 
 
         # !!!!!!!!! IMPORTANT UNCOMMENT !!!!!!!
     # for idx in xrange(0,3):
     #     lista.append(layer1_inputtttttt[idx])
     # layer1_input = T.concatenate(o,1)
+    for idx in xrange(0,3):
+         lista.append(layer1_input[idx])
+    layer1_input = T.concatenate(lista,1)
 
+    layer1_cnn_input = layer1_input.reshape((-1,10,30))
 
     # hidden_units[0] = feature_maps*len(filter_hs)*2 # 600
 
