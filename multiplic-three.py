@@ -126,9 +126,9 @@ def train_conv_net(datasets,
     # entry_one = T.dmatrix()
     # entry_two = T.dmatrix()
 
-    X = T.dmatrix()
-    y = T.dmatrix()
-    cc = theano.function([X, y], circular_crosscorelation(X, y), allow_input_downcast = True)
+    # X = T.dmatrix()
+    # y = T.dmatrix()
+    # cc = theano.function([X, y], circular_crosscorelation(X, y), allow_input_downcast = True)
 
     # elementwise multiplication
     lista =[]
@@ -561,8 +561,8 @@ def make_idx_data(revs, word_idx_map, max_l=81, k=300, filter_h=5):
     test = np.array(test,dtype="int")
     valid = np.array(valid,dtype="int")
 
-    return [train[:100], valid[:10], test[:10]]
-    # return [train, valid, test]
+    # return [train[:100], valid[:10], test[:10]]
+    return [train, valid, test]
 
 def store_sent(batches, num, datasets):
     p_sento_finale = []
@@ -617,37 +617,37 @@ if __name__=="__main__":
     word_vectors = sys.argv[2]
 
     # Parameters
-    # batch_size_f = sys.argv[3]
-    # batch_size_f = int(batch_size_f)
-    # dropout_rate_f = sys.argv[4]
-    # dropout_rate_f = float(dropout_rate_f)
-    # dropout_rate_f /= 100 
-    # conv_non_linear_f = sys.argv[5]
-    # modeOp = sys.argv[6]
-    # lr_decay = sys.argv[7]
-    # lr_decay = float(lr_decay)
-    # lr_decay /= 100
-    # alpha = sys.argv[8]
-    # alpha = float(alpha)
-    # alpha /= 100
-    # beta = sys.argv[9]
-    # beta = float(beta)
-    # beta /= 100
-    # whichAct = sys.argv[10]
-    # whichAct = int(whichAct)-1
-    # sqr_norm_lim = sys.argv[11]
-    # sqr_norm_lim = int(sqr_norm_lim)
+    batch_size_f = sys.argv[3]
+    batch_size_f = int(batch_size_f)
+    dropout_rate_f = sys.argv[4]
+    dropout_rate_f = float(dropout_rate_f)
+    dropout_rate_f /= 100 
+    conv_non_linear_f = sys.argv[5]
+    modeOp = sys.argv[6]
+    lr_decay = sys.argv[7]
+    lr_decay = float(lr_decay)
+    lr_decay /= 100
+    alpha = sys.argv[8]
+    alpha = float(alpha)
+    alpha /= 100
+    beta = sys.argv[9]
+    beta = float(beta)
+    beta /= 100
+    whichAct = sys.argv[10]
+    whichAct = int(whichAct)-1
+    sqr_norm_lim = sys.argv[11]
+    sqr_norm_lim = int(sqr_norm_lim)
 
     # # Test Params
-    batch_size_f = 50
-    dropout_rate_f = 0.5
-    conv_non_linear_f = "relu"
-    modeOp = "crossc"
-    lr_decay = 0.95
-    alpha = 1
-    beta = 1
-    whichAct = 3
-    sqr_norm_lim = 9
+    # batch_size_f = 50
+    # dropout_rate_f = 0.5
+    # conv_non_linear_f = "relu"
+    # modeOp = "add"
+    # lr_decay = 0.95
+    # alpha = 1
+    # beta = 1
+    # whichAct = 3
+    # sqr_norm_lim = 9
 
     
 
