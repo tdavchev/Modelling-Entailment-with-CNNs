@@ -95,8 +95,6 @@ def train_conv_net(datasets,
     two_layers = []
 
     # FIRST CNN
-
-
     for i in xrange(len(filter_hs)):
         filter_shape = filter_shapes[i]
         pool_size = pool_sizes[i]
@@ -109,7 +107,6 @@ def train_conv_net(datasets,
 
 
     # SECOND CNN
-
     for i in xrange(len(filter_hs)):
         filter_shape = filter_shapes[i]
         pool_size = pool_sizes[i]
@@ -137,13 +134,42 @@ def train_conv_net(datasets,
     if modeOp == "mul":
         layer1_input = T.mul(one_layers,two_layers)
     elif modeOp == "add":
-        a = np.ndarray(shape=(len(one_layers),batch_size,feature_maps), dtype='float32')
+        a = np.ndarray(shape=(batch_size,img_w), dtype='float32')
+        b = np.ndarray(shape=(batch_size,img_w), dtype='float32')
+
         a.fill(alpha)
-        b = np.ndarray(shape=(len(two_layers),batch_size,feature_maps), dtype='float32')
         b.fill(beta)
+
+        # a = T.shared(a)
+        # b = T.shared(b)
+
+        for idx in xrange(0,3):
+             lista.append(one_layers[idx])
+
+        one_layers = T.concatenate(lista,1)
+        lista = []
+
+        for idx in xrange(0,3):
+             lista.append(two_layers[idx])
+
+        two_layers = T.concatenate(lista,1)
+        lista = []
+
         one_layers = T.mul(one_layers,a)
         two_layers = T.mul(two_layers,b)
-        layer1_input = T.add(one_layers,two_layers)
+
+        layer1_input = T.add(one_layers,two_layers) # [50 300]
+
+        # a = np.ndarray(shape=(len(one_layers),batch_size,feature_maps), dtype='float32')
+        # a.fill(alpha)
+        # b = np.ndarray(shape=(len(two_layers),batch_size,feature_maps), dtype='float32')
+        # b.fill(beta)
+        # oooooooo = one_layers
+        # putki = oooooooo[0].shape
+        # one_layers = T.mul(one_layers,a)
+        # two_layers = T.mul(two_layers,b)
+        # layer1_input = T.add(one_layers,two_layers)
+        # putki = layer1_input.shape
     else:
         # layer1_input = T.concatenate(layer1_inputs,1)
         first = []
@@ -169,10 +195,12 @@ def train_conv_net(datasets,
     # for idx in xrange(0,3):
     #     lista.append(layer1_inputtttttt[idx])
     # layer1_input = T.concatenate(o,1)
-    if modeOp == "mul" or modeOp == "add":
+    if modeOp == "mul":
         for idx in xrange(0,3):
              lista.append(layer1_input[idx])
         layer1_input = T.concatenate(lista,1)
+
+    kur = layer1_input.shape
 
     layer1_cnn_input = layer1_input.reshape((-1,10,30))
 
@@ -207,9 +235,8 @@ def train_conv_net(datasets,
         layer1_inputs.append(layer1_input)
 
     ffwd_layer_input = T.concatenate(layer1_inputs,1)
-    
-
     hidden_units[0] = feature_maps*len(filter_hs) # 300
+
     # hidden_units[0] = 300
     classifier = MLPDropout(rng, input=ffwd_layer_input, layer_sizes=hidden_units, activations=activations, dropout_rates=dropout_rate)
     #define parameters of the model and update functions using adadelta
@@ -309,17 +336,46 @@ def train_conv_net(datasets,
     for conv_layer in second_conv_layers:
         test_layer0_output = conv_layer.predict(test_layer0_input_two, test_size)
         test_pred_layers_two.append(test_layer0_output.flatten(2))
-
+    ooo = []
     if modeOp == "mul":
         test_pred_layers_mul = T.mul(test_pred_layers_one,test_pred_layers_two)
     elif modeOp == "add":
-        test_a = np.ndarray(shape=(len(test_pred_layers_one),batch_size,feature_maps), dtype='float32')
+        test_a = np.ndarray(shape=(len(datasets[2][:]),img_w), dtype='float32')
+        test_b = np.ndarray(shape=(len(datasets[2][:]),img_w), dtype='float32')
+        # print test_a.shape
+        
         test_a.fill(alpha)
-        test_b = np.ndarray(shape=(len(test_pred_layers_two),batch_size,feature_maps), dtype='float32')
         test_b.fill(beta)
+
+        # test_a = T.shared(test_a)
+        # test_b = T.shared(test_b)
+
+        lista = []
+        for idx in xrange(0,3):
+            lista.append(test_pred_layers_one[idx])
+
+        test_pred_layers_one = T.concatenate(lista,1)
+        lista = []
+
+        for idx in xrange(0,3):
+            lista.append(test_pred_layers_two[idx])
+
+        test_pred_layers_two = T.concatenate(lista,1)
+        lista = []
+        
         test_pred_layers_one = T.mul(test_pred_layers_one,test_a)
         test_pred_layers_two = T.mul(test_pred_layers_two,test_b)
+
         test_pred_layers_mul = T.add(test_pred_layers_one,test_pred_layers_two)
+
+        # test_input1_preprocess_one = T.concatenate(test_pred_layers_one,1)
+        # test_a_shared = theano.shared(test_a)
+        # ooo =  test_input1_preprocess_one.shape
+        # test_b.fill(beta)
+        # test_b_shared = theano.shared(test_b)
+        # kek = test_pred_layers_one.shape
+        # test_pred_layers_two = T.mul(test_pred_layers_two,test_b)
+        # kek2 = test_pred_layers_two.shape
     else:
         # layer1_input = T.concatenate(layer1_inputs,1)
         test_layer_one = []
@@ -339,13 +395,16 @@ def train_conv_net(datasets,
         test_layer1_cnn_input = test_layer1_input.reshape((-1,10,30))
 
     test_pred_layers = []
-    if modeOp == "mul" or modeOp == "add":
+    hnq = test_pred_layers_mul.shape
+    if modeOp == "mul":
         for idx in xrange(0,3):
             test_pred_layers.append(test_pred_layers_mul[idx])
             
         test_layer1_input = T.concatenate(test_pred_layers, 1)
         test_layer1_cnn_input = test_layer1_input.reshape((-1,10,30))
 
+    if modeOp == "add":
+        test_layer1_cnn_input = test_pred_layers_mul.reshape((-1,10,30))
 
     img_w = 30
     img_h = 10
@@ -395,7 +454,10 @@ def train_conv_net(datasets,
         sys.stdout.flush()
         if val_perf >= best_val_perf:
             best_val_perf = val_perf
-            test_loss = test_model_all(test_set_x,test_set_y)
+            test_loss= test_model_all(test_set_x,test_set_y)
+            # print hnqq
+            # print k
+            # print kk
             test_perf = 1- test_loss
 
     return test_perf
@@ -561,8 +623,8 @@ def make_idx_data(revs, word_idx_map, max_l=81, k=300, filter_h=5):
     test = np.array(test,dtype="int")
     valid = np.array(valid,dtype="int")
 
-    # return [train[:100], valid[:10], test[:10]]
-    return [train, valid, test]
+    return [train[:1000], valid[:100], test[:100]]
+    # return [train, valid, test]
 
 def store_sent(batches, num, datasets):
     p_sento_finale = []
