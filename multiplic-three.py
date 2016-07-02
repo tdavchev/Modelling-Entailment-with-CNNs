@@ -561,7 +561,7 @@ def make_idx_data(revs, word_idx_map, max_l=81, k=300, filter_h=5):
     valid = np.array(valid,dtype="int")
 
     # return [train, valid, test
-    return [train[:100], valid[:10], test[:10]]
+    return [train, valid, test]
 
 def store_sent(batches, num, datasets):
     p_sento_finale = []
@@ -673,45 +673,45 @@ if __name__=="__main__":
     datasets = make_idx_data(revs, word_idx_map, max_l=81,k=300, filter_h=5)
     print "datasets configured."
     sys.stdout.flush()
-    print conv_non_linear_f
-    sys.stdout.flush()
-    print non_static, batch_size_f,dropout_rate_f, len(datasets[0])
-    sys.stdout.flush()
+    #print conv_non_linear_f
+    #sys.stdout.flush()
+    #print non_static, batch_size_f,dropout_rate_f, len(datasets[0])
+    #sys.stdout.flush()
     activations = [ReLU, Sigmoid, Tanh, Iden]
-    #perf= train_conv_net(datasets,
-    #   U,
-    #   img_w=300,
-    #   filter_hs=[3,4,5],
-    #   hidden_units=[100,3],
-    #   dropout_rate=[dropout_rate_f],
-    #   shuffle_batch=True,
-    #   n_epochs=25,
-    #   batch_size=batch_size_f,
-    #   lr_decay = lr_decay,
-    #   conv_non_linear=conv_non_linear_f,
-    #   activations=[activations[whichAct]],
-    #   sqr_norm_lim=sqr_norm_lim,
-    #   non_static=non_static,
-    #   modeOp=modeOp,
-    #   alpha=alpha,
-    #   beta=beta)
     perf= train_conv_net(datasets,
        U,
        img_w=300,
        filter_hs=[3,4,5],
        hidden_units=[100,3],
-       dropout_rate=[0.29],
+       dropout_rate=[dropout_rate_f],
        shuffle_batch=True,
        n_epochs=25,
-       batch_size=200,
-       lr_decay = 0.93,
-       conv_non_linear='relu',
-       activations=[Tanh],
-       sqr_norm_lim=9,
+       batch_size=batch_size_f,
+       lr_decay = lr_decay,
+       conv_non_linear=conv_non_linear_f,
+       activations=[activations[whichAct]],
+       sqr_norm_lim=sqr_norm_lim,
        non_static=non_static,
-       modeOp='add',
-       alpha=0.4,
-       beta=0.6)
+       modeOp=modeOp,
+       alpha=alpha,
+       beta=beta)
+    #perf= train_conv_net(datasets,
+    #   U,
+    #   img_w=300,
+    #   filter_hs=[3,4,5],
+    #   hidden_units=[100,3],
+    #   dropout_rate=[0.29],
+    #   shuffle_batch=True,
+    #   n_epochs=25,
+    #   batch_size=200,
+    #   lr_decay = 0.93,
+    #   conv_non_linear='relu',
+    #   activations=[Iden],
+    #   sqr_norm_lim=9,
+    #   non_static=non_static,
+    #   modeOp='add',
+    #   alpha=0.4,
+    #   beta=0.6)
 
 
     results.append(perf)
