@@ -126,9 +126,9 @@ def train_conv_net(datasets,
     # entry_one = T.dmatrix()
     # entry_two = T.dmatrix()
 
-    entry_one = T.dmatrix()
-    entry_two = T.dmatrix()
-    cc = theano.function([entry_one, entry_two], circular_crosscorelation(entry_one, entry_two), allow_input_downcast = True)
+    X = T.dmatrix()
+    y = T.dmatrix()
+    cc = theano.function([X, y], circular_crosscorelation(X, y), allow_input_downcast = True)
 
     # elementwise multiplication
     lista =[]
@@ -157,9 +157,10 @@ def train_conv_net(datasets,
         corr_len = 300
         pad = 300 - corr_len%300    
         v_padded = T.concatenate([corr_expr, T.zeros((1, pad))], axis=1)
-        circ_corr_exp = T.sum(v_padded.reshape((1, v_padded.shape[1] / 300, 300)), axis=1)
-        o=circ_corr_exp[:, ::-1]
-            
+        circ_corr_exp = T.sum(v_padded.reshape((1, v_padded.shape[1] // 300, 300)), axis=1)
+        layer1_input=circ_corr_exp[:, ::-1].flatten(2)
+    
+    # yip = layer_input.shape
 
     # layer1_cnn_input = o.reshape((-1,10,30))
 
@@ -168,9 +169,10 @@ def train_conv_net(datasets,
     # for idx in xrange(0,3):
     #     lista.append(layer1_inputtttttt[idx])
     # layer1_input = T.concatenate(o,1)
-    for idx in xrange(0,3):
-         lista.append(layer1_input[idx])
-    layer1_input = T.concatenate(lista,1)
+    if modeOp == "mul" or modeOp == "add":
+        for idx in xrange(0,3):
+             lista.append(layer1_input[idx])
+        layer1_input = T.concatenate(lista,1)
 
     layer1_cnn_input = layer1_input.reshape((-1,10,30))
 
@@ -332,10 +334,9 @@ def train_conv_net(datasets,
         pad = 300 - corr_len%300    
         test_v_padded = T.concatenate([test_corr_expr, T.zeros((1, pad))], axis=1)
         test_circ_corr_exp = T.sum(test_v_padded.reshape((1, test_v_padded.shape[1] / 300, 300)), axis=1)
-        test_pred_layers=test_circ_corr_exp[:, ::-1]
-            
+        test_layer1_input=test_circ_corr_exp[:, ::-1].flatten(2)            
     
-    test_layer1_cnn_input = layer1_cnn_input.reshape((-1,10,30))
+        test_layer1_cnn_input = test_layer1_input.reshape((-1,10,30))
 
     test_pred_layers = []
     if modeOp == "mul" or modeOp == "add":
@@ -417,7 +418,7 @@ def circular_crosscorelation(X, y):
     corr_len = corr_expr.shape[1]
     pad = m - corr_len%m
     v_padded = T.concatenate([corr_expr, T.zeros((n, pad))], axis=1)
-    circ_corr_exp = T.sum(v_padded.reshape((n, v_padded.shape[1] / m, m)), axis=1)
+    circ_corr_exp = T.sum(v_padded.reshape((n, v_padded.shape[1] // m, m)), axis=1)
 
     return circ_corr_exp[:, ::-1]
 
@@ -560,8 +561,8 @@ def make_idx_data(revs, word_idx_map, max_l=81, k=300, filter_h=5):
     test = np.array(test,dtype="int")
     valid = np.array(valid,dtype="int")
 
-    # return [train, valid, test
-    return [train, valid, test]
+    return [train[:100], valid[:10], test[:10]]
+    # return [train, valid, test]
 
 def store_sent(batches, num, datasets):
     p_sento_finale = []
@@ -616,37 +617,37 @@ if __name__=="__main__":
     word_vectors = sys.argv[2]
 
     # Parameters
-    batch_size_f = sys.argv[3]
-    batch_size_f = int(batch_size_f)
-    dropout_rate_f = sys.argv[4]
-    dropout_rate_f = float(dropout_rate_f)
-    dropout_rate_f /= 100 
-    conv_non_linear_f = sys.argv[5]
-    modeOp = sys.argv[6]
-    lr_decay = sys.argv[7]
-    lr_decay = float(lr_decay)
-    lr_decay /= 100
-    alpha = sys.argv[8]
-    alpha = float(alpha)
-    alpha /= 100
-    beta = sys.argv[9]
-    beta = float(beta)
-    beta /= 100
-    whichAct = sys.argv[10]
-    whichAct = int(whichAct)-1
-    sqr_norm_lim = sys.argv[11]
-    sqr_norm_lim = int(sqr_norm_lim)
+    # batch_size_f = sys.argv[3]
+    # batch_size_f = int(batch_size_f)
+    # dropout_rate_f = sys.argv[4]
+    # dropout_rate_f = float(dropout_rate_f)
+    # dropout_rate_f /= 100 
+    # conv_non_linear_f = sys.argv[5]
+    # modeOp = sys.argv[6]
+    # lr_decay = sys.argv[7]
+    # lr_decay = float(lr_decay)
+    # lr_decay /= 100
+    # alpha = sys.argv[8]
+    # alpha = float(alpha)
+    # alpha /= 100
+    # beta = sys.argv[9]
+    # beta = float(beta)
+    # beta /= 100
+    # whichAct = sys.argv[10]
+    # whichAct = int(whichAct)-1
+    # sqr_norm_lim = sys.argv[11]
+    # sqr_norm_lim = int(sqr_norm_lim)
 
     # # Test Params
-    #batch_size_f = 75
-    #dropout_rate_f = 0.5
-    #conv_non_linear_f = "relu"
-    #modeOp = "crossc"
-    #lr_decay = 0.95
-    #alpha = 1
-    #beta = 1
-    #whichAct = 3
-    #sqr_norm_lim = 9
+    batch_size_f = 50
+    dropout_rate_f = 0.5
+    conv_non_linear_f = "relu"
+    modeOp = "crossc"
+    lr_decay = 0.95
+    alpha = 1
+    beta = 1
+    whichAct = 3
+    sqr_norm_lim = 9
 
     
 
