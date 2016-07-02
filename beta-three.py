@@ -46,6 +46,9 @@ def train_conv_net(datasets,
                    conv_non_linear="relu",
                    activations=[Iden],
                    sqr_norm_lim=9,
+                   modeOp="mul",
+                   alpha=1,
+                   beta=1,
                    non_static=True):
     """
     Train a simple conv net
@@ -68,7 +71,7 @@ def train_conv_net(datasets,
     parameters = [("image shape",img_h,img_w),("filter shape",filter_shapes), ("hidden_units",hidden_units),
                   ("dropout", dropout_rate), ("batch_size",batch_size),("non_static", non_static),
                     ("learn_decay",lr_decay), ("conv_non_linear", conv_non_linear), ("non_static", non_static)
-                    ,("sqr_norm_lim",sqr_norm_lim),("shuffle_batch",shuffle_batch)]
+                    ,("sqr_norm_lim",sqr_norm_lim),("shuffle_batch",shuffle_batch),("mode",modeOp), ("alpha",alpha),("beta",beta),("activations",activations)]
     print parameters
     sys.stdout.flush()
     #define model architecture
@@ -89,6 +92,8 @@ def train_conv_net(datasets,
     first_conv_layers = []
     second_conv_layers = []
     layer1_inputs = []
+    one_layers = []
+    two_layers = []
 
     # FIRST CNN
     for i in xrange(len(filter_hs)):
@@ -98,6 +103,7 @@ def train_conv_net(datasets,
                                 filter_shape=filter_shape, poolsize=pool_size, non_linear=conv_non_linear)
         layer1_input = conv_layer.output.flatten(2)
         first_conv_layers.append(conv_layer)
+        one_layers.append(layer1_input)
         layer1_inputs.append(layer1_input)
 
 
@@ -109,15 +115,48 @@ def train_conv_net(datasets,
                                 filter_shape=filter_shape, poolsize=pool_size, non_linear=conv_non_linear)
         layer1_input = conv_layer.output.flatten(2)
         second_conv_layers.append(conv_layer)
+        two_layers.append(layer1_input)
         layer1_inputs.append(layer1_input)
 
 
-    layer1_input = T.concatenate(layer1_inputs,1)
-    layer1_cnn_input = layer1_input.reshape((-1,12,50))
+    if modeOp == "concat":
+        layer1_input = T.concatenate(layer1_inputs,1)
+        # keep relatively close ratio to 300/81
+        img_w = 50
+        img_h = 12
+    else:
+        lista =[]
+        layer1_input = []
+        layer1_inputtttttt = []
+        for idx in xrange(0,3):
+            lista.append(one_layers[idx])
 
-    # keep relatively close ratio to 300/81
-    img_w = 50
-    img_h = 12
+        one_layers = T.concatenate(lista,1)
+        lista = []
+
+        img_w = 30
+        img_h = 10
+        for idx in xrange(0,3):
+            lista.append(two_layers[idx])
+
+        two_layers = T.concatenate(lista,1)
+        lista = []
+        
+        if modeOp == "add":
+            a = np.ndarray(shape=(batch_size,img_w), dtype='float32')
+            b = np.ndarray(shape=(batch_size,img_w), dtype='float32')
+
+            a.fill(alpha)
+            b.fill(beta)
+
+            one_layers = T.mul(one_layers,a)
+            two_layers = T.mul(two_layers,b)
+
+            layer1_input = T.add(one_layers,two_layers) # [50 300]
+
+    print img_h,img_w
+    layer1_cnn_input = layer1_input.reshape((-1,img_h,img_w))
+        
     filter_w = img_w
     feature_maps = hidden_units[0]
     filter_shapes = []
@@ -186,7 +225,7 @@ def train_conv_net(datasets,
     train_model = build_train_model(index, batch_size, cost, grad_updates, train_set_x, train_set_y, x, y)
 
     img_h = (len(datasets[0][0])-1)/2
-    ffwd_layer_input = build_test(img_h, test_set_x.shape[0], Words, [first_conv_layers, second_conv_layers, third_conv_layers],x)
+    ffwd_layer_input = build_test(img_h, img_w, test_set_x.shape[0], Words, [first_conv_layers, second_conv_layers, third_conv_layers],x, modeOp)
 
     test_y_pred = classifier.predict(ffwd_layer_input)
     test_error = T.mean(T.neq(test_y_pred, y))
@@ -291,8 +330,18 @@ def update_params(classifier, conv_layers):
 
     return params
 
-def build_test(img_h, test_size, Words, conv_layers,x):
-    test_pred_layers = []
+# def concatenate(layers,cases):
+#     lista = []
+#     for idx in xrange(0,cases):
+#         lista.append(layers[idx])
+
+#     pred_layers = T.concatenate(lista,1)
+#     return pred_layers
+
+
+
+def build_test(img_h,img_w, test_size, Words, conv_layers,x, mode):
+    test_pred_layers,test_pred_layers_one,test_pred_layers_two = [],[], []
     # img_h = (len(datasets[0][0])-1)/2
     # test_size = test_set_x.shape[0]
     test_layer0_input_one = Words[T.cast(x[:,:89].flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
@@ -303,14 +352,35 @@ def build_test(img_h, test_size, Words, conv_layers,x):
     for idx in xrange(0,2):
         for conv_layer in conv_layers[idx]:
             test_layer0_output = conv_layer.predict(test_layer0_input[idx], test_size)
-            test_pred_layers.append(test_layer0_output.flatten(2))
+            if mode == "concat":
+                test_pred_layers.append(test_layer0_output.flatten(2))
+            elif idx == 0 and mode != "cocnat":
+                test_pred_layers_one.append(test_layer0_output.flatten(2))
+            else:
+                test_pred_layers_two.append(test_layer0_output.flatten(2))
 
-    test_layer1_input = T.concatenate(test_pred_layers, 1)
-    test_layer1_cnn_input = test_layer1_input.reshape((-1,12,50))
+    if mode == "concat":
+        test_layer1_input = T.concatenate(test_pred_layers, 1)
+    else:
+        lista = []
+        for idx in xrange(0,3):
+            lista.append(test_pred_layers_one[idx])
 
+        test_pred_layers_one = T.concatenate(lista,1)
+        lista = []
+        test_a = np.ndarray(shape=(len(datasets[2][:]),img_w), dtype='float32')
+        test_b = np.ndarray(shape=(len(datasets[2][:]),img_w), dtype='float32')
+        
+        test_a.fill(alpha)
+        test_b.fill(beta)
+        
+        test_pred_layers_one = T.mul(test_pred_layers_one,test_a)
+        test_pred_layers_two = T.mul(test_pred_layers_two,test_b)
 
-    img_w = 50
-    img_h = 12
+        test_layer1_input = T.add(test_pred_layers_one,test_pred_layers_two)
+
+    
+    test_layer1_cnn_input = test_layer1_input.reshape((-1,img_h,img_w))
 
     test_layer0_input_three = test_layer1_cnn_input.reshape((test_layer1_cnn_input.shape[0],1,test_layer1_cnn_input.shape[1],test_layer1_cnn_input.shape[2]))
     test_pred_layers = []
@@ -458,7 +528,7 @@ def make_idx_data(revs, word_idx_map, max_l=81, k=300, filter_h=5):
     test = np.array(test,dtype="int")
     valid = np.array(valid,dtype="int")
 
-    return [train[:100], valid[:10], test[:10]]
+    return [train[:1000], valid[:120], test[:120]]
 
 def store_sent(batches, num, datasets):
     p_sento_finale = []
@@ -516,12 +586,29 @@ if __name__=="__main__":
     # batch_size_f = 50
     # dropout_rate_f = 0.5
     # conv_non_linear_f = "relu"
+
     # Parameters
+
     batch_size_f = sys.argv[3]
     batch_size_f = int(batch_size_f)
     dropout_rate_f = sys.argv[4]
     dropout_rate_f = float(dropout_rate_f)
+    dropout_rate_f /= 100 
     conv_non_linear_f = sys.argv[5]
+    modeOp = sys.argv[6]
+    lr_decay = sys.argv[7]
+    lr_decay = float(lr_decay)
+    lr_decay /= 100
+    alpha = sys.argv[8]
+    alpha = float(alpha)
+    alpha /= 100
+    beta = sys.argv[9]
+    beta = float(beta)
+    beta /= 100
+    whichAct = sys.argv[10]
+    whichAct = int(whichAct)-1
+    sqr_norm_lim = sys.argv[11]
+    sqr_norm_lim = int(sqr_norm_lim)
     
 
     if mode=="-nonstatic":
@@ -551,20 +638,24 @@ if __name__=="__main__":
     sys.stdout.flush()
     print non_static, batch_size_f,dropout_rate_f, len(datasets[0])
     sys.stdout.flush()
+    activations = [ReLU, Sigmoid, Tanh, Iden]
     perf= train_conv_net(datasets,
-           U,
-           img_w=300,
-           filter_hs=[3,4,5],
-           hidden_units=[100,3],
-           dropout_rate=[dropout_rate_f],
-           shuffle_batch=True,
-           n_epochs=25,
-           batch_size=batch_size_f,
-           lr_decay = 0.95,
-           conv_non_linear=conv_non_linear_f,
-           activations=[Iden],
-           sqr_norm_lim=9,
-           non_static=True)
+       U,
+       img_w=300,
+       filter_hs=[3,4,5],
+       hidden_units=[100,3],
+       dropout_rate=[dropout_rate_f],
+       shuffle_batch=True,
+       n_epochs=25,
+       batch_size=batch_size_f,
+       lr_decay = lr_decay,
+       conv_non_linear=conv_non_linear_f,
+       activations=[activations[whichAct]],
+       sqr_norm_lim=sqr_norm_lim,
+       non_static=non_static,
+       modeOp=modeOp,
+       alpha=alpha,
+       beta=beta)
 
 
     results.append(perf)
