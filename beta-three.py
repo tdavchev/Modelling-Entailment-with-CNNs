@@ -153,7 +153,9 @@ def train_conv_net(datasets,
             two_layers = T.mul(two_layers,b)
 
             layer1_input = T.add(one_layers,two_layers) # [50 300]
-
+        elif modeOp == "mul":
+            layer1_input = T.mul(one_layers,two_layers)
+            
     print img_h,img_w
     layer1_cnn_input = layer1_input.reshape((-1,img_h,img_w))
         
