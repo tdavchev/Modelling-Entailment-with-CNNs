@@ -85,13 +85,12 @@ def train_conv_net(datasets,
 
     first_layer0_input = Words[T.cast(x[:,:89].flatten(),dtype="int32")].reshape((x.shape[0],1,(x.shape[1]/2),Words.shape[1]))
     second_layer0_input = Words[T.cast(x[:,89:].flatten(),dtype="int32")].reshape((x.shape[0],1,(x.shape[1]/2),Words.shape[1]))
+    
     first_conv_layers = []
     second_conv_layers = []
     layer1_inputs = []
 
     # FIRST CNN
-
-
     for i in xrange(len(filter_hs)):
         filter_shape = filter_shapes[i]
         pool_size = pool_sizes[i]
@@ -103,7 +102,6 @@ def train_conv_net(datasets,
 
 
     # SECOND CNN
-
     for i in xrange(len(filter_hs)):
         filter_shape = filter_shapes[i]
         pool_size = pool_sizes[i]
@@ -115,10 +113,7 @@ def train_conv_net(datasets,
 
 
     layer1_input = T.concatenate(layer1_inputs,1)
-    # layer1_inputa = layer1_input.shape
     layer1_cnn_input = layer1_input.reshape((-1,12,50))
-
-    # hidden_units[0] = feature_maps*len(filter_hs)*2 # 600
 
     # keep relatively close ratio to 300/81
     img_w = 50
@@ -136,6 +131,7 @@ def train_conv_net(datasets,
     third_conv_layers = []
     layer1_inputs = []
 
+    # THIRD CNN
     for i in xrange(len(filter_hs)):
         filter_shape = filter_shapes[i]
         pool_size = pool_sizes[i]
@@ -146,8 +142,6 @@ def train_conv_net(datasets,
         layer1_inputs.append(layer1_input)
 
     ffwd_layer_input = T.concatenate(layer1_inputs,1)
-    
-
     hidden_units[0] = feature_maps*len(filter_hs) # 300
 
     classifier = MLPDropout(rng, input=ffwd_layer_input, layer_sizes=hidden_units, activations=activations, dropout_rates=dropout_rate)
@@ -155,24 +149,13 @@ def train_conv_net(datasets,
     print "define parameters of the model and update functions using adadelta"
     sys.stdout.flush()
 
-    params = classifier.params
-
-    for conv_layer in first_conv_layers:
-        params += conv_layer.params
-
-    for conv_layer in second_conv_layers:
-        params += conv_layer.params
-
-    for conv_layer in third_conv_layers:
-        params += conv_layer.params
-
+    params = update_params(classifier, [first_conv_layers, second_conv_layers, third_conv_layers])
+    
     if non_static:
         #if word vectors are allowed to change, add them as model parameters
         params += [Words]
 
     cost = classifier.negative_log_likelihood(y)
-
-
     p_y_given_x = classifier.p_y_given_x
 
     # weights = classifier.getW()
@@ -181,132 +164,33 @@ def train_conv_net(datasets,
 
     #shuffle dataset and assign to mini batches. if dataset size is not a multiple of mini batches, replicate
     #extra data (at random)
-    print "shuffle dataset and assign to mini batches. if dataset size is not a multiple of mini batches, replicate"
-    sys.stdout.flush()
     np.random.seed(3435)
-    if datasets[0].shape[0] % batch_size > 0:
-        extra_data_num = batch_size - datasets[0].shape[0] % batch_size
-        train_set = np.random.permutation(datasets[0]) # no need to store ... I use seed so it will be always the same
-        extra_data = train_set[:extra_data_num]
-        new_data=np.append(datasets[0],extra_data,axis=0)
-    else:
-        new_data = datasets[0]
-    print "datasets.shape {0}".format(datasets[0].shape)
-    sys.stdout.flush()
+    new_data = complete_train_data(datasets[0], batch_size)
     new_data = np.random.permutation(new_data)
-    n_batches = new_data.shape[0]/batch_size
-    n_train_batches = int(np.round(n_batches))
+
+    n_train_batches, n_val_batches = get_n_batches(new_data, datasets[1], batch_size)
+
     #divide train set into train/val sets
     print "divide train set into train/val sets"
     sys.stdout.flush()
-    # test_set_x = datasets[2][:,:img_h]
-    # test_set_y = np.asarray(datasets[2][:,-1],"int32")
-    test_set_x = datasets[2][:,:-1]
-    test_set_y = np.asarray(datasets[2][:,-1],"int32")
-    train_set = new_data[:,:]
-    val_set = datasets[1]#[n_train_batches*batch_size:,:]
-    # train_set = new_data[:,:]
-    # val_set = datasets[1] # this is a change
-    train_set_x, train_set_y = shared_dataset((train_set[:,:-1],train_set[:,-1]))
-    # val_set_x = datasets[1][:,:img_h]
-    # val_set_y = np.asarray(datasets[1][:,-1],"int32")
-    val_set_x, val_set_y = shared_dataset((val_set[:,:-1],val_set[:,-1]))
-    n_val_batches = datasets[1].shape[0]/batch_size
+
+    test_set_x, test_set_y = process_test(datasets[2])
+    train_set_x, train_set_y = process_train(new_data)
+    val_set_x, val_set_y = process_valid(datasets[1])
 
     #compile theano functions to get train/val/test errors
     print "compile theano functions to get train/val/test errors"
     sys.stdout.flush()
-    val_model = theano.function([index], classifier.errors(y),
-         givens={
-            x: val_set_x[index * batch_size: (index + 1) * batch_size],
-             y: val_set_y[index * batch_size: (index + 1) * batch_size]},
-                                allow_input_downcast=True)
+    val_model = build_model(index, classifier, batch_size, val_set_x, val_set_y, x, y)
+    test_model = build_model(index, classifier, batch_size, train_set_x, train_set_y, x, y)
+    train_model = build_train_model(index, batch_size, cost, grad_updates, train_set_x, train_set_y, x, y)
 
-    test_model = theano.function([index], classifier.errors(y),
-             givens={
-                x: train_set_x[index * batch_size: (index + 1) * batch_size],
-                 y: train_set_y[index * batch_size: (index + 1) * batch_size]},
-                                 allow_input_downcast=True)
-    train_model = theano.function([index], cost, updates=grad_updates,
-          givens={
-            x: train_set_x[index*batch_size:(index+1)*batch_size],
-              y: train_set_y[index*batch_size:(index+1)*batch_size]},
-                                  allow_input_downcast = True)
-
-
-    test_pred_layers = []
     img_h = (len(datasets[0][0])-1)/2
-    test_size = test_set_x.shape[0]
-    test_layer0_input_one = Words[T.cast(x[:,:89].flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
-    test_layer0_input_two = Words[T.cast(x[:,89:].flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
-    
-    for conv_layer in first_conv_layers:
-        test_layer0_output = conv_layer.predict(test_layer0_input_one, test_size)
-        test_pred_layers.append(test_layer0_output.flatten(2))
-
-    for conv_layer in second_conv_layers:
-        test_layer0_output = conv_layer.predict(test_layer0_input_two, test_size)
-        test_pred_layers.append(test_layer0_output.flatten(2))
-
-    test_layer1_input = T.concatenate(test_pred_layers, 1)
-    test_layer1_cnn_input = test_layer1_input.reshape((-1,12,50))
-
-
-    img_w = 50
-    img_h = 12
-
-    test_layer0_input_three = test_layer1_cnn_input.reshape((test_layer1_cnn_input.shape[0],1,test_layer1_cnn_input.shape[1],test_layer1_cnn_input.shape[2]))
-
-    test_pred_layers = []
-
-    for conv_layer in third_conv_layers:
-        test_layer0_output = conv_layer.predict(test_layer0_input_three, test_size)
-        test_pred_layers.append(test_layer0_output.flatten(2))
-
-    ffwd_layer_input = T.concatenate(test_pred_layers,1)
-
+    ffwd_layer_input = build_test(img_h, test_set_x.shape[0], Words, [first_conv_layers, second_conv_layers, third_conv_layers],x)
 
     test_y_pred = classifier.predict(ffwd_layer_input)
     test_error = T.mean(T.neq(test_y_pred, y))
     test_model_all = theano.function([x,y], test_error, allow_input_downcast = True)
-
-
-
-
-
-    # test_pred_layers = []
-    # test_size = test_set_x.shape[0]
-    # img_h = (len(datasets[0][0])-1)/2
-    # first_test_layer0_input = Words[T.cast(x[:,:89].flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
-    # second_test_layer0_input = Words[T.cast(x[:,89:].flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
-
-    # # TESTING FIRST CNN
-    # for conv_layer in first_conv_layers:
-    #     test_layer0_output = conv_layer.predict(first_test_layer0_input, test_size)
-    #     test_pred_layers.append(test_layer0_output.flatten(2))
-
-
-    # # TESTING SECOND CNN
-    # for conv_layer in second_conv_layers:
-    #     test_layer0_output = conv_layer.predict(second_test_layer0_input, test_size)
-    #     test_pred_layers.append(test_layer0_output.flatten(2))
-
-    # test_layer1_input = T.concatenate(test_pred_layers, 1)
-    # test_layer1_cnn_input = test_layer1_input.reshape((-1,12,50)) # ration 
-    # third_layer0_input = layer1_cnn_input.reshape((test_layer1_cnn_input.shape[0],1,test_layer1_cnn_input.shape[1],test_layer1_cnn_input.shape[2]))
-
-    # # TESTING THIRD CNN
-    # test_pred_layers = []
-    # for conv_layer in third_conv_layers:
-    #     test_layer0_output = conv_layer.predict(third_layer0_input, 2*test_size)
-    #     test_pred_layers.append(test_layer0_output.flatten(2))
-
-    # test_layer1_input = []
-    # test_layer1_input = T.concatenate(test_pred_layers, 1)
-    
-    # test_y_pred = classifier.predict(test_layer1_input)
-    # test_error = T.mean(T.neq(test_y_pred, y))
-    # test_model_all = theano.function([x,y], test_error, allow_input_downcast = True)
 
     #start training over mini-batches
     print '... training'
@@ -340,6 +224,104 @@ def train_conv_net(datasets,
             test_perf = 1- test_loss
 
     return test_perf
+
+def process_train(new_data):
+    train_set = new_data[:,:]
+    train_set_x, train_set_y = shared_dataset((train_set[:,:-1],train_set[:,-1]))
+
+    return train_set_x, train_set_y
+
+def process_test(test_data):
+    test_set_x = test_data[:,:-1]
+    test_set_y = np.asarray(test_data[:,-1],"int32")
+
+    return test_set_x, test_set_y
+
+def process_valid(valid_data):
+    val_set = valid_data
+    val_set_x, val_set_y = shared_dataset((val_set[:,:-1],val_set[:,-1]))
+
+    return val_set_x, val_set_y
+
+def get_n_batches(new_data, valid_data, batch_size):
+    n_batches = new_data.shape[0]/batch_size
+    n_train_batches = int(np.round(n_batches))
+    n_val_batches = valid_data.shape[0]/batch_size
+
+    return n_train_batches, n_val_batches
+
+
+def complete_train_data(data, batch_size):
+    print "shuffle dataset and assign to mini batches. if dataset size is not a multiple of mini batches, replicate"
+    sys.stdout.flush()
+    np.random.seed(3435)
+    if data.shape[0] % batch_size > 0:
+        extra_data_num = batch_size - data.shape[0] % batch_size
+        train_set = np.random.permutation(data) # no need to store ... I use seed so it will be always the same
+        extra_data = train_set[:extra_data_num]
+        new_data=np.append(data,extra_data,axis=0)
+    else:
+        new_data = data
+
+    return new_data
+
+def build_model(index, classifier, batch_size, set_x, set_y, x, y):
+    model = theano.function([index], classifier.errors(y),
+             givens={
+                x: set_x[index * batch_size: (index + 1) * batch_size],
+                 y: set_y[index * batch_size: (index + 1) * batch_size]},
+                                allow_input_downcast=True)
+
+    return model
+
+def build_train_model(index, batch_size, cost, grad_updates, train_set_x, train_set_y, x, y):
+    train_model = theano.function([index], cost, updates=grad_updates,
+      givens={
+        x: train_set_x[index*batch_size:(index+1)*batch_size],
+          y: train_set_y[index*batch_size:(index+1)*batch_size]},
+                              allow_input_downcast = True)
+    
+    return train_model
+
+def update_params(classifier, conv_layers):
+    params = classifier.params
+    for num_conv_layer in conv_layers:
+        for conv_layer in num_conv_layer:
+            params += conv_layer.params
+
+    return params
+
+def build_test(img_h, test_size, Words, conv_layers,x):
+    test_pred_layers = []
+    # img_h = (len(datasets[0][0])-1)/2
+    # test_size = test_set_x.shape[0]
+    test_layer0_input_one = Words[T.cast(x[:,:89].flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
+    test_layer0_input_two = Words[T.cast(x[:,89:].flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
+
+    test_layer0_input = [test_layer0_input_one,test_layer0_input_two]
+    
+    for idx in xrange(0,2):
+        for conv_layer in conv_layers[idx]:
+            test_layer0_output = conv_layer.predict(test_layer0_input[idx], test_size)
+            test_pred_layers.append(test_layer0_output.flatten(2))
+
+    test_layer1_input = T.concatenate(test_pred_layers, 1)
+    test_layer1_cnn_input = test_layer1_input.reshape((-1,12,50))
+
+
+    img_w = 50
+    img_h = 12
+
+    test_layer0_input_three = test_layer1_cnn_input.reshape((test_layer1_cnn_input.shape[0],1,test_layer1_cnn_input.shape[1],test_layer1_cnn_input.shape[2]))
+    test_pred_layers = []
+
+    for conv_layer in conv_layers[-1]:
+        test_layer0_output = conv_layer.predict(test_layer0_input_three, test_size)
+        test_pred_layers.append(test_layer0_output.flatten(2))
+
+    ffwd_layer_input = T.concatenate(test_pred_layers,1)
+
+    return ffwd_layer_input
 
 def shared_dataset(data_xy, borrow=True):
         """ Function that loads the dataset into shared variables
@@ -476,7 +458,7 @@ def make_idx_data(revs, word_idx_map, max_l=81, k=300, filter_h=5):
     test = np.array(test,dtype="int")
     valid = np.array(valid,dtype="int")
 
-    return [train, valid, test]
+    return [train[:100], valid[:10], test[:10]]
 
 def store_sent(batches, num, datasets):
     p_sento_finale = []
@@ -529,7 +511,11 @@ if __name__=="__main__":
     sys.stdout.flush()
     mode= sys.argv[1]
     word_vectors = sys.argv[2]
-
+    # mode = "-nonstatic"
+    # word_vectors = "-word2vec"
+    # batch_size_f = 50
+    # dropout_rate_f = 0.5
+    # conv_non_linear_f = "relu"
     # Parameters
     batch_size_f = sys.argv[3]
     batch_size_f = int(batch_size_f)
