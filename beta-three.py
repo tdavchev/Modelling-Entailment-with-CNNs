@@ -155,7 +155,7 @@ def train_conv_net(datasets,
             layer1_input = T.add(one_layers,two_layers) # [50 300]
         elif modeOp == "mul":
             layer1_input = T.mul(one_layers,two_layers)
-            
+
     print img_h,img_w
     layer1_cnn_input = layer1_input.reshape((-1,img_h,img_w))
         
@@ -335,16 +335,6 @@ def update_params(classifier, conv_layers):
 
     return params
 
-# def concatenate(layers,cases):
-#     lista = []
-#     for idx in xrange(0,cases):
-#         lista.append(layers[idx])
-
-#     pred_layers = T.concatenate(lista,1)
-#     return pred_layers
-
-
-
 def build_test(img_h,img_w, test_size, Words, conv_layers,x, mode):
     test_pred_layers_one, test_pred_layers_two = [], []
     test_layer0_input_one = Words[T.cast(x[:,:89].flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
@@ -406,39 +396,6 @@ def build_test(img_h,img_w, test_size, Words, conv_layers,x, mode):
     ffwd_layer_input = T.concatenate(test_pred_layers,1)
 
     return ffwd_layer_input
-
-# def build_test(img_h, test_size, Words, conv_layers,x):
-#     test_pred_layers = []
-#     # img_h = (len(datasets[0][0])-1)/2
-#     # test_size = test_set_x.shape[0]
-#     test_layer0_input_one = Words[T.cast(x[:,:89].flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
-#     test_layer0_input_two = Words[T.cast(x[:,89:].flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
-
-#     test_layer0_input = [test_layer0_input_one,test_layer0_input_two]
-    
-#     for idx in xrange(0,2):
-#         for conv_layer in conv_layers[idx]:
-#             test_layer0_output = conv_layer.predict(test_layer0_input[idx], test_size)
-#             test_pred_layers.append(test_layer0_output.flatten(2))
-
-#     test_layer1_input = T.concatenate(test_pred_layers, 1)
-#     test_layer1_cnn_input = test_layer1_input.reshape((-1,12,50))
-
-
-#     img_w = 50
-#     img_h = 12
-
-#     test_layer0_input_three = test_layer1_cnn_input.reshape((test_layer1_cnn_input.shape[0],1,test_layer1_cnn_input.shape[1],test_layer1_cnn_input.shape[2]))
-#     test_pred_layers = []
-
-#     for conv_layer in conv_layers[-1]:
-#         test_layer0_output = conv_layer.predict(test_layer0_input_three, test_size)
-#         test_pred_layers.append(test_layer0_output.flatten(2))
-
-#     ffwd_layer_input = T.concatenate(test_pred_layers,1)
-
-#     return ffwd_layer_input
-
 
 def shared_dataset(data_xy, borrow=True):
         """ Function that loads the dataset into shared variables
@@ -525,27 +482,6 @@ def get_idx_from_sent(sent, word_idx_map, max_l=81, k=300, filter_h=5, padit = T
         x.append(0)
     return x
 
-# def make_idx_data(revs, word_idx_map, cur_idx, max_l=81, k=300, filter_h=5):
-#     """
-#     Transforms sentences into a 2-d matrix.
-#     """
-#     train, valid, test = [], [], []
-#     for rev in revs:
-#         if(rev["idx"]==cur_idx):
-#             sent = get_idx_from_sent(rev["text"], word_idx_map, max_l, k, filter_h)
-#             sent.append(rev["label"])
-#             if rev["type"]=="test":
-#                 test.append(sent)
-#             elif rev["type"]=="train":
-#                 train.append(sent)
-#             else:
-#                 valid.append(sent)
-#     train = np.array(train,dtype="int")
-#     test = np.array(test,dtype="int")
-#     valid = np.array(valid,dtype="int")
-
-#     return [train, valid, test]
-
 def make_idx_data(revs, word_idx_map, max_l=81, k=300, filter_h=5):
     """
     Transforms sentences into a 2-d matrix.
@@ -628,14 +564,8 @@ if __name__=="__main__":
     sys.stdout.flush()
     mode= sys.argv[1]
     word_vectors = sys.argv[2]
-    # mode = "-nonstatic"
-    # word_vectors = "-word2vec"
-    # batch_size_f = 50
-    # dropout_rate_f = 0.5
-    # conv_non_linear_f = "relu"
 
     # Parameters
-
     batch_size_f = sys.argv[3]
     batch_size_f = int(batch_size_f)
     dropout_rate_f = sys.argv[4]
