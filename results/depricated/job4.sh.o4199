@@ -1,0 +1,21 @@
+Single Sentence Casei CNN 2
+50, 26, tanh
+loading data...
+data loaded!
+model architecture: CNN-static
+using: word2vec vectors
+datasets configured.
+[('image shape', 89, 300), ('filter shape', [(100, 1, 3, 300), (100, 1, 4, 300), (100, 1, 5, 300)]), ('hidden_units', [100, 3]), ('dropout', [0.26]), ('batch_size', 50), ('non_static', False), ('learn_decay', 0.92), ('conv_non_linear', 'tanh'), ('non_static', False), ('sqr_norm_lim', 9), ('shuffle_batch', True), ('mode', 'add'), ('alpha', 0.92), ('beta', 0.08), ('activations', [<function Iden at 0x9f018c0>])]
+define model architecture
+define parameters of the model and update functions using adadelta
+shuffle dataset and assign to mini batches. if dataset size is not a multiple of mini batches, replicate
+datasets.shape (550152, 179)
+divide train set into train/val sets
+compile theano functions to get train/val/test errors
+... training
+epoch: 1, training time: 462.59 secs, train perf: 66.59 %, val perf: 65.59 %
+epoch: 2, training time: 463.38 secs, train perf: 69.93 %, val perf: 68.46 %
+epoch: 3, training time: 462.85 secs, train perf: 71.94 %, val perf: 69.70 %
+epoch: 4, training time: 467.05 secs, train perf: 73.42 %, val perf: 71.03 %
+epoch: 5, training time: 464.40 secs, train perf: 74.64 %, val perf: 72.27 %
+0.5254
