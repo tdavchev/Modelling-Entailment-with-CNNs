@@ -57,7 +57,7 @@ function activationNum {
 
 count=0
 bs=50
-id=`python select_gpu.py`
+#id=`python select_gpu.py`
 while [ $count -le 9 ]
 do
 	GPU=$((GPU+1))
@@ -65,13 +65,13 @@ do
 		GPU=0
 	fi
 	let "count=$count+1"
-	#randomBinary "add" "mul"
 	randomNum 20 10
 	num=$?
 	mode="add"
 	if [ $num -le 15 ]; then
 		mode="mul"
 	fi
+	mode="add"
         randomNum 20 10
         num=$?
 	cnl="tanh"
@@ -84,10 +84,10 @@ do
 	randomNum 94 85
 	lr_decay=$?
 	echo "Random number for lr_decay --- $lr_decay"
-	randomNum 50 10
-	#alpha=$?
-	alpha=50
-	let "beta=100-$alpha"
+	randomNum 70 10
+	alpha=$?
+	#alpha=100
+	let "beta=200-$alpha"
 	echo "Setting alpha and beta to --- $alpha, $beta"
 	activationNum
 	activation=$?
@@ -97,7 +97,7 @@ do
 	echo "sqr_norm_lim --- $sqr_norm_lim"
 	echo "Starting job with batch size: $bs, dropout: $dropout, conv_non_linear: $cnl lr_decay: $lr_decay in mode: $mode on GPU: $GPU"
 	echo "Starting Model 3 with MODE $mode"
-	qsub -v BATCH_SIZE_F=$bs,DROPOUT_F=$dropout,CNL_F=$cnl,GPU_NO=$id,MODE=$mode,LR_DECAY=$lr_decay,ALPHA=$alpha,BETA=$beta,ACTIVATION=$activation,SQR_NORM_LIM=$sqr_norm_lim job4.sh
+	qsub -v BATCH_SIZE_F=$bs,DROPOUT_F=$dropout,CNL_F=$cnl,GPU_NO=$GPU,MODE=$mode,LR_DECAY=$lr_decay,ALPHA=$alpha,BETA=$beta,ACTIVATION=$activation,SQR_NORM_LIM=$sqr_norm_lim job4.sh
 done
 
 exit 0
