@@ -148,6 +148,18 @@ def train_conv_net(datasets,
 
             layer1_input = T.add(one_layers,two_layers) # [50 300]
 
+        elif modeOp == "sub":
+            a = np.ndarray(shape=(batch_size,300), dtype='float32')
+            b = np.ndarray(shape=(batch_size,300), dtype='float32')
+
+            a.fill(alpha)
+            b.fill(beta)
+
+            one_layers = T.mul(concat[0],a)
+            two_layers = T.mul(concat[1],b)
+
+            layer1_input = T.sub(one_layers,two_layers) # [50 300]
+            
         elif modeOp == "mul":
             layer1_input = T.mul(concat[0],concat[1])
 
@@ -390,6 +402,7 @@ def set_layer1_input(mode,test_pred_layers,test_concat, img_h, img_w):
 
         if mode == "mul":
             test_layer1_input = T.mul(test_concat[0],test_concat[1])
+            
         elif mode == "add":
             test_a = np.ndarray(shape=(len(datasets[2][:]),300), dtype='float32')
             test_b = np.ndarray(shape=(len(datasets[2][:]),300), dtype='float32')
@@ -401,6 +414,19 @@ def set_layer1_input(mode,test_pred_layers,test_concat, img_h, img_w):
             test_pred_layers_two = T.mul(test_concat[1],test_b)
 
             test_layer1_input = T.add(test_pred_layers_one,test_pred_layers_two)
+
+        elif mode == "sub":
+            test_a = np.ndarray(shape=(len(datasets[2][:]),300), dtype='float32')
+            test_b = np.ndarray(shape=(len(datasets[2][:]),300), dtype='float32')
+            
+            test_a.fill(alpha)
+            test_b.fill(beta)
+            
+            test_pred_layers_one = T.mul(test_concat[0],test_a)
+            test_pred_layers_two = T.mul(test_concat[1],test_b)
+
+            test_layer1_input = T.add(test_pred_layers_one,test_pred_layers_two)
+
         elif mode == "circ":
             bs, w = test_concat[0].shape
             test_corr_expr = T.signal.conv.conv2d(test_concat[0], test_concat[1][::-1].reshape((1, -1)), image_shape=(1, w), border_mode='full')
