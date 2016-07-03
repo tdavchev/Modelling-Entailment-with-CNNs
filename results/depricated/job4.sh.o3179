@@ -1,0 +1,23 @@
+Single Sentence Casei CNN 2
+50, 47, relu
+loading data...
+data loaded!
+model architecture: CNN-static
+using: word2vec vectors
+datasets configured.
+relu
+False 50 0.47 550152
+[('image shape', 89, 300), ('filter shape', [(100, 1, 3, 300), (100, 1, 4, 300), (100, 1, 5, 300)]), ('hidden_units', [100, 3]), ('dropout', [0.47]), ('batch_size', 50), ('non_static', False), ('learn_decay', 0.56), ('conv_non_linear', 'relu'), ('non_static', False), ('sqr_norm_lim', 9), ('shuffle_batch', True), ('mode', 'mul'), ('alpha', 0.47), ('beta', 0.53)]
+define model architecture
+define parameters of the model and update functions using adadelta
+shuffle dataset and assign to mini batches. if dataset size is not a multiple of mini batches, replicate
+datasets.shape (550152, 179)
+divide train set into train/val sets
+compile theano functions to get train/val/test errors
+... training
+epoch: 1, training time: 512.65 secs, train perf: 63.65 %, val perf: 62.87 %
+epoch: 2, training time: 515.34 secs, train perf: 57.67 %, val perf: 57.43 %
+epoch: 3, training time: 515.07 secs, train perf: 62.99 %, val perf: 62.16 %
+epoch: 4, training time: 514.97 secs, train perf: 58.64 %, val perf: 58.43 %
+epoch: 5, training time: 515.33 secs, train perf: 49.71 %, val perf: 49.30 %
+0.629
