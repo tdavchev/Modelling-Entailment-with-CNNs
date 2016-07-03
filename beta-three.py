@@ -222,7 +222,7 @@ def train_conv_net(datasets,
    
     img_h = (len(datasets[0][0])-1)/2
 
-    ffwd_layer_input, con, su = build_test(img_h, 
+    ffwd_layer_input = build_test(img_h, 
         img_w, 
         test_set_x.shape[0], 
         Words, 
@@ -235,7 +235,7 @@ def train_conv_net(datasets,
 
     test_y_pred = classifier.predict(ffwd_layer_input)
     test_error = T.mean(T.neq(test_y_pred, y))
-    test_model_all = theano.function([x,y], [test_error, con, su], allow_input_downcast = True)
+    test_model_all = theano.function([x,y], test_error, allow_input_downcast = True)
 
     #start training over mini-batches
     print '... training'
