@@ -1,0 +1,34 @@
+200, 0.5, relu
+loading data... data loaded!
+model architecture: CNN-static
+using: word2vec vectors
+[('image shape', 126, 300), ('filter shape', [(100, 1, 3, 300), (100, 1, 4, 300), (100, 1, 5, 300)]), ('hidden_units', [100, 3]), ('dropout', [0.5]), ('batch_size', 200), ('non_static', False), ('learn_decay', 0.95), ('conv_non_linear', 'relu'), ('non_static', False), ('sqr_norm_lim', 9), ('shuffle_batch', True)]
+1
+... training
+epoch: 1, training time: 213.05 secs, train perf: 63.14 %, val perf: 62.28 %
+epoch: 2, training time: 214.92 secs, train perf: 64.85 %, val perf: 63.17 %
+epoch: 3, training time: 215.10 secs, train perf: 65.11 %, val perf: 64.05 %
+epoch: 4, training time: 215.15 secs, train perf: 66.42 %, val perf: 65.30 %
+epoch: 5, training time: 215.13 secs, train perf: 66.48 %, val perf: 64.41 %
+epoch: 6, training time: 215.38 secs, train perf: 67.76 %, val perf: 65.73 %
+epoch: 7, training time: 215.79 secs, train perf: 67.94 %, val perf: 65.81 %
+epoch: 8, training time: 215.01 secs, train perf: 68.58 %, val perf: 66.30 %
+epoch: 9, training time: 215.01 secs, train perf: 68.84 %, val perf: 66.60 %
+epoch: 10, training time: 215.38 secs, train perf: 68.93 %, val perf: 66.33 %
+epoch: 11, training time: 215.22 secs, train perf: 69.40 %, val perf: 66.48 %
+epoch: 12, training time: 215.76 secs, train perf: 69.86 %, val perf: 66.62 %
+epoch: 13, training time: 216.17 secs, train perf: 69.84 %, val perf: 66.79 %
+epoch: 14, training time: 216.14 secs, train perf: 70.08 %, val perf: 66.68 %
+epoch: 15, training time: 215.83 secs, train perf: 70.55 %, val perf: 66.43 %
+epoch: 16, training time: 215.31 secs, train perf: 70.63 %, val perf: 66.88 %
+epoch: 17, training time: 215.45 secs, train perf: 71.08 %, val perf: 67.02 %
+epoch: 18, training time: 215.99 secs, train perf: 71.11 %, val perf: 66.85 %
+epoch: 19, training time: 215.57 secs, train perf: 71.07 %, val perf: 66.70 %
+epoch: 20, training time: 215.14 secs, train perf: 71.35 %, val perf: 66.95 %
+epoch: 21, training time: 215.15 secs, train perf: 71.23 %, val perf: 66.84 %
+epoch: 22, training time: 215.71 secs, train perf: 71.07 %, val perf: 66.92 %
+epoch: 23, training time: 215.77 secs, train perf: 71.83 %, val perf: 67.40 %
+epoch: 24, training time: 215.05 secs, train perf: 71.61 %, val perf: 66.67 %
+epoch: 25, training time: 214.96 secs, train perf: 72.18 %, val perf: 66.92 %
+perf: 0.6655
+0.6655
