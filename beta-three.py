@@ -122,59 +122,35 @@ def train_conv_net(datasets,
 
 
     if modeOp == "concat":
-        layer1_input = T.concatenate(layer1_inputs,1)
+        layer1_input = concatenate_tensors(layer1_inputs)
         # keep relatively close ratio to 300/81
         img_w = 50
         img_h = 12
+    elif modeOp == "mix1":
+        layer1_concat = concatenate_tensors(layer1_inputs) # [50 600]
+        concat = concatenate([one_layers, two_layers])
+        layer1_sub = sub(batch_size, alpha, beta, concat) # [50 300]
+        concatenated = concatenate([layer1_concat,layer1_sub])
+        layer_mul = mul(concat) # [50 300]
+
     else:
-        lista =[]
         layer1_input = []
-        pred_layers = [one_layers, two_layers]
+        concat = concatenate([one_layers, two_layers])
+        # keep relatively close ratio to 300/81
         img_w = 30
         img_h = 10
 
-        for br in xrange(0,2):
-            concat[br] = concatenate(pred_layers[br])
-
         if modeOp == "add":
-            a = np.ndarray(shape=(batch_size,300), dtype='float32')
-            b = np.ndarray(shape=(batch_size,300), dtype='float32')
-
-            a.fill(alpha)
-            b.fill(beta)
-
-            one_layers = T.mul(concat[0],a)
-            two_layers = T.mul(concat[1],b)
-
-            layer1_input = T.add(one_layers,two_layers) # [50 300]
+            layer1_input = add(batch_size, alpha, beta, concat) # [50 300]
 
         elif modeOp == "sub":
-            a = np.ndarray(shape=(batch_size,300), dtype='float32')
-            b = np.ndarray(shape=(batch_size,300), dtype='float32')
-
-            a.fill(alpha)
-            b.fill(beta)
-
-            one_layers = T.mul(concat[0],a)
-            two_layers = T.mul(concat[1],b)
-
-            layer1_input = T.sub(one_layers,two_layers) # [50 300]
+            layer1_input = sub(batch_size, alpha, beta, concat) # [50 300]
             
         elif modeOp == "mul":
-            layer1_input = T.mul(concat[0],concat[1])
+            layer1_input = mul(concat) # [50,300]
 
         elif modeOp == "circ":
-            bs,w=concat[0].shape # [batch,300]
-
-            corr_expr = T.signal.conv.conv2d(concat[0], concat[1][::-1].reshape((1, -1)), image_shape=(1, w), border_mode='full')
-            corr_len = corr_expr.shape[1]
-
-            pad = w - corr_len%w    
-            v_padded = T.concatenate([corr_expr, T.zeros((bs, pad))], axis=1)
-
-            circ_corr_exp = T.sum(v_padded.reshape((bs, v_padded.shape[1] // w, w)), axis=1)
-
-            layer1_input=circ_corr_exp[:, ::-1] # [50,300]
+            layer1_input = circular_convolution(concat) # [50,300]
 
     layer1_cnn_input = layer1_input.reshape((-1,img_h,img_w))
         
@@ -246,10 +222,15 @@ def train_conv_net(datasets,
     train_model = build_train_model(index, batch_size, cost, grad_updates, train_set_x, train_set_y, x, y)
    
     img_h = (len(datasets[0][0])-1)/2
-    # if modeOp == "concat":
-    #     ffwd_layer_input = build_test(img_h, test_set_x.shape[0], Words, [first_conv_layers, second_conv_layers, third_conv_layers],x)
-    # else:
-    ffwd_layer_input = build_test(img_h, img_w, test_set_x.shape[0], Words, [first_conv_layers, second_conv_layers, third_conv_layers],x, modeOp)
+
+    ffwd_layer_input = build_test(img_h, 
+        img_w, 
+        test_set_x.shape[0], 
+        Words, 
+        [first_conv_layers, second_conv_layers, third_conv_layers],
+        x, 
+        modeOp, 
+        datasets[2])
 
     test_y_pred = classifier.predict(ffwd_layer_input)
     test_error = T.mean(T.neq(test_y_pred, y))
@@ -287,6 +268,54 @@ def train_conv_net(datasets,
             test_perf = 1- test_loss
 
     return test_perf
+
+def concatenate_tensors(layer1_inputs):
+    return T.concatenate(layer1_inputs,1)
+
+def add(batch_size, alpha, beta, concat):
+    a = np.ndarray(shape=(batch_size,300), dtype='float32')
+    b = np.ndarray(shape=(batch_size,300), dtype='float32')
+
+    a.fill(alpha)
+    b.fill(beta)
+
+    one_layers = T.mul(concat[0],a)
+    two_layers = T.mul(concat[1],b)
+
+    return T.add(one_layers,two_layers) # [50 300]
+
+def sub(batch_size, alpha, beta, concat):
+    a = np.ndarray(shape=(batch_size,300), dtype='float32')
+    b = np.ndarray(shape=(batch_size,300), dtype='float32')
+
+    a.fill(alpha)
+    b.fill(beta)
+
+    one_layers = T.mul(concat[0],a)
+    two_layers = T.mul(concat[1],b)
+
+    return T.sub(one_layers,two_layers) # [50 300]
+
+def mul(concat):
+    return T.mul(concat[0],concat[1]) # [50,300]
+
+def circular_convolution(concat):
+    bs,w=concat[0].shape # [batch,width] [50, 300]
+
+    corr_expr = T.signal.conv.conv2d(
+        concat[0], 
+        concat[1][::-1].reshape((1, -1)), # reverse the second vector
+        image_shape=(1, w), 
+        border_mode='full')
+
+    corr_len = corr_expr.shape[1]
+
+    pad = w - corr_len%w    
+    v_padded = T.concatenate([corr_expr, T.zeros((bs, pad))], axis=1)
+
+    circ_corr_exp = T.sum(v_padded.reshape((bs, v_padded.shape[1] // w, w)), axis=1)
+
+    return circ_corr_exp[:, ::-1] # [50,300]
 
 def process_train(new_data):
     train_set = new_data[:,:]
@@ -355,12 +384,15 @@ def update_params(classifier, conv_layers):
     return params
 
 def concatenate(layers):
-    lista = []
-    for idx in xrange(0,3):
-        lista.append(layers[idx])
+    concat= [[],[]]
+    for br in xrange(0,2):
+        lista = []
+        for idx in xrange(0,3):
+            lista.append(layers[br][idx])
 
-    pred_layers = T.concatenate(lista,1)
-    return pred_layers
+        concat[br] = T.concatenate(lista,1)
+
+    return concat
 
 def set_test_params(mode, test_pred_layers_one=[],test_pred_layers_two=[]):
     test_concat = [[],[]]
@@ -393,53 +425,27 @@ def set_layer0_input(Words,img_h,test_size,x):
     
     return [test_layer0_input_one,test_layer0_input_two]
 
-def set_layer1_input(mode,test_pred_layers,test_concat, img_h, img_w):
+def set_layer1_input(mode,test_pred_layers,test_concat, img_h, img_w, data):
     if mode == "concat":
-        test_layer1_input = T.concatenate(test_pred_layers, 1)
+        test_layer1_input = concatenate_tensors(test_pred_layers)
     else:
-        for br in xrange(0,2):
-            test_concat[br] = concatenate(test_pred_layers[br])
+        test_concat = concatenate(test_pred_layers)
 
         if mode == "mul":
-            test_layer1_input = T.mul(test_concat[0],test_concat[1])
-            
-        elif mode == "add":
-            test_a = np.ndarray(shape=(len(datasets[2][:]),300), dtype='float32')
-            test_b = np.ndarray(shape=(len(datasets[2][:]),300), dtype='float32')
-            
-            test_a.fill(alpha)
-            test_b.fill(beta)
-            
-            test_pred_layers_one = T.mul(test_concat[0],test_a)
-            test_pred_layers_two = T.mul(test_concat[1],test_b)
+            test_layer1_input = mul(test_concat)
 
-            test_layer1_input = T.add(test_pred_layers_one,test_pred_layers_two)
+        elif mode == "add":
+            test_layer1_input = add(len(data[:]), alpha, beta, test_concat)
 
         elif mode == "sub":
-            test_a = np.ndarray(shape=(len(datasets[2][:]),300), dtype='float32')
-            test_b = np.ndarray(shape=(len(datasets[2][:]),300), dtype='float32')
-            
-            test_a.fill(alpha)
-            test_b.fill(beta)
-            
-            test_pred_layers_one = T.mul(test_concat[0],test_a)
-            test_pred_layers_two = T.mul(test_concat[1],test_b)
-
-            test_layer1_input = T.add(test_pred_layers_one,test_pred_layers_two)
+            test_layer1_input = sub(len(data[:]), alpha, beta, test_concat)
 
         elif mode == "circ":
-            bs, w = test_concat[0].shape
-            test_corr_expr = T.signal.conv.conv2d(test_concat[0], test_concat[1][::-1].reshape((1, -1)), image_shape=(1, w), border_mode='full')
-            test_corr_len = test_corr_expr.shape[1]
-
-            pad = w - test_corr_len%w    
-            test_v_padded = T.concatenate([test_corr_expr, T.zeros((bs, pad))], axis=1)
-            test_circ_corr_exp = T.sum(test_v_padded.reshape((bs, test_v_padded.shape[1] / w, w)), axis=1)
-            test_layer1_input=test_circ_corr_exp[:, ::-1]           
+            test_layer1_input=circular_convolution(test_concat)           
 
     return test_layer1_input.reshape((-1,img_h,img_w))
 
-def build_test(img_h,img_w, test_size, Words, conv_layers,x, mode):
+def build_test(img_h,img_w, test_size, Words, conv_layers,x, mode, data):
     # initialize layer 0's input
     test_layer0_input = set_layer0_input(Words,img_h,test_size,x)
     # initialize new parameters
@@ -447,7 +453,7 @@ def build_test(img_h,img_w, test_size, Words, conv_layers,x, mode):
     # populate layers
     test_pred_layers = populate_pred_layers(mode,conv_layers,test_layer0_input,test_size)
     # initialize layer 1's input
-    test_layer1_input = set_layer1_input(mode,test_pred_layers,test_concat, img_h, img_w)
+    test_layer1_input = set_layer1_input(mode,test_pred_layers,test_concat, img_h, img_w, data)
     # reshape for third CNN
     test_layer0_input_three = test_layer1_input.reshape(
         (test_layer1_input.shape[0],
