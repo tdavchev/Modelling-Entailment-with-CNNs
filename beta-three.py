@@ -150,6 +150,10 @@ def train_conv_net(datasets,
             img_w = 80
             img_h = 15
             layer1_input = mix1(layer1_inputs,batch_size,alpha,beta,concat) # [50, 1200]
+        elif modeOp == "mix2":
+            img_w = 80
+            img_h = 15
+            layer1_input = mix2(layer1_inputs,batch_size,alpha,beta,concat) # [50, 1200]
 
     layer1_cnn_input = layer1_input.reshape((-1,img_h,img_w))
         
@@ -335,6 +339,24 @@ def mix1(layer1_inputs,batch_size,alpha,beta,concat):
 
     return T.concatenate(lista,1) # [50 1200]  
 
+def mix2(layer1_inputs,batch_size,alpha,beta,concat):
+    layer1_concat = concatenate_tensors(layer1_inputs) # [50 600]
+    layer1_sub = sub(batch_size, 1, 1, concat) # [50 300]
+
+    lista = []
+    lista.append(layer1_concat)
+    lista.append(layer1_sub)
+    layer1_input = T.concatenate(lista,1) # [50 900]
+
+    # layer1_mul = mul(concat) # [50 300]
+    layer1_add = add(batch_size, alpha, beta, concat) # [50 300]
+
+    lista = []
+    lista.append(layer1_input)
+    lista.append(layer1_add)
+
+    return T.concatenate(lista,1) # [50 1200]  
+
 def process_train(new_data):
     train_set = new_data[:,:]
     train_set_x, train_set_y = shared_dataset((train_set[:,:-1],train_set[:,-1]))
@@ -418,7 +440,7 @@ def set_test_params(mode, test_pred_layers_one=[],test_pred_layers_two=[]):
         img_w = 50
         img_h = 12
 
-    elif mode == "mix1":
+    elif mode == "mix1" or mode == "mix2":
         img_w = 80
         img_h = 15
 
@@ -475,6 +497,14 @@ def set_layer1_input(mode,test_pred_layers,test_concat, img_h, img_w, data, alph
                     test_pred_inputs.append(test_pred_layers[idx][br])
 
             test_layer1_input = mix1(test_pred_inputs,len(data[:]),alpha,beta,test_concat)
+
+        elif mode == "mix2":
+            test_pred_inputs = []
+            for idx in xrange(0,2):
+                for br in xrange(0,3):
+                    test_pred_inputs.append(test_pred_layers[idx][br])
+
+            test_layer1_input = mix2(test_pred_inputs,len(data[:]),alpha,beta,test_concat)
 
     return test_layer1_input.reshape((-1,img_h,img_w))
 
