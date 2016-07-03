@@ -126,12 +126,6 @@ def train_conv_net(datasets,
         # keep relatively close ratio to 300/81
         img_w = 50
         img_h = 12
-    elif modeOp == "mix1":
-        layer1_concat = concatenate_tensors(layer1_inputs) # [50 600]
-        concat = concatenate([one_layers, two_layers])
-        layer1_sub = sub(batch_size, alpha, beta, concat) # [50 300]
-        concatenated = concatenate([layer1_concat,layer1_sub])
-        layer_mul = mul(concat) # [50 300]
 
     else:
         layer1_input = []
@@ -151,6 +145,11 @@ def train_conv_net(datasets,
 
         elif modeOp == "circ":
             layer1_input = circular_convolution(concat) # [50,300]
+
+        elif modeOp == "mix1":
+            img_w = 80
+            img_h = 15
+            layer1_input = mix1(layer1_inputs,batch_size,alpha,beta,concat) # [50, 1200]
 
     layer1_cnn_input = layer1_input.reshape((-1,img_h,img_w))
         
@@ -223,18 +222,20 @@ def train_conv_net(datasets,
    
     img_h = (len(datasets[0][0])-1)/2
 
-    ffwd_layer_input = build_test(img_h, 
+    ffwd_layer_input, con, su = build_test(img_h, 
         img_w, 
         test_set_x.shape[0], 
         Words, 
         [first_conv_layers, second_conv_layers, third_conv_layers],
         x, 
         modeOp, 
-        datasets[2])
+        datasets[2],
+        alpha,
+        beta)
 
     test_y_pred = classifier.predict(ffwd_layer_input)
     test_error = T.mean(T.neq(test_y_pred, y))
-    test_model_all = theano.function([x,y], test_error, allow_input_downcast = True)
+    test_model_all = theano.function([x,y], [test_error, con, su], allow_input_downcast = True)
 
     #start training over mini-batches
     print '... training'
@@ -265,7 +266,7 @@ def train_conv_net(datasets,
         if val_perf >= best_val_perf:
             best_val_perf = val_perf
             test_loss = test_model_all(test_set_x,test_set_y)
-            test_perf = 1- test_loss
+            test_perf = 1 - test_loss
 
     return test_perf
 
@@ -316,6 +317,23 @@ def circular_convolution(concat):
     circ_corr_exp = T.sum(v_padded.reshape((bs, v_padded.shape[1] // w, w)), axis=1)
 
     return circ_corr_exp[:, ::-1] # [50,300]
+
+def mix1(layer1_inputs,batch_size,alpha,beta,concat):
+    layer1_concat = concatenate_tensors(layer1_inputs) # [50 600]
+    layer1_sub = sub(batch_size, alpha, beta, concat) # [50 300]
+
+    lista = []
+    lista.append(layer1_concat)
+    lista.append(layer1_sub)
+    layer1_input = T.concatenate(lista,1) # [50 900]
+
+    layer1_mul = mul(concat) # [50 300]
+
+    lista = []
+    lista.append(layer1_input)
+    lista.append(layer1_mul)
+
+    return T.concatenate(lista,1) # [50 1200]  
 
 def process_train(new_data):
     train_set = new_data[:,:]
@@ -396,18 +414,25 @@ def concatenate(layers):
 
 def set_test_params(mode, test_pred_layers_one=[],test_pred_layers_two=[]):
     test_concat = [[],[]]
-    if mode != "concat":
-        img_w = 30
-        img_h = 10
-
-    else:
+    if mode == "concat":
         img_w = 50
         img_h = 12
+
+    elif mode == "mix1":
+        img_w = 80
+        img_h = 15
+
+    else:
+        img_w = 30
+        img_h = 10
 
     return [test_concat, img_w, img_h]
 
 def populate_pred_layers(mode,conv_layers,test_layer0_input,test_size):
-    test_pred_layers = [[], []]
+    if mode == "concat":
+        test_pred_layers = []
+    else:
+        test_pred_layers = [[], []] 
 
     for idx in xrange(0,2):
         for conv_layer in conv_layers[idx]:
@@ -425,7 +450,7 @@ def set_layer0_input(Words,img_h,test_size,x):
     
     return [test_layer0_input_one,test_layer0_input_two]
 
-def set_layer1_input(mode,test_pred_layers,test_concat, img_h, img_w, data):
+def set_layer1_input(mode,test_pred_layers,test_concat, img_h, img_w, data, alpha, beta):
     if mode == "concat":
         test_layer1_input = concatenate_tensors(test_pred_layers)
     else:
@@ -441,11 +466,19 @@ def set_layer1_input(mode,test_pred_layers,test_concat, img_h, img_w, data):
             test_layer1_input = sub(len(data[:]), alpha, beta, test_concat)
 
         elif mode == "circ":
-            test_layer1_input=circular_convolution(test_concat)           
+            test_layer1_input=circular_convolution(test_concat)
+
+        elif mode == "mix1":
+            test_pred_inputs = []
+            for idx in xrange(0,2):
+                for br in xrange(0,3):
+                    test_pred_inputs.append(test_pred_layers[idx][br])
+
+            test_layer1_input = mix1(test_pred_inputs,len(data[:]),alpha,beta,test_concat)
 
     return test_layer1_input.reshape((-1,img_h,img_w))
 
-def build_test(img_h,img_w, test_size, Words, conv_layers,x, mode, data):
+def build_test(img_h,img_w, test_size, Words, conv_layers,x, mode, data, alpha, beta):
     # initialize layer 0's input
     test_layer0_input = set_layer0_input(Words,img_h,test_size,x)
     # initialize new parameters
@@ -453,7 +486,7 @@ def build_test(img_h,img_w, test_size, Words, conv_layers,x, mode, data):
     # populate layers
     test_pred_layers = populate_pred_layers(mode,conv_layers,test_layer0_input,test_size)
     # initialize layer 1's input
-    test_layer1_input = set_layer1_input(mode,test_pred_layers,test_concat, img_h, img_w, data)
+    test_layer1_input = set_layer1_input(mode,test_pred_layers,test_concat, img_h, img_w, data,alpha,beta)
     # reshape for third CNN
     test_layer0_input_three = test_layer1_input.reshape(
         (test_layer1_input.shape[0],
@@ -725,6 +758,6 @@ if __name__=="__main__":
     print str(np.mean(results))
     sys.stdout.flush()
     
-    # store_output(first_sent, second_sent, datasets)
-    #print "concatenating the two sentences {0}".format(len(first_sent[0]))
-    # sys.stdout.flush()
+    store_output(first_sent, second_sent, datasets)
+    print "concatenating the two sentences {0}".format(len(first_sent[0]))
+    sys.stdout.flush()
