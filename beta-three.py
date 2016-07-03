@@ -530,7 +530,7 @@ def make_idx_data(revs, word_idx_map, max_l=81, k=300, filter_h=5):
     test = np.array(test,dtype="int")
     valid = np.array(valid,dtype="int")
 
-    return [train[:1000], valid[:120], test[:120]]
+    return [train, valid, test]
 
 def store_sent(batches, num, datasets):
     p_sento_finale = []
