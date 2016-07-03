@@ -94,6 +94,7 @@ def train_conv_net(datasets,
     layer1_inputs = []
     one_layers = []
     two_layers = []
+    concat = [[],[]]
 
     # FIRST CNN
     for i in xrange(len(filter_hs)):
@@ -127,36 +128,27 @@ def train_conv_net(datasets,
     else:
         lista =[]
         layer1_input = []
-        layer1_inputtttttt = []
-        for idx in xrange(0,3):
-            lista.append(one_layers[idx])
-
-        one_layers = T.concatenate(lista,1)
-        lista = []
-
+        pred_layers = [one_layers, two_layers]
         img_w = 30
         img_h = 10
-        for idx in xrange(0,3):
-            lista.append(two_layers[idx])
 
-        two_layers = T.concatenate(lista,1)
-        lista = []
-        
+        for br in xrange(0,2):
+            concat[br] = concatenate(pred_layers[br])
+
         if modeOp == "add":
-            a = np.ndarray(shape=(batch_size,img_w), dtype='float32')
-            b = np.ndarray(shape=(batch_size,img_w), dtype='float32')
+            a = np.ndarray(shape=(batch_size,300), dtype='float32')
+            b = np.ndarray(shape=(batch_size,300), dtype='float32')
 
             a.fill(alpha)
             b.fill(beta)
 
-            one_layers = T.mul(one_layers,a)
-            two_layers = T.mul(two_layers,b)
+            one_layers = T.mul(concat[0],a)
+            two_layers = T.mul(concat[1],b)
 
             layer1_input = T.add(one_layers,two_layers) # [50 300]
         elif modeOp == "mul":
             layer1_input = T.mul(one_layers,two_layers)
 
-    print img_h,img_w
     layer1_cnn_input = layer1_input.reshape((-1,img_h,img_w))
         
     filter_w = img_w
@@ -335,21 +327,28 @@ def update_params(classifier, conv_layers):
 
     return params
 
-def build_test(img_h,img_w, test_size, Words, conv_layers,x, mode):
-    test_pred_layers_one, test_pred_layers_two = [], []
-    test_layer0_input_one = Words[T.cast(x[:,:89].flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
-    test_layer0_input_two = Words[T.cast(x[:,89:].flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
+def concatenate(layers):
+    lista = []
+    for idx in xrange(0,3):
+        lista.append(layers[idx])
 
-    test_layer0_input = [test_layer0_input_one,test_layer0_input_two]
+    pred_layers = T.concatenate(lista,1)
+    return pred_layers
+
+def set_test_params(mode, test_pred_layers_one=[],test_pred_layers_two=[]):
+    test_concat = [[],[]]
     if mode != "concat":
-        test_pred_layers = [test_pred_layers_one, test_pred_layers_two]
-        test_concat = [[],[]]
         img_w = 30
         img_h = 10
+
     else:
-        test_pred_layers = []
         img_w = 50
         img_h = 12
+
+    return [test_concat, img_w, img_h]
+
+def populate_pred_layers(mode,conv_layers,test_layer0_input,test_size):
+    test_pred_layers = [[], []]
 
     for idx in xrange(0,2):
         for conv_layer in conv_layers[idx]:
@@ -359,18 +358,23 @@ def build_test(img_h,img_w, test_size, Words, conv_layers,x, mode):
             else:
                 test_pred_layers[idx].append(test_layer0_output.flatten(2)) 
 
+    return test_pred_layers
+
+def set_layer0_input(Words,img_h,test_size,x):
+    test_layer0_input_one = Words[T.cast(x[:,:89].flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
+    test_layer0_input_two = Words[T.cast(x[:,89:].flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
+    
+    return [test_layer0_input_one,test_layer0_input_two]
+
+def set_layer1_input(mode,test_pred_layers,test_concat, img_h, img_w):
     if mode == "concat":
         test_layer1_input = T.concatenate(test_pred_layers, 1)
     else:
         for br in xrange(0,2):
-            lista = []
-            for idx in xrange(0,3):
-                lista.append(test_pred_layers[br][idx])
-
-            test_concat[br] = T.concatenate(lista,1)
+            test_concat[br] = concatenate(test_pred_layers[br])
 
         if mode == "mul":
-            test_layer1_input = T.mul(test_pred_layers[0],test_pred_layers[1])
+            test_layer1_input = T.mul(test_concat[0],test_concat[1])
         elif mode == "add":
             test_a = np.ndarray(shape=(len(datasets[2][:]),300), dtype='float32')
             test_b = np.ndarray(shape=(len(datasets[2][:]),300), dtype='float32')
@@ -378,17 +382,32 @@ def build_test(img_h,img_w, test_size, Words, conv_layers,x, mode):
             test_a.fill(alpha)
             test_b.fill(beta)
             
-            test_pred_layers_one = T.mul(test_pred_layers_one,test_a)
-            test_pred_layers_two = T.mul(test_pred_layers_two,test_b)
+            test_pred_layers_one = T.mul(test_concat[0],test_a)
+            test_pred_layers_two = T.mul(test_concat[1],test_b)
 
             test_layer1_input = T.add(test_pred_layers_one,test_pred_layers_two)
-    
-    test_layer1_cnn_input = test_layer1_input.reshape((-1,img_h,img_w))
 
+    return test_layer1_input.reshape((-1,img_h,img_w))
 
-    test_layer0_input_three = test_layer1_cnn_input.reshape((test_layer1_cnn_input.shape[0],1,test_layer1_cnn_input.shape[1],test_layer1_cnn_input.shape[2]))
+def build_test(img_h,img_w, test_size, Words, conv_layers,x, mode):
+    # initialize layer 0's input
+    test_layer0_input = set_layer0_input(Words,img_h,test_size,x)
+    # initialize new parameters
+    test_concat, img_w, img_h = set_test_params(mode)
+    # populate layers
+    test_pred_layers = populate_pred_layers(mode,conv_layers,test_layer0_input,test_size)
+    # initialize layer 1's input
+    test_layer1_input = set_layer1_input(mode,test_pred_layers,test_concat, img_h, img_w)
+    # reshape for third CNN
+    test_layer0_input_three = test_layer1_input.reshape(
+        (test_layer1_input.shape[0],
+            1,
+            test_layer1_input.shape[1],
+            test_layer1_input.shape[2]
+            )
+        )
+    # predict with third CNN
     test_pred_layers = []
-
     for conv_layer in conv_layers[-1]:
         test_layer0_output = conv_layer.predict(test_layer0_input_three, test_size)
         test_pred_layers.append(test_layer0_output.flatten(2))
