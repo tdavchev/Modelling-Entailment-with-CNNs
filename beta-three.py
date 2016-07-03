@@ -12,6 +12,7 @@ import numpy as np
 from collections import defaultdict, OrderedDict
 import theano
 import theano.tensor as T
+import theano.tensor.signal.conv
 import re
 import warnings
 import sys
@@ -146,8 +147,22 @@ def train_conv_net(datasets,
             two_layers = T.mul(concat[1],b)
 
             layer1_input = T.add(one_layers,two_layers) # [50 300]
+
         elif modeOp == "mul":
-            layer1_input = T.mul(one_layers,two_layers)
+            layer1_input = T.mul(concat[0],concat[1])
+
+        elif modeOp == "circ":
+            bs,w=concat[0].shape # [batch,300]
+
+            corr_expr = T.signal.conv.conv2d(concat[0], concat[1][::-1].reshape((1, -1)), image_shape=(1, w), border_mode='full')
+            corr_len = corr_expr.shape[1]
+
+            pad = w - corr_len%w    
+            v_padded = T.concatenate([corr_expr, T.zeros((bs, pad))], axis=1)
+
+            circ_corr_exp = T.sum(v_padded.reshape((bs, v_padded.shape[1] // w, w)), axis=1)
+
+            layer1_input=circ_corr_exp[:, ::-1] # [50,300]
 
     layer1_cnn_input = layer1_input.reshape((-1,img_h,img_w))
         
@@ -217,7 +232,7 @@ def train_conv_net(datasets,
     val_model = build_model(index, classifier, batch_size, val_set_x, val_set_y, x, y)
     test_model = build_model(index, classifier, batch_size, train_set_x, train_set_y, x, y)
     train_model = build_train_model(index, batch_size, cost, grad_updates, train_set_x, train_set_y, x, y)
-
+   
     img_h = (len(datasets[0][0])-1)/2
     # if modeOp == "concat":
     #     ffwd_layer_input = build_test(img_h, test_set_x.shape[0], Words, [first_conv_layers, second_conv_layers, third_conv_layers],x)
@@ -386,6 +401,15 @@ def set_layer1_input(mode,test_pred_layers,test_concat, img_h, img_w):
             test_pred_layers_two = T.mul(test_concat[1],test_b)
 
             test_layer1_input = T.add(test_pred_layers_one,test_pred_layers_two)
+        elif mode == "circ":
+            bs, w = test_concat[0].shape
+            test_corr_expr = T.signal.conv.conv2d(test_concat[0], test_concat[1][::-1].reshape((1, -1)), image_shape=(1, w), border_mode='full')
+            test_corr_len = test_corr_expr.shape[1]
+
+            pad = w - test_corr_len%w    
+            test_v_padded = T.concatenate([test_corr_expr, T.zeros((bs, pad))], axis=1)
+            test_circ_corr_exp = T.sum(test_v_padded.reshape((bs, test_v_padded.shape[1] / w, w)), axis=1)
+            test_layer1_input=test_circ_corr_exp[:, ::-1]           
 
     return test_layer1_input.reshape((-1,img_h,img_w))
 
@@ -605,6 +629,17 @@ if __name__=="__main__":
     whichAct = int(whichAct)-1
     sqr_norm_lim = sys.argv[11]
     sqr_norm_lim = int(sqr_norm_lim)
+
+    # # Test Params
+    # batch_size_f = 50
+    # dropout_rate_f = 0.5
+    # conv_non_linear_f = "relu"
+    # modeOp = "add"
+    # lr_decay = 0.95
+    # alpha = 1
+    # beta = 1
+    # whichAct = 3
+    # sqr_norm_lim = 9
     
 
     if mode=="-nonstatic":
