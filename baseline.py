@@ -92,7 +92,7 @@ def train_conv_net(datasets,
     for i in xrange(len(filter_hs)):
         filter_shape = filter_shapes[i]
         pool_size = pool_sizes[i]
-        conv_layer = LeNetConvPoolLayer(rng, input=first_layer0_input,image_shape=(batch_size, 1, img_h, img_w),
+        conv_layer = LeNetConvPoolLayer(rng, input=layer0_input,image_shape=(batch_size, 1, img_h, img_w),
                                 filter_shape=filter_shape, poolsize=pool_size, non_linear=conv_non_linear)
         layer1_input = conv_layer.output.flatten(2)
         conv_layers.append(conv_layer)
@@ -141,7 +141,7 @@ def train_conv_net(datasets,
     test_model = build_model(index, classifier, batch_size, train_set_x, train_set_y, x, y)
     train_model = build_train_model(index, batch_size, cost, grad_updates, train_set_x, train_set_y, x, y)
 
-    ffwd_layer_input = build_test(img_h, test_size, Words, conv_layers, x)
+    ffwd_layer_input = build_test(img_h, test_set_x.shape[0], Words, conv_layers, x)
 
     test_y_pred = classifier.predict(ffwd_layer_input)
     test_error = T.mean(T.neq(test_y_pred, y))
@@ -251,7 +251,7 @@ def update_params(classifier, conv_layers):
 def set_layer0_input(Words, img_h, test_size, x):
     test_layer0_input_one = Words[T.cast(x.flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
    
-    return [test_layer0_input_one,test_layer0_input_two]
+    return test_layer0_input_one
 
 def build_test(img_h, test_size, Words, conv_layers, x):
     # initialize layer 0's input
