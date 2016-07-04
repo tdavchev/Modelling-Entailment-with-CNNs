@@ -59,7 +59,7 @@ def add_logic(file, file_type, revs, vocab, split_sent, clean_string=True):
             else:
                 rev = []
                 rev.append(sentence)
-                datum, vocab = process(sentence, 0,rev, label, file_type, vocab, clean_string)
+                datum, vocab = process(0, rev, label, file_type, vocab, clean_string)
                 revs.append(datum)
 
     return revs,vocab
@@ -206,6 +206,6 @@ if __name__=="__main__":
     rand_vecs = {}
     add_unknown_words(rand_vecs, vocab)
     W2, _ = get_W(rand_vecs)
-    cPickle.dump([revs, W, W2, word_idx_map, vocab], open("snli-GloVe-Split.p", "wb"))
+    cPickle.dump([revs, W, W2, word_idx_map, vocab], open("snli-GloVe.p", "wb"))
     print "dataset created!"
     
