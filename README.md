@@ -19,6 +19,9 @@ Options for model = 1 will process a premise-hypothesis
 	     			21 will process premise
 	     			22 will process hypothesis
 
+True/False - refers to whether or not to process SNLI dataset as one pair or index premises as 0 and
+hypotheses with 1
+
 python process_snli.py /path-to-file/file.txt model 
 python process_data.py embedding.txt False/True file-name.p
 ```
