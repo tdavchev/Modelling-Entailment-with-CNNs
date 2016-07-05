@@ -389,12 +389,12 @@ if __name__=="__main__":
     dropout_rate_f = float(dropout_rate_f)
     dropout_rate_f /= 100 
     conv_non_linear_f = sys.argv[5]
-    lr_decay = sys.argv[7]
+    lr_decay = sys.argv[6]
     lr_decay = float(lr_decay)
     lr_decay /= 100
-    whichAct = sys.argv[10]
+    whichAct = sys.argv[7]
     whichAct = int(whichAct)-1
-    sqr_norm_lim = sys.argv[11]
+    sqr_norm_lim = sys.argv[8]
     sqr_norm_lim = int(sqr_norm_lim)
 
     # # Test Params
