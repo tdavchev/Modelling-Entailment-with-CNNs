@@ -182,6 +182,7 @@ def clean_str_sst(string):
 if __name__=="__main__":    
     w2v_file = sys.argv[1]
     split_sent = sys.argv[2]
+    file_name = sys.argv[3]
     if split_sent=="False":
         split_sent = False
     data_folder = ["train.txt","valid.txt","test.txt"]   
@@ -206,6 +207,6 @@ if __name__=="__main__":
     rand_vecs = {}
     add_unknown_words(rand_vecs, vocab)
     W2, _ = get_W(rand_vecs)
-    cPickle.dump([revs, W, W2, word_idx_map, vocab], open("snli-GloVe.p", "wb"))
+    cPickle.dump([revs, W, W2, word_idx_map, vocab], open(file_name, "wb"))
     print "dataset created!"
     
