@@ -15,7 +15,15 @@ https://code.google.com/p/word2vec/
 To process the raw data, run
 
 ```
-python process_data.py path
+Options for model = 1 will process a premise-hypothesis
+	     			21 will process premise
+	     			22 will process hypothesis
+
+True/False - refers to whether or not to process SNLI dataset as one pair or index premises as 0 and
+hypotheses with 1
+
+python process_snli.py /path-to-file/file.txt model 
+python process_data.py embedding.txt False/True file-name.p
 ```
 
 where path points to the word2vec binary file (i.e. `GoogleNews-vectors-negative300.bin` file). 
