@@ -346,25 +346,16 @@ def make_idx_data(revs, word_idx_map, max_l=81, k=300, filter_h=5):
     Transforms sentences into a 2-d matrix.
     """
     train, valid, test = [], [], []
-    sent = []
-    count = 0
     for idx in xrange(0,len(revs)):
-        if ((idx % 2)==0):
-            sent = get_idx_from_sent(revs[idx]["text"], word_idx_map, max_l, k, filter_h)
-        else:
-            sentApp = get_idx_from_sent(revs[idx]["text"], word_idx_map, max_l, k, filter_h)
-            sentApp.append(int(revs[idx]["label"]))
-            sent = np.concatenate((sent,sentApp),axis=0)
-            if idx > 0:
-                if revs[idx]["type"]=="test":
-                    test.append(sent)
-                elif revs[idx]["type"]=="train":
-                    count += 1
-                    train.append(sent)
-                else:
-                    valid.append(sent)
-
-                sent = []
+        sent = get_idx_from_sent(revs[idx]["text"], word_idx_map, max_l, k, filter_h)
+        sent.append(int(revs[idx]["label"]))
+        if idx > 0:
+            if revs[idx]["type"]=="test":
+                test.append(sent)
+            elif revs[idx]["type"]=="train":
+                train.append(sent)
+            else:
+                valid.append(sent)
 
     train = np.array(train,dtype="int")
     test = np.array(test,dtype="int")
