@@ -457,11 +457,11 @@ if __name__=="__main__":
     if cv:
         r = range(0,10)    
         for i in r:
-            datasets = make_idx_data_cv(revs, word_idx_map, i, max_l=51,k=300, filter_h=5)
+            datasets = make_idx_data_cv(revs, word_idx_map, i, max_l=51,k=300, filter_h=7)
             perf = train_conv_net(datasets,
                                   U,
                                   lr_decay=0.95,
-                                  filter_hs=[3,4,5],
+                                  filter_hs=[7],
                                   conv_non_linear="relu",
                                   hidden_units=[100,2], 
                                   shuffle_batch=True, 
@@ -485,18 +485,17 @@ if __name__=="__main__":
         results = []
         perf= train_conv_net(datasets,
            U,
-           img_w=300,
+           lr_decay=0.95,
            filter_hs=[3,4,5],
-           hidden_units=[100,3],
-           dropout_rate=[dropout_rate_f],
-           shuffle_batch=True,
-           n_epochs=25,
-           batch_size=batch_size_f,
-           lr_decay = lr_decay,
-           conv_non_linear=conv_non_linear_f,
-           activations=[activations[whichAct]],
-           sqr_norm_lim=sqr_norm_lim,
-           non_static=non_static)
+           conv_non_linear="relu",
+           hidden_units=[100,2], 
+           shuffle_batch=True, 
+           n_epochs=25, 
+           sqr_norm_lim=9,
+           non_static=non_static,
+           batch_size=50,
+           dropout_rate=[0.5],
+           cv=True)
 
 
         results.append(perf)
