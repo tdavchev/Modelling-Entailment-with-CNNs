@@ -126,14 +126,20 @@ def train_conv_net(datasets,
     new_data = complete_train_data(datasets[0], batch_size)
     # new_data = np.random.permutation(new_data) # makes it all nonsence ! why ?
 
-    n_train_batches, _ = get_n_batches(new_data, [], batch_size, True)
-    val_set = []
-    if cv:
-        val_set = new_data[n_train_batches*batch_size:,:]
-    else:
-        val_set = datasets[2]
+    new_data = np.random.permutation(new_data)
+    n_batches = new_data.shape[0]/batch_size
+    n_train_batches = int(np.round(n_batches*0.9))
+    n_val_batches = n_batches - n_train_batches
 
-    _,n_val_batches = get_n_batches([], val_set, batch_size, True)
+    val_set = new_data[n_train_batches*batch_size:,:]
+    # n_train_batches, _ = get_n_batches(new_data, [], batch_size, True)
+    # val_set = []
+    # if cv:
+    #     val_set = new_data[n_train_batches*batch_size:,:]
+    # else:
+    #     val_set = datasets[2]
+
+    # _,n_val_batches = get_n_batches([], val_set, batch_size, True)
 
     #divide train set into train/val sets
     print "divide train set into train/val sets"
@@ -411,7 +417,7 @@ def make_idx_data(revs, word_idx_map, max_l=81, k=300, filter_h=5):
     test = np.array(test,dtype="int")
     valid = np.array(valid,dtype="int")
 
-    return [train[1000],  test[120]], valid[120],
+    return [train,  test, valid],
 
 if __name__=="__main__":
     print "loading data..."
