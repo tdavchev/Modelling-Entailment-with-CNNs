@@ -130,6 +130,7 @@ def train_conv_net(datasets,
     n_batches = new_data.shape[0]/batch_size
     n_train_batches = int(np.round(n_batches*0.9))
     n_val_batches = n_batches - n_train_batches
+    # print n_val_batches
 
     val_set = new_data[n_train_batches*batch_size:,:]
     # n_train_batches, _ = get_n_batches(new_data, [], batch_size, True)
@@ -152,11 +153,13 @@ def train_conv_net(datasets,
         n_train_batches,
         batch_size=batch_size)
 
-    val_set_x, val_set_y = process_valid(val_set,
-        img_h,
-        True, 
-        n_train_batches,
-        batch_size)
+    val_set_x, val_set_y = shared_dataset((val_set[:,:img_h],val_set[:,-1]))
+
+    # val_set_x, val_set_y = process_valid(val_set,
+    #     img_h,
+    #     True, 
+    #     n_train_batches,
+    #     batch_size)
 
     #compile theano functions to get train/val/test errors
     print "compile theano functions to get train/val/test errors"
@@ -417,7 +420,7 @@ def make_idx_data(revs, word_idx_map, max_l=81, k=300, filter_h=5):
     test = np.array(test,dtype="int")
     valid = np.array(valid,dtype="int")
 
-    return [train,  test, valid],
+    return [train,  test, valid]
 
 if __name__=="__main__":
     print "loading data..."
@@ -484,7 +487,7 @@ if __name__=="__main__":
     results = []
     r = range(0,10)    
     for i in r:
-        datasets = make_idx_data_cv(revs, word_idx_map, i, max_l=118,k=300, filter_h=5)
+        datasets = make_idx_data_cv(revs, word_idx_map, i, max_l=56,k=300, filter_h=5)
         perf = train_conv_net(datasets,
                               U,
                               lr_decay=0.95,
