@@ -419,7 +419,8 @@ def make_idx_data(revs, word_idx_map, max_l=81, k=300, filter_h=5):
 if __name__=="__main__":
     print "loading data..."
     sys.stdout.flush()
-    x = cPickle.load(open("mr.p","rb"))
+    # x = cPickle.load(open("mr.p","rb"))
+    x = cPickle.load(open("snli-GloVe-Full.p","rb"))
     revs, W, W2, word_idx_map, vocab = x[0], x[1], x[2], x[3], x[4]
     print "data loaded!"
     sys.stdout.flush()
@@ -470,7 +471,7 @@ if __name__=="__main__":
         sys.stdout.flush()
         U = W
     # results = []
-    # datasets = make_idx_data(revs, word_idx_map, max_l=118, k=300, filter_h=5)
+    datasets = make_idx_data(revs, word_idx_map, max_l=118, k=300, filter_h=5)
     # print "datasets configured."
     # sys.stdout.flush()
     # print conv_non_linear_f
@@ -479,9 +480,9 @@ if __name__=="__main__":
     # sys.stdout.flush()
     activations = [ReLU, Sigmoid, Tanh, Iden]
     results = []
-    r = range(0,10)    
+    r = range(0,1)    
     for i in r:
-        datasets = make_idx_data_cv(revs, word_idx_map, i, max_l=56,k=300, filter_h=5)
+        # datasets = make_idx_data(revs, word_idx_map, max_l=81,k=300, filter_h=5)
         perf = train_conv_net(datasets,
                               U,
                               lr_decay=0.95,
@@ -494,7 +495,7 @@ if __name__=="__main__":
                               non_static=non_static,
                               batch_size=50,
                               dropout_rate=[0.5],
-                              cv=True)
+                              cv=False)
         print "cv: " + str(i) + ", perf: " + str(perf)
         results.append(perf)  
     print str(np.mean(results))
