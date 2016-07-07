@@ -153,7 +153,7 @@ def train_conv_net(datasets,
         n_train_batches,
         batch_size=batch_size)
 
-    val_set_x, val_set_y = shared_dataset((val_set[:,:img_h],val_set[:,-1]))
+    val_set_x, val_set_y = process_valid(val_set[:,:img_h],val_set[:,-1])#shared_dataset((val_set[:,:img_h],val_set[:,-1]))
 
     # val_set_x, val_set_y = process_valid(val_set,
     #     img_h,
@@ -225,14 +225,8 @@ def process_test(test_data):
 
     return test_set_x, test_set_y
 
-def process_valid(valid_data, img_h, cv, n_train_batches=0, batch_size=0):
-    if cv:
-        val_set = valid_data[n_train_batches*batch_size:,:]
-        val_set_x, val_set_y = shared_dataset((val_set[:,:img_h],val_set[:,-1]))
-    
-    else:
-        val_set = valid_data
-        val_set_x, val_set_y = shared_dataset((val_set[:,:-1],val_set[:,-1]))
+def process_valid(data,labels):
+    val_set_x, val_set_y = shared_dataset((data,labels))
 
     return val_set_x, val_set_y
 
@@ -423,38 +417,22 @@ def make_idx_data(revs, word_idx_map, max_l=81, k=300, filter_h=5):
     return [train,  test, valid]
 
 if __name__=="__main__":
+    mode= sys.argv[1]
+    word_vectors = sys.argv[2]
+    file_name = sys.argv[3]
     print "loading data..."
     sys.stdout.flush()
-    x = cPickle.load(open("mr.p","rb"))
+    # x = cPickle.load(open("mr.p","rb"))
+    # x = cPickle.load(open("snli-GloVe-Full.p","rb"))
+    x = cPickle.load(open(file_name,"rb"))
     revs, W, W2, word_idx_map, vocab = x[0], x[1], x[2], x[3], x[4]
     print "data loaded!"
     sys.stdout.flush()
-    mode= sys.argv[1]
-    word_vectors = sys.argv[2]
 
-    # Parameters
-    # batch_size_f = sys.argv[3]
-    # batch_size_f = int(batch_size_f)
-    # dropout_rate_f = sys.argv[4]
-    # dropout_rate_f = float(dropout_rate_f)
-    # dropout_rate_f /= 100 
-    # conv_non_linear_f = sys.argv[5]
-    # lr_decay = sys.argv[7]
-    # lr_decay = float(lr_decay)
-    # lr_decay /= 100
-    # whichAct = sys.argv[10]
-    # whichAct = int(whichAct)-1
-    # sqr_norm_lim = sys.argv[11]
-    # sqr_norm_lim = int(sqr_norm_lim)
-
-    # # Test Params
-    batch_size_f = 50
-    dropout_rate_f = 0.5
-    conv_non_linear_f = "relu"
-    lr_decay = 0.95
-    whichAct = 3
-    sqr_norm_lim = 9
-    
+    if "snli" in file_name:
+        cv = False
+    else:
+        cv = True
 
     if mode=="-nonstatic":
         print "model architecture: CNN-non-static"
@@ -476,53 +454,56 @@ if __name__=="__main__":
         sys.stdout.flush()
         U = W
     # results = []
-    # datasets = make_idx_data(revs, word_idx_map, max_l=118, k=300, filter_h=5)
-    # print "datasets configured."
-    # sys.stdout.flush()
-    # print conv_non_linear_f
-    # sys.stdout.flush()
-    # print non_static, batch_size_f,dropout_rate_f, len(datasets[0])
-    # sys.stdout.flush()
-    activations = [ReLU, Sigmoid, Tanh, Iden]
-    results = []
-    r = range(0,10)    
-    for i in r:
-        datasets = make_idx_data_cv(revs, word_idx_map, i, max_l=56,k=300, filter_h=5)
-        perf = train_conv_net(datasets,
-                              U,
-                              lr_decay=0.95,
-                              filter_hs=[3,4,5],
-                              conv_non_linear="relu",
-                              hidden_units=[100,2], 
-                              shuffle_batch=True, 
-                              n_epochs=25, 
-                              sqr_norm_lim=9,
-                              non_static=non_static,
-                              batch_size=50,
-                              dropout_rate=[0.5],
-                              cv=True)
-        print "cv: " + str(i) + ", perf: " + str(perf)
-        results.append(perf)  
+    if cv:
+        r = range(0,10)    
+        for i in r:
+            datasets = make_idx_data_cv(revs, word_idx_map, i, max_l=51,k=300, filter_h=5)
+            perf = train_conv_net(datasets,
+                                  U,
+                                  lr_decay=0.95,
+                                  filter_hs=[3,4,5],
+                                  conv_non_linear="relu",
+                                  hidden_units=[100,2], 
+                                  shuffle_batch=True, 
+                                  n_epochs=25, 
+                                  sqr_norm_lim=9,
+                                  non_static=non_static,
+                                  batch_size=50,
+                                  dropout_rate=[0.5],
+                                  cv=True)
+            print "cv: " + str(i) + ", perf: " + str(perf)
+            results.append(perf)  
+    else:
+        datasets = make_idx_data(revs, word_idx_map, max_l=118, k=300, filter_h=5)
+        print "datasets configured."
+        sys.stdout.flush()
+        print conv_non_linear_f
+        sys.stdout.flush()
+        print non_static, batch_size_f,dropout_rate_f, len(datasets[0])
+        sys.stdout.flush()
+        activations = [ReLU, Sigmoid, Tanh, Iden]
+        results = []
+        perf= train_conv_net(datasets,
+           U,
+           img_w=300,
+           filter_hs=[3,4,5],
+           hidden_units=[100,3],
+           dropout_rate=[dropout_rate_f],
+           shuffle_batch=True,
+           n_epochs=25,
+           batch_size=batch_size_f,
+           lr_decay = lr_decay,
+           conv_non_linear=conv_non_linear_f,
+           activations=[activations[whichAct]],
+           sqr_norm_lim=sqr_norm_lim,
+           non_static=non_static)
+
+
+        results.append(perf)
+        print str(np.mean(results))
+    
     print str(np.mean(results))
-    # perf= train_conv_net(datasets,
-    #    U,
-    #    img_w=300,
-    #    filter_hs=[3,4,5],
-    #    hidden_units=[100,3],
-    #    dropout_rate=[dropout_rate_f],
-    #    shuffle_batch=True,
-    #    n_epochs=25,
-    #    batch_size=batch_size_f,
-    #    lr_decay = lr_decay,
-    #    conv_non_linear=conv_non_linear_f,
-    #    activations=[activations[whichAct]],
-    #    sqr_norm_lim=sqr_norm_lim,
-    #    non_static=non_static)
-
-
-    # results.append(perf)
-    # print str(np.mean(results))
-    # sys.stdout.flush()
+    sys.stdout.flush()
     
     store_output(first_sent, second_sent, datasets)
     print "concatenating the two sentences {0}".format(len(first_sent[0]))
