@@ -153,7 +153,7 @@ def train_conv_net(datasets,
         n_train_batches,
         batch_size=batch_size)
 
-    val_set_x, val_set_y = shared_dataset((val_set[:,:img_h],val_set[:,-1]))
+    val_set_x, val_set_y = process_valid(val_set[:,:img_h],val_set[:,-1])#shared_dataset((val_set[:,:img_h],val_set[:,-1]))
 
     # val_set_x, val_set_y = process_valid(val_set,
     #     img_h,
@@ -225,14 +225,8 @@ def process_test(test_data):
 
     return test_set_x, test_set_y
 
-def process_valid(valid_data, img_h, cv, n_train_batches=0, batch_size=0):
-    if cv:
-        val_set = valid_data[n_train_batches*batch_size:,:]
-        val_set_x, val_set_y = shared_dataset((val_set[:,:img_h],val_set[:,-1]))
-    
-    else:
-        val_set = valid_data
-        val_set_x, val_set_y = shared_dataset((val_set[:,:-1],val_set[:,-1]))
+def process_valid(data,labels):
+    val_set_x, val_set_y = shared_dataset((data,labels))
 
     return val_set_x, val_set_y
 
