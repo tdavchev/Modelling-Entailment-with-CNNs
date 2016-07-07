@@ -453,7 +453,7 @@ if __name__=="__main__":
         print "using: word2vec vectors"
         sys.stdout.flush()
         U = W
-    # results = []
+    results = []
     if cv:
         r = range(0,10)    
         for i in r:
@@ -461,7 +461,7 @@ if __name__=="__main__":
             perf = train_conv_net(datasets,
                                   U,
                                   lr_decay=0.95,
-                                  filter_hs=[7],
+                                  filter_hs=[7,7,7,7],
                                   conv_non_linear="relu",
                                   hidden_units=[100,2], 
                                   shuffle_batch=True, 
