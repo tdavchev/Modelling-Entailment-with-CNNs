@@ -100,3 +100,67 @@ def set_lengths(modeOp):
         img_h = 10
 
     return img_w,img_h
+
+def build_test(img_h,img_w, test_size, Words, conv_layers,x, mode, data, alpha, beta):
+    # initialize layer 0's input
+    test_layer0_input = set_layer0_input(Words,img_h,test_size,x)
+    # initialize new parameters
+    test_concat, img_w, img_h = set_test_params(mode)
+    # populate layers
+    test_pred_layers = populate_pred_layers(mode,conv_layers,test_layer0_input,test_size)
+    # initialize layer 1's input
+    test_layer1_input = set_layer1_input(mode,test_pred_layers,test_concat, img_h, img_w, data,alpha,beta)
+    # reshape for third CNN
+    test_layer0_input_three = test_layer1_input.reshape(
+        (test_layer1_input.shape[0],
+            1,
+            test_layer1_input.shape[1],
+            test_layer1_input.shape[2]
+            )
+        )
+    # predict with third CNN
+    test_pred_layers = []
+    for conv_layer in conv_layers[-1]:
+        test_layer0_output = conv_layer.predict(test_layer0_input_three, test_size)
+        test_pred_layers.append(test_layer0_output.flatten(2))
+
+    ffwd_layer_input = T.concatenate(test_pred_layers,1)
+
+    return ffwd_layer_input
+
+def make_idx_data(revs, word_idx_map, max_l=81, k=300, filter_h=5):
+    """
+    Transforms sentences into a 2-d matrix.
+    """
+    train, valid, test = [], [], []
+    sent = []
+    count = 0
+    for idx in xrange(0,len(revs)):
+        if ((idx % 2)==0):
+            sent = get_idx_from_sent(revs[idx]["text"], word_idx_map, max_l, k, filter_h)
+        else:
+            sentApp = get_idx_from_sent(revs[idx]["text"], word_idx_map, max_l, k, filter_h)
+            sentApp.append(int(revs[idx]["label"]))
+            sent = np.concatenate((sent,sentApp),axis=0) # 89*2
+            if idx > 0:
+                if revs[idx]["type"]=="test":
+                    test.append(sent)
+                elif revs[idx]["type"]=="train":
+                    count += 1
+                    train.append(sent)
+                else:
+                    valid.append(sent)
+
+                sent = []
+
+    train = np.array(train,dtype="int")
+    test = np.array(test,dtype="int")
+    valid = np.array(valid,dtype="int")
+
+    return [train, test, valid]
+
+def set_layer0_input(Words,img_h,test_size,x):
+    test_layer0_input_one = Words[T.cast(x[:,:89].flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
+    test_layer0_input_two = Words[T.cast(x[:,89:].flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
+    
+    return [test_layer0_input_one,test_layer0_input_two]

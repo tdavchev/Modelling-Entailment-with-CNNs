@@ -57,15 +57,6 @@ def update_params(classifier, conv_layers):
 
     return params
 
-def set_layer0_input(Words,img_h,test_size,x, cv=False):
-    if cv:
-        return Words[T.cast(x.flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
-    else:
-        test_layer0_input_one = Words[T.cast(x[:,:89].flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
-        test_layer0_input_two = Words[T.cast(x[:,89:].flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
-    
-    return [test_layer0_input_one,test_layer0_input_two]
-
 def shared_dataset(data_xy, borrow=True):
     """ Function that loads the dataset into shared variables
     The reason we store our dataset in shared variables is to allow
@@ -151,55 +142,6 @@ def get_idx_from_sent(sent, word_idx_map, max_l=81, k=300, filter_h=5, padit = T
         x.append(0)
     return x
 
-
-def make_idx_data(revs, word_idx_map, max_l=81, k=300, filter_h=5):
-    """
-    Transforms sentences into a 2-d matrix.
-    """
-    train, valid, test = [], [], []
-    sent = []
-    count = 0
-    for idx in xrange(0,len(revs)):
-        if ((idx % 2)==0):
-            sent = get_idx_from_sent(revs[idx]["text"], word_idx_map, max_l, k, filter_h)
-        else:
-            sentApp = get_idx_from_sent(revs[idx]["text"], word_idx_map, max_l, k, filter_h)
-            sentApp.append(int(revs[idx]["label"]))
-            sent = np.concatenate((sent,sentApp),axis=0) # 89*2
-            if idx > 0:
-                if revs[idx]["type"]=="test":
-                    test.append(sent)
-                elif revs[idx]["type"]=="train":
-                    count += 1
-                    train.append(sent)
-                else:
-                    valid.append(sent)
-
-                sent = []
-
-    train = np.array(train,dtype="int")
-    test = np.array(test,dtype="int")
-    valid = np.array(valid,dtype="int")
-
-    return [train[:100], test[:10], valid[:10]]
-
-def make_idx_data_cv(revs, word_idx_map, cv, max_l=51, k=300, filter_h=5):
-    """
-    Transforms sentences into a 2-d matrix.
-    """
-    train, test = [], []
-    for rev in revs:
-        sent = get_idx_from_sent(rev["text"], word_idx_map, max_l, k, filter_h)   
-        sent.append(rev["y"])
-        if rev["split"]==cv:            
-            test.append(sent)        
-        else:  
-            train.append(sent)   
-    train = np.array(train,dtype="int")
-    test = np.array(test,dtype="int")
-    return [train[:10], test[:10]] 
-
-
 def build_model(index, classifier, batch_size, set_x, set_y, x, y):
     model = theano.function([index], classifier.errors(y),
              givens={
@@ -218,29 +160,3 @@ def build_train_model(index, batch_size, cost, grad_updates, train_set_x, train_
     
     return train_model
 
-def build_test(img_h,img_w, test_size, Words, conv_layers,x, mode, data, alpha, beta):
-    # initialize layer 0's input
-    test_layer0_input = set_layer0_input(Words,img_h,test_size,x)
-    # initialize new parameters
-    test_concat, img_w, img_h = set_test_params(mode)
-    # populate layers
-    test_pred_layers = populate_pred_layers(mode,conv_layers,test_layer0_input,test_size)
-    # initialize layer 1's input
-    test_layer1_input = set_layer1_input(mode,test_pred_layers,test_concat, img_h, img_w, data,alpha,beta)
-    # reshape for third CNN
-    test_layer0_input_three = test_layer1_input.reshape(
-        (test_layer1_input.shape[0],
-            1,
-            test_layer1_input.shape[1],
-            test_layer1_input.shape[2]
-            )
-        )
-    # predict with third CNN
-    test_pred_layers = []
-    for conv_layer in conv_layers[-1]:
-        test_layer0_output = conv_layer.predict(test_layer0_input_three, test_size)
-        test_pred_layers.append(test_layer0_output.flatten(2))
-
-    ffwd_layer_input = T.concatenate(test_pred_layers,1)
-
-    return ffwd_layer_input

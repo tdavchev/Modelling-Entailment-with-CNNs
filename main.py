@@ -20,39 +20,40 @@ import time
 warnings.filterwarnings("ignore")
 
 if __name__=="__main__":
-    # file_name = sys.argv[1]
-    # word_vectors = sys.argv[2]
-    # mode= sys.argv[3]
+    file_name = sys.argv[1]
+    word_vectors = sys.argv[2]
+    mode= sys.argv[3]
 
     print "loading data..."
     sys.stdout.flush()
+    print file_name
     x = cPickle.load(open(file_name,"rb"))
     revs, W, W2, word_idx_map, vocab = x[0], x[1], x[2], x[3], x[4]
     print "data loaded!"
     sys.stdout.flush()
 
     # Parameters
-    # batch_size_f = sys.argv[4]
-    # batch_size_f = int(batch_size_f)
-    # dropout_rate_f = sys.argv[5]
-    # dropout_rate_f = float(dropout_rate_f)
-    # dropout_rate_f /= 100 
-    # conv_non_linear_f = sys.argv[6]
-    # modeOp = sys.argv[7]
-    # lr_decay = sys.argv[8]
-    # lr_decay = float(lr_decay)
-    # lr_decay /= 100
-    # alpha = sys.argv[9]
-    # alpha = float(alpha)
-    # alpha /= 100
-    # beta = sys.argv[10]
-    # beta = float(beta)
-    # beta /= 100
-    # whichAct = sys.argv[11]
-    # whichAct = int(whichAct)-1
-    # sqr_norm_lim = sys.argv[12]
-    # sqr_norm_lim = int(sqr_norm_lim)
-    # which_model = sys.argv[13]
+    batch_size_f = sys.argv[4]
+    batch_size_f = int(batch_size_f)
+    dropout_rate_f = sys.argv[5]
+    dropout_rate_f = float(dropout_rate_f)
+    dropout_rate_f /= 100 
+    conv_non_linear_f = sys.argv[6]
+    modeOp = sys.argv[7]
+    lr_decay = sys.argv[8]
+    lr_decay = float(lr_decay)
+    lr_decay /= 100
+    alpha = sys.argv[9]
+    alpha = float(alpha)
+    alpha /= 100
+    beta = sys.argv[10]
+    beta = float(beta)
+    beta /= 100
+    whichAct = sys.argv[11]
+    whichAct = int(whichAct)-1
+    sqr_norm_lim = sys.argv[12]
+    sqr_norm_lim = int(sqr_norm_lim)
+    which_model = sys.argv[13]
 
     if "snli" in file_name:
         cv = False
@@ -60,20 +61,22 @@ if __name__=="__main__":
         cv = True
 
     # # Test Params
-    batch_size_f = 50
-    dropout_rate_f = 0.5
-    conv_non_linear_f = "relu"
-    modeOp = "add"
-    lr_decay = 0.95
-    alpha = 1
-    beta = 1
-    whichAct = 3
-    sqr_norm_lim = 9
-    which_model = "basic"
+    # batch_size_f = 50
+    # dropout_rate_f = 0.5
+    # conv_non_linear_f = "relu"
+    # modeOp = "add"
+    # lr_decay = 0.95
+    # alpha = 1
+    # beta = 1
+    # whichAct = 3
+    # sqr_norm_lim = 9
+    # which_model = "basic"
     if which_model == "basic":
         model = "baseline"
+        model_type = "basic"
     else:
         model = "three-cnns"
+        model_type = "siamese"
     
 
     if mode=="-nonstatic":
@@ -86,10 +89,10 @@ if __name__=="__main__":
         non_static=False
     first_sent = [] # note currently takes the output of the convolution layers and not the predictions
     second_sent = [] # I need to try it with predictions as well
-    execfile("conv_net_classes.py")
+    execfile("utils/conv_net_classes.py")
     execfile("utils/arithmetics.py")
     execfile("utils/helpers.py")
-    execfile("utils/siamese.py")
+    execfile("utils/"+model_type+".py")
     execfile("models/"+model+".py")
     if word_vectors=="-rand":
         print "using: random vectors"
@@ -100,14 +103,6 @@ if __name__=="__main__":
         sys.stdout.flush()
         U = W
     results = []
-    datasets = make_idx_data(revs, word_idx_map, max_l=81,k=300, filter_h=5)
-    print "datasets configured."
-    sys.stdout.flush()
-    print conv_non_linear_f
-    sys.stdout.flush()
-    print non_static, batch_size_f,dropout_rate_f, len(datasets[0])
-    sys.stdout.flush()
-    activations = [ReLU, Sigmoid, Tanh, Iden]
     if which_model=="basic":
         if cv:
             r = range(0,10)    
@@ -146,7 +141,7 @@ if __name__=="__main__":
                non_static=non_static,
                batch_size=50,
                dropout_rate=[0.5],
-               cv=True)
+               cv=False)
 
 
             results.append(perf)
@@ -154,6 +149,10 @@ if __name__=="__main__":
         print str(np.mean(results))
         sys.stdout.flush()
     else:
+        datasets = make_idx_data(revs, word_idx_map, max_l=81,k=300, filter_h=5)
+        sys.stdout.flush()
+        activations = [ReLU, Sigmoid, Tanh, Iden]
+
         perf = train_conv_net(datasets,
            U,
            img_w=300,
