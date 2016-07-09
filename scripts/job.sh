@@ -14,4 +14,4 @@ echo "Single Sentence Casei CNN 2"
 echo "$BATCH_SIZE_F, $DROPOUT_F, $CNL_F"
 #THEANO_FLAGS="device=gpu$GPU_NO" python /home/s1045064/dissertation/repo-diss/sentence-classification/multiplic-three.py -static -word2vec $BATCH_SIZE_F $DROPOUT_F $CNL_F
 
-THEANO_FLAGS="device=gpu$GPU_NO" python /home/s1045064/dissertation/repo-diss/sentence-classification/multiplic-three.py -static -word2vec $BATCH_SIZE_F $DROPOUT_F $CNL_F $MODE $LR_DECAY $ALPHA $BETA $ACTIVATION $SQR_NORM_LIM
+THEANO_FLAGS="device=gpu$GPU_NO,mode=FAST_RUN,floatX=float32" python /home/s1045064/dissertation/repo-diss/sentence-classification/main.py $PICKLE $MODE $WORD_VECTORS $BATCH_SIZE_F $DROPOUT_F $CNL_F $MODE_OP $LR_DECAY $ALPHA $BETA $ACTIVATION $SQR_NORM_LIM $WHICH_MODEL
