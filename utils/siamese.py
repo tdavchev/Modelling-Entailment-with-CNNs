@@ -2,7 +2,7 @@ def concatenate(layers):
     concat= [[],[]]
     for br in xrange(0,2):
         lista = []
-        for idx in xrange(0,len(layers[br])):
+        for idx in xrange(0,len(layers[idx])):
             lista.append(layers[br][idx])
 
         concat[br] = T.concatenate(lista,1)
@@ -31,13 +31,13 @@ def populate_pred_layers(mode,conv_layers,test_layer0_input,test_size):
     else:
         test_pred_layers = [[], []] 
 
-    for idx in xrange(0,2): # we don't look at the third conv layer here
+    for idx in xrange(0,2):
         for conv_layer in conv_layers[idx]:
             test_layer0_output = conv_layer.predict(test_layer0_input[idx], test_size)
             if mode == "concat":
                 test_pred_layers.append(test_layer0_output.flatten(2))
             else:
-                test_pred_layers[idx].append(test_layer0_output.flatten(2))
+                test_pred_layers[idx].append(test_layer0_output.flatten(2)) 
 
     return test_pred_layers
 
@@ -45,7 +45,7 @@ def set_layer1_input(mode,test_pred_layers,test_concat, img_h, img_w, data, alph
     if mode == "concat":
         test_layer1_input = concatenate_tensors(test_pred_layers)
     else:
-        test_concat = concatenate([test_pred_layers[0],test_pred_layers[1]]) # !!!!!!!!!!!!!! only the first two CNNs
+        test_concat = concatenate(test_pred_layers) # !!!!!!!!!!!!!! only the first two CNNs
 
         if mode == "mul":
             test_layer1_input = mul(test_concat)
