@@ -70,9 +70,9 @@ if [ $1 -eq 1 ]; then
 	randomNum 2 0
 	GPU_NO=$?
 	pickle="data/mr.p"
-	#echo "$pickle,$word_vectors,$mode,$bs,$dropout,$cnl,$GPU,$mode_op,$lr_decay,$alpha,$beta,$activation,$sqr_norm_lim"
-	qsub -v PICKLE=$pickle,WORD_VECTORS=$word_vectors,MODE=$mode,BATCH_SIZE_F=$bs,DROPOUT_F=$dropout,CNL_F=$cnl,GPU_NO=$GPU,MODE_OP=$mode_op,LR_DECAY=$lr_decay,ALPHA=$alpha,BETA=$beta,ACTIVATION=$activation,SQR_NORM_LIM=$sqr_norm_lim job.sh
-	
+	which_model="basic"
+	qsub -v qsub -v PICKLE=$pickle,WORD_VECTORS=$word_vectors,MODE=$mode,BATCH_SIZE_F=$bs,DROPOUT_F=$dropout,CNL_F=$cnl,GPU_NO=$GPU,MODE_OP=$mode_op,LR_DECAY=$lr_decay,ALPHA=$alpha,BETA=$beta,ACTIVATION=$activation,SQR_NORM_LIM=$sqr_norm_lim,WHICH_MODEL=$which_model job.sh
+
 else
 	#id=`python select_gpu.py`
 	while [ $count -le 10 ]
@@ -125,8 +125,8 @@ else
 		echo "Starting job with batch size: $bs, dropout: $dropout, conv_non_linear: $cnl lr_decay: $lr_decay in mode: $mode on GPU: $GPU"
 		echo "Starting Model 3 with MODE $mode"
 		pickle="data/snli-GloVe-Split.p"
-		qsub -v PICKLE=$pickle,WORD_VECTORS=$word_vectors,MODE=$mode,BATCH_SIZE_F=$bs,DROPOUT_F=$dropout,CNL_F=$cnl,GPU_NO=$GPU,MODE=$mode,LR_DECAY=$lr_decay,ALPHA=$alpha,BETA=$beta,ACTIVATION=$activation,SQR_NORM_LIM=$sqr_norm_lim job.sh
-
+		which_model="complex"
+		qsub -v PICKLE=$pickle,WORD_VECTORS=$word_vectors,MODE=$mode,BATCH_SIZE_F=$bs,DROPOUT_F=$dropout,CNL_F=$cnl,GPU_NO=$GPU,MODE_OP=$mode_op,LR_DECAY=$lr_decay,ALPHA=$alpha,BETA=$beta,ACTIVATION=$activation,SQR_NORM_LIM=$sqr_norm_lim,WHICH_MODEL=$which_model job.sh
 	done
 fi
 
