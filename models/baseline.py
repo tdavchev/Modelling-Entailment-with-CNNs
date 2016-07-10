@@ -17,7 +17,6 @@ import re
 import warnings
 import sys
 import time
-import cv_process_data as process
 warnings.filterwarnings("ignore")
 
 #different non-linearities
