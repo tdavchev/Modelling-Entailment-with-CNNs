@@ -1,7 +1,0 @@
-Using gpu device 1: GeForce GTX TITAN X (CNMeM is enabled with initial size: 95.0% of memory, cuDNN not available)
-Traceback (most recent call last):
-  File "/home/s1045064/dissertation/repo-diss/sentence-classification/beta-three.py", line 567, in <module>
-    non_static=True)
-  File "/home/s1045064/dissertation/repo-diss/sentence-classification/beta-three.py", line 97, in train_conv_net
-    conv_layer = LeNetConvPoolLayer(rng, input=first_layer0_input,image_shape=(batch_size, 1, img_h, img_w),
-NameError: global name 'LeNetConvPoolLayer' is not defined

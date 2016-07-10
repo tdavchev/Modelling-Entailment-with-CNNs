@@ -1,5 +1,0 @@
-Using gpu device 1: GeForce GTX TITAN X (CNMeM is enabled with initial size: 95.0% of memory, cuDNN not available)
-Traceback (most recent call last):
-  File "/home/s1045064/dissertation/repo-diss/sentence-classification/conv_net_sentence.py", line 454, in <module>
-    dropout_rate=[dropout_rate])
-TypeError: train_conv_net() takes at least 3 arguments (12 given)

@@ -49,7 +49,9 @@ GPU will result in a good 10x to 20x speed-up, so it is highly recommended.
 To use the GPU, simply change `device=cpu` to `device=gpu` (or whichever gpu you are using).
 For example:
 ```
-THEANO_FLAGS=mode=FAST_RUN,device=gpu,floatX=float32 python conv_net_sentence.py -nonstatic -word2vec
+THEANO_FLAGS="mode=FAST_RUN,device=gpu,floatX=float32" python baseline.py -nonstatic -word2vec name.p
+
+Where name.p is the pickle file's name (i.e. mr.p or snli-GloVe-Full.p)
 ```
 
 ### Example output

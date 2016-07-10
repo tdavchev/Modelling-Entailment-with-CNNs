@@ -1,4 +1,0 @@
-  File "/home/s1045064/dissertation/repo-diss/sentence-classification/conv_net_sentence.py", line 128
-    sys.stdout.flush()
-      ^
-SyntaxError: invalid syntax

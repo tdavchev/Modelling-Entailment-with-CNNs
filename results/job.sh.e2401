@@ -1,5 +1,0 @@
-Using gpu device 0: GeForce GTX TITAN X (CNMeM is enabled with initial size: 95.0% of memory, cuDNN not available)
-Traceback (most recent call last):
-  File "/home/s1045064/dissertation/repo-diss/sentence-classification/conv_net_sentence_singleCNN.py", line 306, in <module>
-    batch_size = sys.argv[3]
-IndexError: list index out of range
