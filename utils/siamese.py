@@ -25,40 +25,27 @@ def set_test_params(mode, test_pred_layers_one=[],test_pred_layers_two=[]):
 
     return [test_concat, img_w, img_h]
 
-def populate_pred_layers(mode,conv_layers,test_layer0_input_one, test_layer0_input_two,test_size):
-    # if mode == "concat":
-    #     test_pred_layers = []
-    # else:
-    #     test_pred_layers = [[], []] 
+def populate_pred_layers(mode,conv_layers,test_layer0_input,test_size):
+    if mode == "concat":
+        test_pred_layers = []
+    else:
+        test_pred_layers = [[], []] 
 
-    # for idx in xrange(0,2): # we don't look at the third conv layer here
-    #     for conv_layer in conv_layers[idx]:
-    #         test_layer0_output = conv_layer.predict(test_layer0_input[idx], test_size)
-    #         if mode == "concat":
-    #             test_pred_layers.append(test_layer0_output.flatten(2))
-    #         else:
-    #             test_pred_layers[idx].append(test_layer0_output.flatten(2))
+    for idx in xrange(0,2): # we don't look at the third conv layer here
+        for conv_layer in conv_layers[idx]:
+            test_layer0_output = conv_layer.predict(test_layer0_input[idx], test_size)
+            if mode == "concat":
+                test_pred_layers.append(test_layer0_output.flatten(2))
+            else:
+                test_pred_layers[idx].append(test_layer0_output.flatten(2))
 
-    test_pred_layers = []
-    test_pred_layers_one = []
-    test_pred_layers_two = []
+    return test_pred_layers
 
-    for conv_layer in conv_layers[0]:
-        test_layer0_output_one = conv_layer.predict(test_layer0_input_one, test_size)
-        test_pred_layers_one.append(test_layer0_output_one.flatten(2))
-
-    for conv_layer in conv_layers[1]:
-        test_layer0_output_two = conv_layer.predict(test_layer0_input_two, test_size)
-        test_pred_layers_two.append(test_layer0_output_two.flatten(2))
-
-
-    return test_pred_layers, test_pred_layers_one, test_pred_layers_two
-
-def set_layer1_input(mode, test_pred_layers_one, test_pred_layers_two, test_concat, img_h, img_w, data, alpha, beta, test_pred_layers):
+def set_layer1_input(mode,test_pred_layers,test_concat, img_h, img_w, data, alpha, beta):
     if mode == "concat":
         test_layer1_input = concatenate_tensors(test_pred_layers)
     else:
-        test_concat = concatenate([test_pred_layers_one, test_pred_layers_two]) # !!!!!!!!!!!!!! only the first two CNNs
+        test_concat = concatenate([test_pred_layers[0],test_pred_layers[1]]) # !!!!!!!!!!!!!! only the first two CNNs
 
         if mode == "mul":
             test_layer1_input = mul(test_concat)
@@ -116,13 +103,13 @@ def set_lengths(modeOp):
 
 def build_test(img_h,img_w, test_size, Words, conv_layers, x, mode, data, alpha, beta):
     # initialize layer 0's input
-    test_layer0_input_one,test_layer0_input_two = set_layer0_input(Words, img_h, test_size, x)
+    test_layer0_input = set_layer0_input(Words, img_h, test_size, x)
     # initialize new parameters
     test_concat, img_w, img_h = set_test_params(mode)
     # populate layers
-    test_pred_layers, test_pred_layers_one, test_pred_layers_two = populate_pred_layers(mode, conv_layers, test_layer0_input_one, test_layer0_input_two, test_size)
+    test_pred_layers = populate_pred_layers(mode, conv_layers, test_layer0_input, test_size)
     # initialize layer 1's input
-    test_layer1_input = set_layer1_input(mode, test_pred_layers_one, test_pred_layers_two, test_concat, img_h, img_w, data, alpha, beta, test_pred_layers)
+    test_layer1_input = set_layer1_input(mode, test_pred_layers, test_concat, img_h, img_w, data, alpha, beta)
     # reshape for third CNN
     test_layer0_input_three = test_layer1_input.reshape(
         (test_layer1_input.shape[0],
@@ -176,4 +163,4 @@ def set_layer0_input(Words,img_h,test_size,x):
     test_layer0_input_one = Words[T.cast(x[:,:89].flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
     test_layer0_input_two = Words[T.cast(x[:,89:].flatten(),dtype="int32")].reshape((test_size,1,img_h,Words.shape[1]))
     
-    return test_layer0_input_one,test_layer0_input_two
+    return [test_layer0_input_one,test_layer0_input_two]
