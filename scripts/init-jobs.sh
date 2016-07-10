@@ -6,7 +6,7 @@ cnl="relu"
 lr_decay=0.95
 mode_op="add"
 dropout=0.5
-activation=3
+activation=4
 sqr_norm_lim=9
 
 ####### Define Functions #######
