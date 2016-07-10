@@ -73,7 +73,7 @@ do
 		GPU=0
 	fi
 	let "count=$count+1"
-	randomNum 40 10
+	randomNum 70 10
 	num=$?
 	mode_op="add"
 	if [ $num -le 10 ]; then
@@ -82,6 +82,14 @@ do
 		mode_op="concat"
 	elif [ $num -le 30 ]; then
 		mode_op="circ"
+	elif [ $num -le 40 ]; then
+		mode_op="sub"
+	elif [ $num -le 50 ]; then
+		mode_op="mix1"
+	elif [ $num -le 60 ]; then
+		mode_op="mix2"
+	elif [ $num -le 70 ]; then
+		mode_op="mix3"
 	fi
 	#mode="add"
     randomNum 20 10
