@@ -92,12 +92,12 @@ do
 	fi
 	cnl="relu"
 	randomNum 50 20
-	#dropout=20
-	dropout=$?
+	dropout=50
+#	dropout=$?
 	echo "Dropout is --- $dropout"
 	randomNum 94 85
-	lr_decay=$?
-	#lr_decay=95
+#	lr_decay=$?
+	lr_decay=95
 	echo "Random number for lr_decay --- $lr_decay"
 	randomNum 50 30
 	alpha=$?
@@ -106,17 +106,17 @@ do
 	let "beta=100-$alpha"
 	echo "Setting alpha and beta to --- $alpha, $beta"
 	activationNum
-	activation=$?
-	#activation=3
+#	activation=$?
+	activation=4
 	echo "Activation num: $activation"
 	randomNum 10 6
-	sqr_norm_lim=$?
-	#sqr_norm_lim=9
+#	sqr_norm_lim=$?
+	sqr_norm_lim=9
 	if [ $1 -le 1 ]; then
 		pickle="data/mr.p"
 		which_model="basic"
 		echo "pickle: $pickle; word vectors: $word_vectors; mode: $mode; batch_size: $batch_size_f; dropout_f: $dropout_f; mode_op: $mode_op; cnl_f: $cnl_f;lr_decay: $lr_decay; alpha: $alpha; beta: $beta; activation: $activation; sqr_norm_lim: $sqr_norm_lim; which_model: $which_model"
-		qsub -v
+		qsub -v PICKLE=$pickle,WORD_VECTORS=$word_vectors,MODE=$mode,BATCH_SIZE_F=$bs,DROPOUT_F=$dropout,CNL_F=$cnl,GPU_NO=$GPU,MODE_OP=$mode_op,LR_DECAY=$lr_decay,ALPHA=$alpha,BETA=$beta,ACTIVATION=$activation,SQR_NORM_LIM=$sqr_norm_lim,WHICH_MODEL=$which_model job.sh
 	else
 		echo "sqr_norm_lim --- $sqr_norm_lim"
 		echo "Starting job with batch size: $bs, dropout: $dropout, conv_non_linear: $cnl lr_decay: $lr_decay in mode: $mode on GPU: $GPU"
