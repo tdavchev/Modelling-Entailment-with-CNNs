@@ -91,7 +91,7 @@ do
 	elif [ $num -le 70 ]; then
 		mode_op="mix3"
 	fi
-	#mode="add"
+	#mode_op="add"
     randomNum 20 10
     num=$?
 	cnl="tanh"
