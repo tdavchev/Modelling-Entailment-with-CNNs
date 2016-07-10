@@ -88,15 +88,10 @@ def train_conv_net(datasets,
     img_w,img_h = set_lengths(modeOp)
     if modeOp == "concat":
         layer1_input = concatenate_tensors(layer1_inputs)
-        # keep relatively close ratio to 300/81
-        # img_w,img_h = set_lengths(modeOp)
 
     else:
         layer1_input = []
         concat = concatenate([one_layers, two_layers])
-        # keep relatively close ratio to 300/81
-        # img_w,img_h = set_lengths(modeOp)
-
         if modeOp == "add":
             layer1_input = add(batch_size, alpha, beta, concat) # [50 300]
 
@@ -114,12 +109,15 @@ def train_conv_net(datasets,
             layer1_input = mix1(layer1_inputs,batch_size,alpha,beta,concat) # [50, 1200]
 
         elif modeOp == "mix2":
-            # img_w,img_h = set_lengths(modeOp)
             layer1_input = mix2(layer1_inputs,batch_size,alpha,beta,concat) # [50, 1200]
 
         elif modeOp == "mix3":
-            # img_w,img_h = set_lengths(modeOp)
             layer1_input = mix3(layer1_inputs,batch_size,alpha,beta,concat) # [50, 1200]
+
+        elif modeOp == "mix4":
+            conv1d = circular_convolution([first_layer0_input,second_layer0_input]) # [50,300]
+            layer1_input = mix4(layer1_inputs,batch_size,alpha,beta,concat) # [50, 1200]
+
 
     layer1_cnn_input = layer1_input.reshape((-1,img_h,img_w))
         
