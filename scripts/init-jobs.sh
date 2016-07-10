@@ -66,70 +66,65 @@ count=0
 bs=50
 mode="-nonstatic"
 word_vectors="-word2vec"
-if [ $1 -eq 1 ]; then
-	randomNum 2 0
-	GPU_NO=$?
-	pickle="data/mr.p"
-	which_model="basic"
-	echo "pickle: $pickle; word vectors: $word_vectors; mode: $mode; batch_size: $batch_size_f; dropout_f: $dropout_f; mode_op: $mode_op; cnl_f: $cnl_f;lr_decay: $lr_decay; alpha: $alpha; beta: $beta; activation: $activation; sqr_norm_lim: $sqr_norm_lim; which_model: $which_model"
-	qsub -v qsub -v PICKLE=$pickle,WORD_VECTORS=$word_vectors,MODE=$mode,BATCH_SIZE_F=$bs,DROPOUT_F=$dropout,CNL_F=$cnl,GPU_NO=$GPU,MODE_OP=$mode_op,LR_DECAY=$lr_decay,ALPHA=$alpha,BETA=$beta,ACTIVATION=$activation,SQR_NORM_LIM=$sqr_norm_lim,WHICH_MODEL=$which_model job.sh
-
-else
-	#id=`python select_gpu.py`
-	while [ $count -le 10 ]
-	do
-		GPU=$((GPU+1))
-		if [ $GPU -eq 3 ]; then
-			GPU=0
-		fi
-		let "count=$count+1"
-		randomNum 40 10
-		num=$?
-		mode_op="add"
-		if [ $num -le 10 ]; then
-			mode_op="mul"
-		elif [ $num -le 20 ]; then
-			mode_op="concat"
-		elif [ $num -le 30 ]; then
-			mode_op="circ"
-		fi
-		#mode="add"
-        randomNum 20 10
-        num=$?
-		cnl="tanh"
-		if [ $num -le 15 ]; then
-			cnl="relu"
-		fi
+while [ $count -le $2 ]
+do
+	GPU=$((GPU+1))
+	if [ $GPU -eq 3 ]; then
+		GPU=0
+	fi
+	let "count=$count+1"
+	randomNum 40 10
+	num=$?
+	mode_op="add"
+	if [ $num -le 10 ]; then
+		mode_op="mul"
+	elif [ $num -le 20 ]; then
+		mode_op="concat"
+	elif [ $num -le 30 ]; then
+		mode_op="circ"
+	fi
+	#mode="add"
+    randomNum 20 10
+    num=$?
+	cnl="tanh"
+	if [ $num -le 15 ]; then
 		cnl="relu"
-		randomNum 50 20
-		#dropout=20
-		dropout=$?
-		echo "Dropout is --- $dropout"
-		randomNum 94 85
-		lr_decay=$?
-		#lr_decay=95
-		echo "Random number for lr_decay --- $lr_decay"
-		randomNum 50 30
-		alpha=$?
-		#alpha=40
-		#alpha=100
-		let "beta=100-$alpha"
-		echo "Setting alpha and beta to --- $alpha, $beta"
-		activationNum
-		activation=$?
-		#activation=3
-		echo "Activation num: $activation"
-		randomNum 10 6
-		sqr_norm_lim=$?
-		#sqr_norm_lim=9
+	fi
+	cnl="relu"
+	randomNum 50 20
+	#dropout=20
+	dropout=$?
+	echo "Dropout is --- $dropout"
+	randomNum 94 85
+	lr_decay=$?
+	#lr_decay=95
+	echo "Random number for lr_decay --- $lr_decay"
+	randomNum 50 30
+	alpha=$?
+	#alpha=40
+	#alpha=100
+	let "beta=100-$alpha"
+	echo "Setting alpha and beta to --- $alpha, $beta"
+	activationNum
+	activation=$?
+	#activation=3
+	echo "Activation num: $activation"
+	randomNum 10 6
+	sqr_norm_lim=$?
+	#sqr_norm_lim=9
+	if [ $1 -le 1 ]; then
+		pickle="data/mr.p"
+		which_model="basic"
+		echo "pickle: $pickle; word vectors: $word_vectors; mode: $mode; batch_size: $batch_size_f; dropout_f: $dropout_f; mode_op: $mode_op; cnl_f: $cnl_f;lr_decay: $lr_decay; alpha: $alpha; beta: $beta; activation: $activation; sqr_norm_lim: $sqr_norm_lim; which_model: $which_model"
+		qsub -v
+	else
 		echo "sqr_norm_lim --- $sqr_norm_lim"
 		echo "Starting job with batch size: $bs, dropout: $dropout, conv_non_linear: $cnl lr_decay: $lr_decay in mode: $mode on GPU: $GPU"
 		echo "Starting Model 3 with MODE $mode"
 		pickle="data/snli-GloVe-Split.p"
 		which_model="complex"
 		qsub -v PICKLE=$pickle,WORD_VECTORS=$word_vectors,MODE=$mode,BATCH_SIZE_F=$bs,DROPOUT_F=$dropout,CNL_F=$cnl,GPU_NO=$GPU,MODE_OP=$mode_op,LR_DECAY=$lr_decay,ALPHA=$alpha,BETA=$beta,ACTIVATION=$activation,SQR_NORM_LIM=$sqr_norm_lim,WHICH_MODEL=$which_model job.sh
-	done
-fi
-
+	fi
+done
 
 exit 0
