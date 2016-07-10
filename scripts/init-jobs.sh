@@ -71,7 +71,7 @@ if [ $1 -eq 1 ]; then
 	GPU_NO=$?
 	pickle="data/mr.p"
 	which_model="basic"
-	echo "echo $pickle $word_vectors $mode $batch_size_f $dropout_f $mode_op $cnl_f $lr_decay $alpha $beta $activation $sqr_norm_lim $which_model"
+	echo "pickle: $pickle; word vectors: $word_vectors; mode: $mode; batch_size: $batch_size_f; dropout_f: $dropout_f; mode_op: $mode_op; cnl_f: $cnl_f;lr_decay: $lr_decay; alpha: $alpha; beta: $beta; activation: $activation; sqr_norm_lim: $sqr_norm_lim; which_model: $which_model"
 	qsub -v qsub -v PICKLE=$pickle,WORD_VECTORS=$word_vectors,MODE=$mode,BATCH_SIZE_F=$bs,DROPOUT_F=$dropout,CNL_F=$cnl,GPU_NO=$GPU,MODE_OP=$mode_op,LR_DECAY=$lr_decay,ALPHA=$alpha,BETA=$beta,ACTIVATION=$activation,SQR_NORM_LIM=$sqr_norm_lim,WHICH_MODEL=$which_model job.sh
 
 else
