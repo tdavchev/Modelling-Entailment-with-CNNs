@@ -147,9 +147,9 @@ def train_conv_net(datasets,
     test_model = build_model(index, classifier, batch_size, train_set_x, train_set_y, x, y)
     train_model = build_train_model(index, batch_size, cost, grad_updates, train_set_x, train_set_y, x, y)
 
-    ffwd_layer_input = build_test(img_h, test_set_x.shape[0], Words, conv_layers, x)
+    test_ffwd_layer_input = build_test(img_h, test_set_x.shape[0], Words, conv_layers, x)
 
-    test_y_pred = classifier.predict(ffwd_layer_input)
+    test_y_pred = classifier.predict(test_ffwd_layer_input)
     test_error = T.mean(T.neq(test_y_pred, y))
     test_model_all = theano.function([x,y], test_error, allow_input_downcast = True)
 

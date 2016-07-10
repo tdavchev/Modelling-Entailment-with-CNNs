@@ -105,7 +105,6 @@ def train_conv_net(datasets,
             layer1_input = circular_convolution(concat) # [50,300]
 
         elif modeOp == "mix1":
-            img_w,img_h = set_lengths(modeOp)
             layer1_input = mix1(layer1_inputs,batch_size,alpha,beta,concat) # [50, 1200]
 
         elif modeOp == "mix2":
@@ -189,7 +188,7 @@ def train_conv_net(datasets,
    
     img_h = (len(datasets[0][0])-1)/2 # note we need only per sentence
 
-    ffwd_layer_input = build_test(img_h, 
+    test_ffwd_layer_input = build_test(img_h, 
         img_w, 
         test_set_x.shape[0], 
         Words, 
@@ -200,7 +199,7 @@ def train_conv_net(datasets,
         alpha,
         beta)
 
-    test_y_pred = classifier.predict(ffwd_layer_input)
+    test_y_pred = classifier.predict(test_ffwd_layer_input)
     test_error = T.mean(T.neq(test_y_pred, y))
     test_model_all = theano.function([x,y], test_error, allow_input_downcast = True)
 
