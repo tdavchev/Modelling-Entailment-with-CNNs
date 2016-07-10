@@ -115,7 +115,6 @@ def train_conv_net(datasets,
             layer1_input = mix3(layer1_inputs,batch_size,alpha,beta,concat) # [50, 1200]
 
         elif modeOp == "mix4":
-            conv1d = circular_convolution([first_layer0_input,second_layer0_input]) # [50,300]
             layer1_input = mix4(layer1_inputs,batch_size,alpha,beta,concat) # [50, 1200]
 
 

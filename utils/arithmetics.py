@@ -101,7 +101,7 @@ def mix3(layer1_inputs,batch_size,alpha,beta,concat):
 
     lista = []
     lista.append(layer1_concat)
-    lista.append(layer1_circ)
+    lista.append(layer1_sub)
     layer1_input = T.concatenate(lista,1) # [50 900]
 
     # layer1_mul = mul(concat) # [50 300]
@@ -113,21 +113,21 @@ def mix3(layer1_inputs,batch_size,alpha,beta,concat):
 
     return T.concatenate(lista,1) # [50 1200]
 
-    def mix4(layer1_inputs,batch_size,alpha,beta,concat, conv1d):
+def mix4(layer1_inputs,batch_size,alpha,beta,concat):
     layer1_concat = concatenate_tensors(layer1_inputs) # [50 600]
     layer1_sub = sub(batch_size, 1, 1, concat) # [50 300]
 
     lista = []
-    lista.append(conv1d)
     lista.append(layer1_concat)
-    lista.append(layer1_circ)
+    lista.append(layer1_sub)
     layer1_input = T.concatenate(lista,1) # [50 900]
 
+    layer1_circ = circular_convolution(concat) # [50 300]
     # layer1_mul = mul(concat) # [50 300]
-    layer1_add = add(batch_size, alpha, beta, concat) # [50 300]
+    # layer1_add = add(batch_size, alpha, beta, concat) # [50 300]
 
     lista = []
     lista.append(layer1_input)
-    lista.append(layer1_add)
+    lista.append(layer1_circ)
 
     return T.concatenate(lista,1) # [50 1200] 
