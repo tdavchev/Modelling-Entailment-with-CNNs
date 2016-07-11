@@ -15,7 +15,7 @@ def set_test_params(mode, test_pred_layers_one=[],test_pred_layers_two=[]):
         img_w = 50
         img_h = 12
 
-    elif mode == "mix1" or mode == "mix2":
+    elif mode == "mix1" or mode == "mix2" or mode == "mix3":
         img_w = 80
         img_h = 15
 
