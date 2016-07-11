@@ -193,7 +193,7 @@ def train_conv_net(datasets,
 
     test_ffwd_layer_input = build_test(img_h, 
         img_w, 
-        test_set_x.shape[0], 
+        x.shape[0], 
         Words, 
         [first_conv_layers, second_conv_layers, third_conv_layers],
         x, 
