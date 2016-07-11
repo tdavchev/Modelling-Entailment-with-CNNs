@@ -2,7 +2,7 @@ def concatenate(layers):
     concat= [[],[]]
     for br in xrange(0,2):
         lista = []
-        for idx in xrange(0,len(layers[idx])):
+        for idx in xrange(0,len(layers[br])):
             lista.append(layers[br][idx])
 
         concat[br] = T.concatenate(lista,1)
