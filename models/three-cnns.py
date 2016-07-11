@@ -233,6 +233,7 @@ def train_conv_net(datasets,
         if val_perf >= best_val_perf:
             best_val_perf = val_perf
             if modeOp == "circ": # split in minibatches to decrease convolution size
+                test_loss = 0
                 for minibatch_index in xrange(n_test_batches):
                     test_loss += test_model_all(test_set_x[minibatch_index*batch_size:(minibatch_index+1)*batch_size],test_set_y[minibatch_index*batch_size:(minibatch_index+1)*batch_size])
 
