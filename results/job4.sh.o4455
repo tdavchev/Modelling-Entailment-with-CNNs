@@ -1,0 +1,15 @@
+Single Sentence Casei CNN 2
+50, 32, relu
+loading data...
+data loaded!
+model architecture: CNN-static
+using: word2vec vectors
+datasets configured.
+relu
+False 50 0.32 550152
+[('image shape', 89, 300), ('filter shape', [(100, 1, 3, 300), (100, 1, 4, 300), (100, 1, 5, 300)]), ('hidden_units', [100, 3]), ('dropout', [0.32]), ('batch_size', 50), ('non_static', False), ('learn_decay', 0.92), ('conv_non_linear', 'relu'), ('non_static', False), ('sqr_norm_lim', 7), ('shuffle_batch', True), ('mode', 'concat'), ('alpha', 0.32), ('beta', 0.68), ('activations', [<function Tanh at 0xa32ade8>])]
+define model architecture
+define parameters of the model and update functions using adadelta
+shuffle dataset and assign to mini batches. if dataset size is not a multiple of mini batches, replicate
+divide train set into train/val sets
+compile theano functions to get train/val/test errors
