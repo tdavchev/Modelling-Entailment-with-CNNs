@@ -65,7 +65,13 @@ def set_layer1_input(mode,test_pred_layers,test_concat, img_h, img_w, data, alph
                 for br in xrange(0,3):
                     test_pred_inputs.append(test_pred_layers[idx][br])
 
-            test_layer1_input = mix3(test_pred_inputs,len(data[:]),alpha,beta,test_concat)
+        elif mode == "mix4":
+            test_pred_inputs = []
+            for idx in xrange(0,2):
+                for br in xrange(0,3):
+                    test_pred_inputs.append(test_pred_layers[idx][br])
+
+            test_layer1_input = mix4(test_pred_inputs,len(data[:]),alpha,beta,test_concat)
 
     return test_layer1_input.reshape((-1,img_h,img_w))
 
