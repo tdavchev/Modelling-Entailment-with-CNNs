@@ -45,7 +45,7 @@ def set_layer1_input(mode,test_pred_layers,test_concat, img_h, img_w, data, alph
     if mode == "concat":
         test_layer1_input = concatenate_tensors(test_pred_layers)
     else:
-        test_concat = concatenate(test_pred_layers) # !!!!!!!!!!!!!! only the first two CNNs
+        test_concat = concatenate(test_pred_layers)
 
         if mode == "mul":
             test_layer1_input = mul(test_concat)
