@@ -63,7 +63,8 @@ function activationNum {
 }
 
 count=0
-bs=50
+br=0
+bs=200
 mode="-nonstatic"
 word_vectors="-word2vec"
 while [ $count -le $2 ]
@@ -75,23 +76,37 @@ do
 	let "count=$count+1"
 	randomNum 70 10
 	num=$?
-	mode_op="add"
-	if [ $num -le 10 ]; then
-		mode_op="mul"
-	elif [ $num -le 20 ]; then
-		mode_op="concat"
-	elif [ $num -le 30 ]; then
-		mode_op="circ"
-	elif [ $num -le 40 ]; then
+	br=$((br+1))
+        if [ $br -eq 1 ]; then
+               mode_op="mul"
+	elif [ $br -eq 2 ]; then
+		mode_op="add"
+	elif [ $br -eq 3 ]; then
 		mode_op="sub"
-	elif [ $num -le 50 ]; then
+	elif [ $br -eq 4 ]; then
 		mode_op="mix1"
-	elif [ $num -le 60 ]; then
+	elif [ $br -eq 5 ]; then
 		mode_op="mix2"
-	elif [ $num -le 70 ]; then
+	elif [ $br -eq 6 ]; then
+		br=0
 		mode_op="mix3"
-	fi
-	mode_op="circ"
+        fi
+#	if [ $num -le 10 ]; then
+#		mode_op="mul"
+#	elif [ $num -le 20 ]; then
+#		mode_op="concat"
+#	elif [ $num -le 30 ]; then
+#		mode_op="circ"
+#	elif [ $num -le 40 ]; then
+#		mode_op="sub"
+#	elif [ $num -le 50 ]; then
+#		mode_op="mix1"
+#	elif [ $num -le 60 ]; then
+#		mode_op="mix2"
+#	elif [ $num -le 70 ]; then
+#		mode_op="mix3"
+#	fi
+#	mode_op="sub"
     	randomNum 20 10
     	num=$?
 	cnl="tanh"
@@ -100,7 +115,7 @@ do
 	fi
 	cnl="relu"
 	randomNum 50 20
-	dropout=50
+	dropout=20
 #	dropout=$?
 	echo "Dropout is --- $dropout"
 	randomNum 94 85
@@ -108,8 +123,8 @@ do
 	lr_decay=95
 	echo "Random number for lr_decay --- $lr_decay"
 	randomNum 50 30
-	alpha=$?
-	#alpha=40
+#	alpha=$?
+	alpha=40
 	#alpha=100
 	let "beta=100-$alpha"
 	echo "Setting alpha and beta to --- $alpha, $beta"
