@@ -64,6 +64,10 @@ if __name__=="__main__":
     else:
         cv = True
 
+    if "GloVe" in file_name:
+        if word_vectors != "-rand":
+            word_vectors = "-glove"
+
     # # Test Params
     # batch_size_f = 50
     # dropout_rate_f = 0.5
