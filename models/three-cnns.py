@@ -159,7 +159,6 @@ def train_conv_net(datasets,
     cost = classifier.negative_log_likelihood(y)
     p_y_given_x = classifier.p_y_given_x
 
-    # weights = classifier.getW()
     dropout_cost = classifier.dropout_negative_log_likelihood(y)
     grad_updates = sgd_updates_adadelta(params, dropout_cost, lr_decay, 1e-6, sqr_norm_lim)
 
@@ -169,7 +168,7 @@ def train_conv_net(datasets,
     new_data = complete_train_data(datasets[0], batch_size)
     # new_data = np.random.permutation(new_data) # makes it all nonsence ! why - usually used when not enough data, maybe, to generalize better?
 
-    n_train_batches, n_val_batches = get_n_batches(new_data, datasets[2], batch_size)#1], batch_size)
+    n_train_batches, n_val_batches = get_n_batches(new_data, datasets[2], batch_size)
 
     if modeOp == "circ":
         n_test_batches, _ = get_n_batches(datasets[1], [], batch_size)
@@ -178,9 +177,9 @@ def train_conv_net(datasets,
     print "divide train set into train/val sets"
     sys.stdout.flush()
 
-    test_set_x, test_set_y = process_test(datasets[1])#[2])
+    test_set_x, test_set_y = process_test(datasets[1])
     train_set_x, train_set_y = process_train(new_data)
-    val_set_x, val_set_y = process_valid(datasets[2][:,:-1],datasets[2][:,-1])#1][:,:-1],datasets[1][:,-1])
+    val_set_x, val_set_y = process_valid(datasets[2][:,:-1],datasets[2][:,-1])
 
     #compile theano functions to get train/val/test errors
     print "compile theano functions to get train/val/test errors"
@@ -193,12 +192,12 @@ def train_conv_net(datasets,
 
     test_ffwd_layer_input = build_test(img_h, 
         img_w, 
-        x.shape[0], 
+        test_set_x.shape[0], 
         Words, 
         [first_conv_layers, second_conv_layers, third_conv_layers],
         x, 
         modeOp, 
-        datasets[1],#2],
+        datasets[1],
         alpha,
         beta)
 
