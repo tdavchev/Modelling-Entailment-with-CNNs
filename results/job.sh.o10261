@@ -1,0 +1,3 @@
+Single Sentence Casei CNN 2
+200, 15, relu
+keep everything but operations static

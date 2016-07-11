@@ -1,0 +1,348 @@
+Single Sentence Casei CNN 2
+50, 50, relu
+loading data...
+/home/s1045064/dissertation/repo-diss/sentence-classification/data/mr.p
+data loaded!
+model architecture: CNN-non-static
+using: word2vec vectors
+True
+[('image shape', 63, 300), ('filter shape', [(100, 1, 2, 300), (100, 1, 3, 300), (100, 1, 4, 300), (100, 1, 5, 300)]), ('hidden_units', [100, 2]), ('dropout', [0.5]), ('batch_size', 50), ('non_static', True), ('learn_decay', 0.95), ('conv_non_linear', 'relu'), ('non_static', True), ('sqr_norm_lim', 9), ('shuffle_batch', True), ('activations', [<function Iden at 0xa7c9668>]), ('baseline', True)]
+define model architecture
+define parameters of the model and update functions using adadelta
+shuffle dataset and assign to mini batches. if dataset size is not a multiple of mini batches, replicate
+divide train set into train/val sets
+compile theano functions to get train/val/test errors
+... training
+epoch: 1, training time: 4.95 secs, train perf: 80.21 %, val perf: 76.21 %
+epoch: 2, training time: 4.92 secs, train perf: 87.28 %, val perf: 79.37 %
+epoch: 3, training time: 4.92 secs, train perf: 91.45 %, val perf: 80.84 %
+epoch: 4, training time: 4.92 secs, train perf: 93.35 %, val perf: 78.21 %
+epoch: 5, training time: 4.92 secs, train perf: 97.45 %, val perf: 80.53 %
+epoch: 6, training time: 4.93 secs, train perf: 98.64 %, val perf: 79.79 %
+epoch: 7, training time: 4.92 secs, train perf: 99.41 %, val perf: 80.32 %
+epoch: 8, training time: 4.92 secs, train perf: 99.63 %, val perf: 81.16 %
+epoch: 9, training time: 4.92 secs, train perf: 99.70 %, val perf: 79.37 %
+epoch: 10, training time: 4.92 secs, train perf: 99.91 %, val perf: 80.21 %
+epoch: 11, training time: 4.93 secs, train perf: 99.98 %, val perf: 81.68 %
+epoch: 12, training time: 4.93 secs, train perf: 99.98 %, val perf: 81.68 %
+epoch: 13, training time: 4.93 secs, train perf: 99.99 %, val perf: 81.79 %
+epoch: 14, training time: 4.93 secs, train perf: 99.99 %, val perf: 80.95 %
+epoch: 15, training time: 4.93 secs, train perf: 99.99 %, val perf: 81.58 %
+epoch: 16, training time: 4.93 secs, train perf: 99.99 %, val perf: 81.05 %
+epoch: 17, training time: 4.94 secs, train perf: 99.99 %, val perf: 81.47 %
+epoch: 18, training time: 4.98 secs, train perf: 99.99 %, val perf: 81.68 %
+epoch: 19, training time: 4.97 secs, train perf: 99.99 %, val perf: 81.37 %
+epoch: 20, training time: 4.98 secs, train perf: 99.99 %, val perf: 81.05 %
+epoch: 21, training time: 4.98 secs, train perf: 100.00 %, val perf: 81.16 %
+epoch: 22, training time: 4.97 secs, train perf: 100.00 %, val perf: 81.26 %
+epoch: 23, training time: 4.98 secs, train perf: 100.00 %, val perf: 81.05 %
+epoch: 24, training time: 4.99 secs, train perf: 100.00 %, val perf: 81.16 %
+epoch: 25, training time: 4.98 secs, train perf: 100.00 %, val perf: 81.47 %
+cv: 0, perf: 0.805381165919
+True
+[('image shape', 63, 300), ('filter shape', [(100, 1, 2, 300), (100, 1, 3, 300), (100, 1, 4, 300), (100, 1, 5, 300)]), ('hidden_units', [100, 2]), ('dropout', [0.5]), ('batch_size', 50), ('non_static', True), ('learn_decay', 0.95), ('conv_non_linear', 'relu'), ('non_static', True), ('sqr_norm_lim', 9), ('shuffle_batch', True), ('activations', [<function Iden at 0xa7c9668>]), ('baseline', True)]
+define model architecture
+define parameters of the model and update functions using adadelta
+shuffle dataset and assign to mini batches. if dataset size is not a multiple of mini batches, replicate
+divide train set into train/val sets
+compile theano functions to get train/val/test errors
+... training
+epoch: 1, training time: 5.05 secs, train perf: 80.83 %, val perf: 76.11 %
+epoch: 2, training time: 5.02 secs, train perf: 86.54 %, val perf: 80.63 %
+epoch: 3, training time: 5.02 secs, train perf: 91.90 %, val perf: 82.00 %
+epoch: 4, training time: 5.02 secs, train perf: 95.41 %, val perf: 82.32 %
+epoch: 5, training time: 5.05 secs, train perf: 96.38 %, val perf: 79.37 %
+epoch: 6, training time: 5.05 secs, train perf: 98.87 %, val perf: 81.47 %
+epoch: 7, training time: 5.05 secs, train perf: 99.64 %, val perf: 82.21 %
+epoch: 8, training time: 5.06 secs, train perf: 99.77 %, val perf: 82.21 %
+epoch: 9, training time: 5.05 secs, train perf: 99.84 %, val perf: 81.89 %
+epoch: 10, training time: 5.05 secs, train perf: 99.95 %, val perf: 80.95 %
+epoch: 11, training time: 5.06 secs, train perf: 99.95 %, val perf: 81.58 %
+epoch: 12, training time: 5.05 secs, train perf: 99.99 %, val perf: 81.58 %
+epoch: 13, training time: 5.06 secs, train perf: 99.98 %, val perf: 81.68 %
+epoch: 14, training time: 5.05 secs, train perf: 99.99 %, val perf: 81.89 %
+epoch: 15, training time: 5.06 secs, train perf: 100.00 %, val perf: 81.89 %
+epoch: 16, training time: 5.06 secs, train perf: 99.99 %, val perf: 81.79 %
+epoch: 17, training time: 5.06 secs, train perf: 100.00 %, val perf: 81.47 %
+epoch: 18, training time: 5.06 secs, train perf: 100.00 %, val perf: 81.37 %
+epoch: 19, training time: 5.05 secs, train perf: 100.00 %, val perf: 80.84 %
+epoch: 20, training time: 5.06 secs, train perf: 100.00 %, val perf: 81.47 %
+epoch: 21, training time: 5.06 secs, train perf: 100.00 %, val perf: 81.89 %
+epoch: 22, training time: 5.06 secs, train perf: 100.00 %, val perf: 81.68 %
+epoch: 23, training time: 5.05 secs, train perf: 100.00 %, val perf: 81.58 %
+epoch: 24, training time: 5.06 secs, train perf: 100.00 %, val perf: 82.00 %
+epoch: 25, training time: 5.05 secs, train perf: 100.00 %, val perf: 81.68 %
+cv: 1, perf: 0.818265682657
+True
+[('image shape', 63, 300), ('filter shape', [(100, 1, 2, 300), (100, 1, 3, 300), (100, 1, 4, 300), (100, 1, 5, 300)]), ('hidden_units', [100, 2]), ('dropout', [0.5]), ('batch_size', 50), ('non_static', True), ('learn_decay', 0.95), ('conv_non_linear', 'relu'), ('non_static', True), ('sqr_norm_lim', 9), ('shuffle_batch', True), ('activations', [<function Iden at 0xa7c9668>]), ('baseline', True)]
+define model architecture
+define parameters of the model and update functions using adadelta
+shuffle dataset and assign to mini batches. if dataset size is not a multiple of mini batches, replicate
+divide train set into train/val sets
+compile theano functions to get train/val/test errors
+... training
+epoch: 1, training time: 5.10 secs, train perf: 80.34 %, val perf: 78.74 %
+epoch: 2, training time: 5.07 secs, train perf: 85.36 %, val perf: 81.26 %
+epoch: 3, training time: 5.07 secs, train perf: 91.41 %, val perf: 82.95 %
+epoch: 4, training time: 5.07 secs, train perf: 95.68 %, val perf: 82.74 %
+epoch: 5, training time: 5.07 secs, train perf: 97.86 %, val perf: 82.42 %
+epoch: 6, training time: 5.07 secs, train perf: 98.76 %, val perf: 81.05 %
+epoch: 7, training time: 5.07 secs, train perf: 99.52 %, val perf: 81.89 %
+epoch: 8, training time: 5.07 secs, train perf: 99.72 %, val perf: 81.58 %
+epoch: 9, training time: 5.07 secs, train perf: 99.66 %, val perf: 82.32 %
+epoch: 10, training time: 5.07 secs, train perf: 99.91 %, val perf: 81.26 %
+epoch: 11, training time: 5.07 secs, train perf: 99.97 %, val perf: 82.74 %
+epoch: 12, training time: 5.07 secs, train perf: 99.99 %, val perf: 82.84 %
+epoch: 13, training time: 5.07 secs, train perf: 100.00 %, val perf: 82.74 %
+epoch: 14, training time: 5.07 secs, train perf: 100.00 %, val perf: 82.63 %
+epoch: 15, training time: 5.07 secs, train perf: 100.00 %, val perf: 82.95 %
+epoch: 16, training time: 5.08 secs, train perf: 100.00 %, val perf: 81.89 %
+epoch: 17, training time: 5.07 secs, train perf: 100.00 %, val perf: 82.95 %
+epoch: 18, training time: 5.08 secs, train perf: 100.00 %, val perf: 82.00 %
+epoch: 19, training time: 5.07 secs, train perf: 100.00 %, val perf: 82.84 %
+epoch: 20, training time: 5.07 secs, train perf: 100.00 %, val perf: 82.63 %
+epoch: 21, training time: 5.07 secs, train perf: 100.00 %, val perf: 81.89 %
+epoch: 22, training time: 5.08 secs, train perf: 100.00 %, val perf: 82.32 %
+epoch: 23, training time: 5.08 secs, train perf: 100.00 %, val perf: 82.63 %
+epoch: 24, training time: 5.08 secs, train perf: 100.00 %, val perf: 82.63 %
+epoch: 25, training time: 5.07 secs, train perf: 100.00 %, val perf: 82.42 %
+cv: 2, perf: 0.81362346263
+True
+[('image shape', 63, 300), ('filter shape', [(100, 1, 2, 300), (100, 1, 3, 300), (100, 1, 4, 300), (100, 1, 5, 300)]), ('hidden_units', [100, 2]), ('dropout', [0.5]), ('batch_size', 50), ('non_static', True), ('learn_decay', 0.95), ('conv_non_linear', 'relu'), ('non_static', True), ('sqr_norm_lim', 9), ('shuffle_batch', True), ('activations', [<function Iden at 0xa7c9668>]), ('baseline', True)]
+define model architecture
+define parameters of the model and update functions using adadelta
+shuffle dataset and assign to mini batches. if dataset size is not a multiple of mini batches, replicate
+divide train set into train/val sets
+compile theano functions to get train/val/test errors
+... training
+epoch: 1, training time: 5.08 secs, train perf: 81.43 %, val perf: 74.74 %
+epoch: 2, training time: 5.04 secs, train perf: 82.08 %, val perf: 74.32 %
+epoch: 3, training time: 5.05 secs, train perf: 86.74 %, val perf: 75.89 %
+epoch: 4, training time: 5.05 secs, train perf: 95.58 %, val perf: 78.32 %
+epoch: 5, training time: 5.05 secs, train perf: 97.54 %, val perf: 79.68 %
+epoch: 6, training time: 5.05 secs, train perf: 99.03 %, val perf: 79.26 %
+epoch: 7, training time: 5.05 secs, train perf: 99.54 %, val perf: 79.79 %
+epoch: 8, training time: 5.05 secs, train perf: 99.75 %, val perf: 79.16 %
+epoch: 9, training time: 5.05 secs, train perf: 99.93 %, val perf: 79.26 %
+epoch: 10, training time: 5.05 secs, train perf: 99.99 %, val perf: 79.37 %
+epoch: 11, training time: 5.05 secs, train perf: 99.94 %, val perf: 80.11 %
+epoch: 12, training time: 5.05 secs, train perf: 99.97 %, val perf: 78.95 %
+epoch: 13, training time: 5.04 secs, train perf: 99.99 %, val perf: 80.00 %
+epoch: 14, training time: 5.04 secs, train perf: 99.99 %, val perf: 80.00 %
+epoch: 15, training time: 5.05 secs, train perf: 99.99 %, val perf: 79.47 %
+epoch: 16, training time: 5.04 secs, train perf: 100.00 %, val perf: 80.00 %
+epoch: 17, training time: 5.05 secs, train perf: 99.99 %, val perf: 79.58 %
+epoch: 18, training time: 5.05 secs, train perf: 100.00 %, val perf: 79.89 %
+epoch: 19, training time: 5.05 secs, train perf: 100.00 %, val perf: 80.00 %
+epoch: 20, training time: 5.05 secs, train perf: 100.00 %, val perf: 79.89 %
+epoch: 21, training time: 5.05 secs, train perf: 100.00 %, val perf: 80.32 %
+epoch: 22, training time: 5.05 secs, train perf: 100.00 %, val perf: 80.53 %
+epoch: 23, training time: 5.05 secs, train perf: 100.00 %, val perf: 80.11 %
+epoch: 24, training time: 5.05 secs, train perf: 100.00 %, val perf: 79.58 %
+epoch: 25, training time: 5.05 secs, train perf: 100.00 %, val perf: 80.11 %
+cv: 3, perf: 0.816059757236
+True
+[('image shape', 63, 300), ('filter shape', [(100, 1, 2, 300), (100, 1, 3, 300), (100, 1, 4, 300), (100, 1, 5, 300)]), ('hidden_units', [100, 2]), ('dropout', [0.5]), ('batch_size', 50), ('non_static', True), ('learn_decay', 0.95), ('conv_non_linear', 'relu'), ('non_static', True), ('sqr_norm_lim', 9), ('shuffle_batch', True), ('activations', [<function Iden at 0xa7c9668>]), ('baseline', True)]
+define model architecture
+define parameters of the model and update functions using adadelta
+shuffle dataset and assign to mini batches. if dataset size is not a multiple of mini batches, replicate
+divide train set into train/val sets
+compile theano functions to get train/val/test errors
+... training
+epoch: 1, training time: 5.14 secs, train perf: 81.58 %, val perf: 81.05 %
+epoch: 2, training time: 5.11 secs, train perf: 80.63 %, val perf: 75.47 %
+epoch: 3, training time: 5.11 secs, train perf: 91.36 %, val perf: 80.95 %
+epoch: 4, training time: 5.12 secs, train perf: 92.61 %, val perf: 80.11 %
+epoch: 5, training time: 5.11 secs, train perf: 97.43 %, val perf: 81.58 %
+epoch: 6, training time: 5.11 secs, train perf: 98.89 %, val perf: 81.79 %
+epoch: 7, training time: 5.11 secs, train perf: 98.57 %, val perf: 81.37 %
+epoch: 8, training time: 5.11 secs, train perf: 99.76 %, val perf: 83.16 %
+epoch: 9, training time: 5.11 secs, train perf: 99.86 %, val perf: 82.63 %
+epoch: 10, training time: 5.11 secs, train perf: 99.93 %, val perf: 81.58 %
+epoch: 11, training time: 5.11 secs, train perf: 99.98 %, val perf: 82.53 %
+epoch: 12, training time: 5.11 secs, train perf: 99.99 %, val perf: 82.00 %
+epoch: 13, training time: 5.11 secs, train perf: 99.99 %, val perf: 82.53 %
+epoch: 14, training time: 5.11 secs, train perf: 99.99 %, val perf: 82.53 %
+epoch: 15, training time: 5.11 secs, train perf: 99.99 %, val perf: 82.63 %
+epoch: 16, training time: 5.12 secs, train perf: 99.99 %, val perf: 82.53 %
+epoch: 17, training time: 5.11 secs, train perf: 100.00 %, val perf: 82.53 %
+epoch: 18, training time: 5.11 secs, train perf: 100.00 %, val perf: 82.95 %
+epoch: 19, training time: 5.11 secs, train perf: 100.00 %, val perf: 82.84 %
+epoch: 20, training time: 5.11 secs, train perf: 100.00 %, val perf: 83.37 %
+epoch: 21, training time: 5.11 secs, train perf: 100.00 %, val perf: 82.84 %
+epoch: 22, training time: 5.11 secs, train perf: 100.00 %, val perf: 82.53 %
+epoch: 23, training time: 5.11 secs, train perf: 100.00 %, val perf: 82.95 %
+epoch: 24, training time: 5.11 secs, train perf: 100.00 %, val perf: 82.53 %
+epoch: 25, training time: 5.12 secs, train perf: 100.00 %, val perf: 82.95 %
+cv: 4, perf: 0.805143422354
+True
+[('image shape', 63, 300), ('filter shape', [(100, 1, 2, 300), (100, 1, 3, 300), (100, 1, 4, 300), (100, 1, 5, 300)]), ('hidden_units', [100, 2]), ('dropout', [0.5]), ('batch_size', 50), ('non_static', True), ('learn_decay', 0.95), ('conv_non_linear', 'relu'), ('non_static', True), ('sqr_norm_lim', 9), ('shuffle_batch', True), ('activations', [<function Iden at 0xa7c9668>]), ('baseline', True)]
+define model architecture
+define parameters of the model and update functions using adadelta
+shuffle dataset and assign to mini batches. if dataset size is not a multiple of mini batches, replicate
+divide train set into train/val sets
+compile theano functions to get train/val/test errors
+... training
+epoch: 1, training time: 5.10 secs, train perf: 81.37 %, val perf: 78.95 %
+epoch: 2, training time: 5.07 secs, train perf: 87.31 %, val perf: 80.95 %
+epoch: 3, training time: 5.07 secs, train perf: 91.91 %, val perf: 82.53 %
+epoch: 4, training time: 5.07 secs, train perf: 95.64 %, val perf: 81.47 %
+epoch: 5, training time: 5.07 secs, train perf: 97.49 %, val perf: 81.16 %
+epoch: 6, training time: 5.07 secs, train perf: 96.75 %, val perf: 79.89 %
+epoch: 7, training time: 5.07 secs, train perf: 99.53 %, val perf: 80.32 %
+epoch: 8, training time: 5.07 secs, train perf: 99.78 %, val perf: 81.37 %
+epoch: 9, training time: 5.07 secs, train perf: 99.90 %, val perf: 81.05 %
+epoch: 10, training time: 5.07 secs, train perf: 99.95 %, val perf: 80.84 %
+epoch: 11, training time: 5.07 secs, train perf: 99.97 %, val perf: 80.84 %
+epoch: 12, training time: 5.07 secs, train perf: 99.98 %, val perf: 80.42 %
+epoch: 13, training time: 5.07 secs, train perf: 100.00 %, val perf: 79.68 %
+epoch: 14, training time: 5.07 secs, train perf: 100.00 %, val perf: 80.42 %
+epoch: 15, training time: 5.07 secs, train perf: 100.00 %, val perf: 80.84 %
+epoch: 16, training time: 5.07 secs, train perf: 100.00 %, val perf: 80.42 %
+epoch: 17, training time: 5.06 secs, train perf: 100.00 %, val perf: 80.42 %
+epoch: 18, training time: 5.07 secs, train perf: 100.00 %, val perf: 80.95 %
+epoch: 19, training time: 5.07 secs, train perf: 100.00 %, val perf: 80.84 %
+epoch: 20, training time: 5.06 secs, train perf: 100.00 %, val perf: 80.74 %
+epoch: 21, training time: 5.07 secs, train perf: 100.00 %, val perf: 80.95 %
+epoch: 22, training time: 5.07 secs, train perf: 100.00 %, val perf: 80.95 %
+epoch: 23, training time: 5.06 secs, train perf: 100.00 %, val perf: 80.95 %
+epoch: 24, training time: 5.07 secs, train perf: 100.00 %, val perf: 81.05 %
+epoch: 25, training time: 5.07 secs, train perf: 100.00 %, val perf: 80.95 %
+cv: 5, perf: 0.818982387476
+True
+[('image shape', 63, 300), ('filter shape', [(100, 1, 2, 300), (100, 1, 3, 300), (100, 1, 4, 300), (100, 1, 5, 300)]), ('hidden_units', [100, 2]), ('dropout', [0.5]), ('batch_size', 50), ('non_static', True), ('learn_decay', 0.95), ('conv_non_linear', 'relu'), ('non_static', True), ('sqr_norm_lim', 9), ('shuffle_batch', True), ('activations', [<function Iden at 0xa7c9668>]), ('baseline', True)]
+define model architecture
+define parameters of the model and update functions using adadelta
+shuffle dataset and assign to mini batches. if dataset size is not a multiple of mini batches, replicate
+divide train set into train/val sets
+compile theano functions to get train/val/test errors
+... training
+epoch: 1, training time: 5.10 secs, train perf: 81.25 %, val perf: 77.26 %
+epoch: 2, training time: 5.08 secs, train perf: 80.37 %, val perf: 76.74 %
+epoch: 3, training time: 5.08 secs, train perf: 92.30 %, val perf: 81.05 %
+epoch: 4, training time: 5.08 secs, train perf: 93.98 %, val perf: 80.74 %
+epoch: 5, training time: 5.08 secs, train perf: 96.62 %, val perf: 79.58 %
+epoch: 6, training time: 5.08 secs, train perf: 98.92 %, val perf: 81.58 %
+epoch: 7, training time: 5.08 secs, train perf: 98.61 %, val perf: 80.32 %
+epoch: 8, training time: 5.08 secs, train perf: 99.57 %, val perf: 80.42 %
+epoch: 9, training time: 5.08 secs, train perf: 99.87 %, val perf: 81.68 %
+epoch: 10, training time: 5.08 secs, train perf: 99.99 %, val perf: 81.37 %
+epoch: 11, training time: 5.08 secs, train perf: 99.99 %, val perf: 80.63 %
+epoch: 12, training time: 5.08 secs, train perf: 99.95 %, val perf: 82.32 %
+epoch: 13, training time: 5.08 secs, train perf: 99.99 %, val perf: 82.53 %
+epoch: 14, training time: 5.08 secs, train perf: 100.00 %, val perf: 82.00 %
+epoch: 15, training time: 5.08 secs, train perf: 100.00 %, val perf: 82.11 %
+epoch: 16, training time: 5.08 secs, train perf: 100.00 %, val perf: 82.11 %
+epoch: 17, training time: 5.08 secs, train perf: 100.00 %, val perf: 82.00 %
+epoch: 18, training time: 5.08 secs, train perf: 100.00 %, val perf: 82.63 %
+epoch: 19, training time: 5.08 secs, train perf: 100.00 %, val perf: 82.00 %
+epoch: 20, training time: 5.08 secs, train perf: 100.00 %, val perf: 81.79 %
+epoch: 21, training time: 5.08 secs, train perf: 100.00 %, val perf: 82.00 %
+epoch: 22, training time: 5.08 secs, train perf: 100.00 %, val perf: 81.68 %
+epoch: 23, training time: 5.08 secs, train perf: 100.00 %, val perf: 82.21 %
+epoch: 24, training time: 5.08 secs, train perf: 100.00 %, val perf: 81.79 %
+epoch: 25, training time: 5.08 secs, train perf: 100.00 %, val perf: 82.11 %
+cv: 6, perf: 0.822688274547
+True
+[('image shape', 63, 300), ('filter shape', [(100, 1, 2, 300), (100, 1, 3, 300), (100, 1, 4, 300), (100, 1, 5, 300)]), ('hidden_units', [100, 2]), ('dropout', [0.5]), ('batch_size', 50), ('non_static', True), ('learn_decay', 0.95), ('conv_non_linear', 'relu'), ('non_static', True), ('sqr_norm_lim', 9), ('shuffle_batch', True), ('activations', [<function Iden at 0xa7c9668>]), ('baseline', True)]
+define model architecture
+define parameters of the model and update functions using adadelta
+shuffle dataset and assign to mini batches. if dataset size is not a multiple of mini batches, replicate
+divide train set into train/val sets
+compile theano functions to get train/val/test errors
+... training
+epoch: 1, training time: 5.07 secs, train perf: 81.23 %, val perf: 75.68 %
+epoch: 2, training time: 5.04 secs, train perf: 85.99 %, val perf: 78.11 %
+epoch: 3, training time: 5.04 secs, train perf: 92.24 %, val perf: 79.58 %
+epoch: 4, training time: 5.05 secs, train perf: 94.40 %, val perf: 79.37 %
+epoch: 5, training time: 5.04 secs, train perf: 97.26 %, val perf: 77.68 %
+epoch: 6, training time: 5.04 secs, train perf: 99.05 %, val perf: 79.37 %
+epoch: 7, training time: 5.04 secs, train perf: 99.56 %, val perf: 79.89 %
+epoch: 8, training time: 5.05 secs, train perf: 99.80 %, val perf: 80.42 %
+epoch: 9, training time: 5.05 secs, train perf: 99.86 %, val perf: 79.05 %
+epoch: 10, training time: 5.04 secs, train perf: 99.91 %, val perf: 79.68 %
+epoch: 11, training time: 5.05 secs, train perf: 99.98 %, val perf: 80.21 %
+epoch: 12, training time: 5.05 secs, train perf: 100.00 %, val perf: 79.89 %
+epoch: 13, training time: 5.04 secs, train perf: 99.98 %, val perf: 80.21 %
+epoch: 14, training time: 5.05 secs, train perf: 99.99 %, val perf: 80.00 %
+epoch: 15, training time: 5.05 secs, train perf: 100.00 %, val perf: 80.00 %
+epoch: 16, training time: 5.04 secs, train perf: 100.00 %, val perf: 80.00 %
+epoch: 17, training time: 5.05 secs, train perf: 100.00 %, val perf: 79.79 %
+epoch: 18, training time: 5.04 secs, train perf: 100.00 %, val perf: 79.47 %
+epoch: 19, training time: 5.04 secs, train perf: 100.00 %, val perf: 79.68 %
+epoch: 20, training time: 5.05 secs, train perf: 100.00 %, val perf: 79.58 %
+epoch: 21, training time: 5.05 secs, train perf: 100.00 %, val perf: 79.37 %
+epoch: 22, training time: 5.04 secs, train perf: 100.00 %, val perf: 79.05 %
+epoch: 23, training time: 5.05 secs, train perf: 100.00 %, val perf: 78.74 %
+epoch: 24, training time: 5.04 secs, train perf: 100.00 %, val perf: 79.26 %
+epoch: 25, training time: 5.04 secs, train perf: 100.00 %, val perf: 79.26 %
+cv: 7, perf: 0.809389671362
+True
+[('image shape', 63, 300), ('filter shape', [(100, 1, 2, 300), (100, 1, 3, 300), (100, 1, 4, 300), (100, 1, 5, 300)]), ('hidden_units', [100, 2]), ('dropout', [0.5]), ('batch_size', 50), ('non_static', True), ('learn_decay', 0.95), ('conv_non_linear', 'relu'), ('non_static', True), ('sqr_norm_lim', 9), ('shuffle_batch', True), ('activations', [<function Iden at 0xa7c9668>]), ('baseline', True)]
+define model architecture
+define parameters of the model and update functions using adadelta
+shuffle dataset and assign to mini batches. if dataset size is not a multiple of mini batches, replicate
+divide train set into train/val sets
+compile theano functions to get train/val/test errors
+... training
+epoch: 1, training time: 5.05 secs, train perf: 79.94 %, val perf: 74.95 %
+epoch: 2, training time: 5.02 secs, train perf: 87.02 %, val perf: 80.21 %
+epoch: 3, training time: 5.02 secs, train perf: 89.63 %, val perf: 80.95 %
+epoch: 4, training time: 5.03 secs, train perf: 95.76 %, val perf: 81.26 %
+epoch: 5, training time: 5.03 secs, train perf: 97.90 %, val perf: 82.00 %
+epoch: 6, training time: 5.02 secs, train perf: 96.53 %, val perf: 81.16 %
+epoch: 7, training time: 5.02 secs, train perf: 99.36 %, val perf: 81.37 %
+epoch: 8, training time: 5.03 secs, train perf: 99.76 %, val perf: 81.68 %
+epoch: 9, training time: 5.03 secs, train perf: 99.94 %, val perf: 82.21 %
+epoch: 10, training time: 5.03 secs, train perf: 99.98 %, val perf: 81.79 %
+epoch: 11, training time: 5.02 secs, train perf: 99.95 %, val perf: 82.11 %
+epoch: 12, training time: 5.02 secs, train perf: 99.97 %, val perf: 81.58 %
+epoch: 13, training time: 5.03 secs, train perf: 99.99 %, val perf: 81.47 %
+epoch: 14, training time: 5.03 secs, train perf: 99.99 %, val perf: 81.58 %
+epoch: 15, training time: 5.03 secs, train perf: 99.99 %, val perf: 81.68 %
+epoch: 16, training time: 5.02 secs, train perf: 99.99 %, val perf: 81.58 %
+epoch: 17, training time: 5.03 secs, train perf: 99.99 %, val perf: 81.79 %
+epoch: 18, training time: 5.03 secs, train perf: 99.99 %, val perf: 81.58 %
+epoch: 19, training time: 5.03 secs, train perf: 99.99 %, val perf: 81.68 %
+epoch: 20, training time: 5.03 secs, train perf: 100.00 %, val perf: 81.58 %
+epoch: 21, training time: 5.03 secs, train perf: 100.00 %, val perf: 81.58 %
+epoch: 22, training time: 5.03 secs, train perf: 100.00 %, val perf: 81.47 %
+epoch: 23, training time: 5.03 secs, train perf: 100.00 %, val perf: 81.68 %
+epoch: 24, training time: 5.02 secs, train perf: 100.00 %, val perf: 81.05 %
+epoch: 25, training time: 5.02 secs, train perf: 100.00 %, val perf: 81.05 %
+cv: 8, perf: 0.812834224599
+True
+[('image shape', 63, 300), ('filter shape', [(100, 1, 2, 300), (100, 1, 3, 300), (100, 1, 4, 300), (100, 1, 5, 300)]), ('hidden_units', [100, 2]), ('dropout', [0.5]), ('batch_size', 50), ('non_static', True), ('learn_decay', 0.95), ('conv_non_linear', 'relu'), ('non_static', True), ('sqr_norm_lim', 9), ('shuffle_batch', True), ('activations', [<function Iden at 0xa7c9668>]), ('baseline', True)]
+define model architecture
+define parameters of the model and update functions using adadelta
+shuffle dataset and assign to mini batches. if dataset size is not a multiple of mini batches, replicate
+divide train set into train/val sets
+compile theano functions to get train/val/test errors
+... training
+epoch: 1, training time: 5.06 secs, train perf: 81.77 %, val perf: 77.47 %
+epoch: 2, training time: 5.04 secs, train perf: 87.51 %, val perf: 78.74 %
+epoch: 3, training time: 5.04 secs, train perf: 91.79 %, val perf: 79.79 %
+epoch: 4, training time: 5.04 secs, train perf: 94.12 %, val perf: 80.63 %
+epoch: 5, training time: 5.04 secs, train perf: 97.88 %, val perf: 80.32 %
+epoch: 6, training time: 5.04 secs, train perf: 99.05 %, val perf: 80.21 %
+epoch: 7, training time: 5.04 secs, train perf: 99.60 %, val perf: 80.74 %
+epoch: 8, training time: 5.04 secs, train perf: 99.76 %, val perf: 80.95 %
+epoch: 9, training time: 5.04 secs, train perf: 99.87 %, val perf: 81.05 %
+epoch: 10, training time: 5.04 secs, train perf: 99.94 %, val perf: 81.58 %
+epoch: 11, training time: 5.05 secs, train perf: 99.98 %, val perf: 80.74 %
+epoch: 12, training time: 5.04 secs, train perf: 100.00 %, val perf: 81.05 %
+epoch: 13, training time: 5.04 secs, train perf: 100.00 %, val perf: 80.95 %
+epoch: 14, training time: 5.04 secs, train perf: 100.00 %, val perf: 80.95 %
+epoch: 15, training time: 5.04 secs, train perf: 100.00 %, val perf: 80.95 %
+epoch: 16, training time: 5.04 secs, train perf: 100.00 %, val perf: 80.53 %
+epoch: 17, training time: 5.04 secs, train perf: 100.00 %, val perf: 81.26 %
+epoch: 18, training time: 5.04 secs, train perf: 100.00 %, val perf: 80.95 %
+epoch: 19, training time: 5.04 secs, train perf: 100.00 %, val perf: 80.63 %
+epoch: 20, training time: 5.04 secs, train perf: 100.00 %, val perf: 80.95 %
+epoch: 21, training time: 5.04 secs, train perf: 100.00 %, val perf: 80.42 %
+epoch: 22, training time: 5.04 secs, train perf: 100.00 %, val perf: 80.84 %
+epoch: 23, training time: 5.04 secs, train perf: 100.00 %, val perf: 80.95 %
+epoch: 24, training time: 5.04 secs, train perf: 100.00 %, val perf: 80.53 %
+epoch: 25, training time: 5.04 secs, train perf: 100.00 %, val perf: 80.74 %
+cv: 9, perf: 0.810506566604
+0.813287461538
