@@ -28,9 +28,16 @@ def get_n_batches(new_data, valid_data, batch_size, cv=False):
         n_val_batches = n_batches - n_train_batches
 
     else:
-        n_batches = new_data.shape[0]/batch_size
-        n_train_batches = int(np.round(n_batches))
-        n_val_batches = valid_data.shape[0]/batch_size
+        if type(new_data) != list:
+            n_batches = new_data.shape[0]/batch_size
+            n_train_batches = int(np.round(n_batches))
+        else:
+            n_train_batches = []
+        if type(valid_data) != list:
+            n_batches = valid_data.shape[0]/batch_size
+            n_val_batches = int(np.round(n_batches))
+        else:
+            n_val_batches = []
 
     return n_train_batches, n_val_batches
 
