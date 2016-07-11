@@ -190,16 +190,28 @@ def train_conv_net(datasets,
    
     img_h = (len(datasets[0][0])-1)/2 # note we need only per sentence
 
-    test_ffwd_layer_input = build_test(img_h, 
-        img_w, 
-        test_set_x.shape[0], 
-        Words, 
-        [first_conv_layers, second_conv_layers, third_conv_layers],
-        x, 
-        modeOp, 
-        datasets[1],
-        alpha,
-        beta)
+    if modeOp == "circ":
+        test_ffwd_layer_input = build_test(img_h, 
+            img_w, 
+            batch_size, 
+            Words, 
+            [first_conv_layers, second_conv_layers, third_conv_layers],
+            x, 
+            modeOp, 
+            datasets[1],
+            alpha,
+            beta)
+    else:
+        test_ffwd_layer_input = build_test(img_h, 
+            img_w, 
+            test_set_x.shape[0], 
+            Words, 
+            [first_conv_layers, second_conv_layers, third_conv_layers],
+            x, 
+            modeOp, 
+            datasets[1],
+            alpha,
+            beta)
 
     test_y_pred = classifier.predict(test_ffwd_layer_input)
     test_error = T.mean(T.neq(test_y_pred, y))
@@ -237,7 +249,7 @@ def train_conv_net(datasets,
                 for minibatch_index in xrange(n_test_batches):
                     test_loss += test_model_all(test_set_x[minibatch_index*batch_size:(minibatch_index+1)*batch_size],test_set_y[minibatch_index*batch_size:(minibatch_index+1)*batch_size])
 
-                test_loss /= len(n_test_batches)
+                test_loss /= n_test_batches
             else:
                 test_loss = test_model_all(test_set_x,test_set_y)
                     
