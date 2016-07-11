@@ -23,6 +23,10 @@ if __name__=="__main__":
     file_name = sys.argv[1]
     word_vectors = sys.argv[2]
     mode= sys.argv[3]
+    #Test
+    # file_name = "data/snli-GloVe-Split.p"
+    # word_vectors="-word2vec"
+    # mode="-nonstatic"
 
     print "loading data..."
     sys.stdout.flush()
@@ -64,13 +68,13 @@ if __name__=="__main__":
     # batch_size_f = 50
     # dropout_rate_f = 0.5
     # conv_non_linear_f = "relu"
-    # modeOp = "add"
+    # modeOp = "mix4"
     # lr_decay = 0.95
     # alpha = 1
     # beta = 1
     # whichAct = 3
     # sqr_norm_lim = 9
-    # which_model = "basic"
+    # which_model = "siamese"
     if which_model == "basic":
         model = "baseline"
         model_type = "basic"
