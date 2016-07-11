@@ -9,22 +9,6 @@ def concatenate(layers):
 
     return concat
 
-def set_test_params(mode, test_pred_layers_one=[],test_pred_layers_two=[]):
-    test_concat = [[],[]]
-    if mode == "concat":
-        img_w = 50
-        img_h = 12
-
-    elif mode == "mix1" or mode == "mix2" or mode == "mix3":
-        img_w = 80
-        img_h = 15
-
-    else:
-        img_w = 30
-        img_h = 10
-
-    return [test_concat, img_w, img_h]
-
 def populate_pred_layers(mode,conv_layers,test_layer0_input,test_size):
     if mode == "concat":
         test_pred_layers = []
@@ -105,11 +89,11 @@ def build_test(img_h,img_w, test_size, Words, conv_layers, x, mode, data, alpha,
     # initialize layer 0's input
     test_layer0_input = set_layer0_input(Words, img_h, test_size, x)
     # initialize new parameters
-    test_concat, img_w, img_h = set_test_params(mode)
+    img_w, img_h = set_lengths(mode)
     # populate layers
     test_pred_layers = populate_pred_layers(mode, conv_layers, test_layer0_input, test_size)
     # initialize layer 1's input
-    test_layer1_input = set_layer1_input(mode, test_pred_layers, test_concat, img_h, img_w, data, alpha, beta)
+    test_layer1_input = set_layer1_input(mode, test_pred_layers, [[],[]], img_h, img_w, data, alpha, beta)
     # reshape for third CNN
     test_layer0_input_three = test_layer1_input.reshape(
         (test_layer1_input.shape[0],
