@@ -180,12 +180,12 @@ def clean_str_sst(string):
     return string.strip().lower()
 
 if __name__=="__main__":    
-    w2v_file = sys.argv[1]
+    embd_file = sys.argv[1]
     split_sent = sys.argv[2]
     file_name = sys.argv[3]
     if split_sent=="False":
         split_sent = False
-    data_folder = ["train.txt","valid.txt","test.txt"]   
+    data_folder = ["../data/processed/SNLI/train.txt","../data/processed/SNLI/valid.txt","../data/processed/SNLI/test.txt"]   
     print "loading data...",        
     revs, vocab = build_data(data_folder, split_sent, clean_string=True)
     max_l = np.max(pd.DataFrame(revs)["num_words"])
@@ -194,16 +194,18 @@ if __name__=="__main__":
     print "vocab size: " + str(len(vocab))
     print "max sentence length: " + str(max_l)
     who = "word2vec"
-    if "glove" in w2v_file:
+    if "glove" in embd_file:
         who = "GloVe"
         print "loading GloVe vectors...",
+        embd = load_glove_vec(embd_file, vocab)
     else:   
         print "loading {0} vectors...".format(who),
-    w2v = load_glove_vec(w2v_file, vocab)
+        embd = load_bin_vec(embd_file, vocab)
+    
     print "{0} loaded!".format(who)
-    print "num words already in {0}: {1}".format(who, str(len(w2v)))
-    add_unknown_words(w2v, vocab)
-    W, word_idx_map = get_W(w2v)
+    print "num words already in {0}: {1}".format(who, str(len(embd)))
+    add_unknown_words(embd, vocab)
+    W, word_idx_map = get_W(embd)
     rand_vecs = {}
     add_unknown_words(rand_vecs, vocab)
     W2, _ = get_W(rand_vecs)
