@@ -106,6 +106,10 @@ if __name__=="__main__":
         print "using: word2vec vectors"
         sys.stdout.flush()
         U = W
+    elif word_vectors == "-glove"
+        print "using: GloVe vectors"
+        sys.stdout.flush()
+        U = W
     results = []
     if which_model=="basic":
         if cv:
