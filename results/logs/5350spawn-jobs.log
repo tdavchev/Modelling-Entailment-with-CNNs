@@ -1,0 +1,155 @@
+0.95
+
+
+
+Dropout is --- 32
+
+Random number for lr_decay --- 88
+
+Setting alpha and beta to --- 37, 63
+Activation num: 4
+
+sqr_norm_lim --- 7
+Starting job with batch size: 50, dropout: 32, conv_non_linear: relu lr_decay: 88 in mode: add on GPU: 1
+Starting Model 3 with MODE add
+Your job 5369 ("job4.sh") has been submitted
+
+
+
+Dropout is --- 32
+
+Random number for lr_decay --- 92
+
+Setting alpha and beta to --- 44, 56
+Activation num: 4
+
+sqr_norm_lim --- 7
+Starting job with batch size: 50, dropout: 32, conv_non_linear: relu lr_decay: 92 in mode: add on GPU: 2
+Starting Model 3 with MODE add
+Your job 5370 ("job4.sh") has been submitted
+
+
+
+Dropout is --- 32
+
+Random number for lr_decay --- 91
+
+Setting alpha and beta to --- 46, 54
+Activation num: 2
+
+sqr_norm_lim --- 9
+Starting job with batch size: 50, dropout: 32, conv_non_linear: relu lr_decay: 91 in mode: circ on GPU: 0
+Starting Model 3 with MODE circ
+Your job 5371 ("job4.sh") has been submitted
+
+
+
+Dropout is --- 24
+
+Random number for lr_decay --- 88
+
+Setting alpha and beta to --- 36, 64
+Activation num: 2
+
+sqr_norm_lim --- 8
+Starting job with batch size: 50, dropout: 24, conv_non_linear: relu lr_decay: 88 in mode: add on GPU: 1
+Starting Model 3 with MODE add
+Your job 5372 ("job4.sh") has been submitted
+
+
+
+Dropout is --- 22
+
+Random number for lr_decay --- 92
+
+Setting alpha and beta to --- 48, 52
+Activation num: 3
+
+sqr_norm_lim --- 7
+Starting job with batch size: 50, dropout: 22, conv_non_linear: relu lr_decay: 92 in mode: concat on GPU: 2
+Starting Model 3 with MODE concat
+Your job 5373 ("job4.sh") has been submitted
+
+
+
+Dropout is --- 36
+
+Random number for lr_decay --- 90
+
+Setting alpha and beta to --- 34, 66
+Activation num: 4
+
+sqr_norm_lim --- 7
+Starting job with batch size: 50, dropout: 36, conv_non_linear: relu lr_decay: 90 in mode: concat on GPU: 0
+Starting Model 3 with MODE concat
+Your job 5374 ("job4.sh") has been submitted
+
+
+
+Dropout is --- 38
+
+Random number for lr_decay --- 88
+
+Setting alpha and beta to --- 40, 60
+Activation num: 2
+
+sqr_norm_lim --- 8
+Starting job with batch size: 50, dropout: 38, conv_non_linear: relu lr_decay: 88 in mode: concat on GPU: 1
+Starting Model 3 with MODE concat
+Your job 5375 ("job4.sh") has been submitted
+
+
+
+Dropout is --- 21
+
+Random number for lr_decay --- 90
+
+Setting alpha and beta to --- 42, 58
+Activation num: 1
+
+sqr_norm_lim --- 8
+Starting job with batch size: 50, dropout: 21, conv_non_linear: relu lr_decay: 90 in mode: circ on GPU: 2
+Starting Model 3 with MODE circ
+Your job 5376 ("job4.sh") has been submitted
+
+
+
+Dropout is --- 44
+
+Random number for lr_decay --- 86
+
+Setting alpha and beta to --- 35, 65
+Activation num: 4
+
+sqr_norm_lim --- 9
+Starting job with batch size: 50, dropout: 44, conv_non_linear: relu lr_decay: 86 in mode: circ on GPU: 0
+Starting Model 3 with MODE circ
+Your job 5377 ("job4.sh") has been submitted
+
+
+
+Dropout is --- 23
+
+Random number for lr_decay --- 87
+
+Setting alpha and beta to --- 35, 65
+Activation num: 3
+
+sqr_norm_lim --- 9
+Starting job with batch size: 50, dropout: 23, conv_non_linear: relu lr_decay: 87 in mode: circ on GPU: 1
+Starting Model 3 with MODE circ
+Your job 5378 ("job4.sh") has been submitted
+
+
+
+Dropout is --- 25
+
+Random number for lr_decay --- 90
+
+Setting alpha and beta to --- 39, 61
+Activation num: 2
+
+sqr_norm_lim --- 7
+Starting job with batch size: 50, dropout: 25, conv_non_linear: relu lr_decay: 90 in mode: circ on GPU: 2
+Starting Model 3 with MODE circ
+Your job 5379 ("job4.sh") has been submitted
