@@ -149,7 +149,7 @@ if __name__=="__main__":
                lr_decay=0.95,
                filter_hs=[3,4,5],
                conv_non_linear="relu",
-               hidden_units=[100,2], 
+               hidden_units=[100,3], 
                shuffle_batch=True, 
                n_epochs=25, 
                sqr_norm_lim=9,
