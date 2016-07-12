@@ -198,7 +198,7 @@ def train_conv_net(datasets,
             [first_conv_layers, second_conv_layers, third_conv_layers],
             x, 
             modeOp, 
-            datasets[1],
+            batch_size,
             alpha,
             beta)
     else:
@@ -209,7 +209,7 @@ def train_conv_net(datasets,
             [first_conv_layers, second_conv_layers, third_conv_layers],
             x, 
             modeOp, 
-            datasets[1],
+            len(datasets[1]),
             alpha,
             beta)
 
