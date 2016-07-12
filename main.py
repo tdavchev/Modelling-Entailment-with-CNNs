@@ -155,7 +155,7 @@ if __name__=="__main__":
                sqr_norm_lim=sqr_norm_lim,
                non_static=non_static,
                batch_size=batch_size_f,
-               dropout_rate=[batch_size_f],
+               dropout_rate=[dropout_rate_f],
                cv=False)
 
 
