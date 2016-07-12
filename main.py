@@ -41,7 +41,10 @@ if __name__=="__main__":
     batch_size_f = int(batch_size_f)
     dropout_rate_f = sys.argv[5]
     dropout_rate_f = float(dropout_rate_f)
-    dropout_rate_f /= 100 
+    if dropout_rate_f > 0:
+        dropout_rate_f /= 100
+    else:
+        dropout_rate_f = 0 
     conv_non_linear_f = sys.argv[6]
     modeOp = sys.argv[7]
     lr_decay = sys.argv[8]
@@ -146,7 +149,7 @@ if __name__=="__main__":
                lr_decay=0.95,
                filter_hs=[3,4,5],
                conv_non_linear="relu",
-               hidden_units=[100,2], 
+               hidden_units=[100,3], 
                shuffle_batch=True, 
                n_epochs=25, 
                sqr_norm_lim=9,
