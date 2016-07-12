@@ -1,8 +1,8 @@
 ## Convolutional Neural Networks for Sentence Classification
-Code for the paper [Convolutional Neural Networks for Sentence Classification](http://arxiv.org/abs/1408.5882) (EMNLP 2014).
+Code influenced by the paper [Convolutional Neural Networks for Sentence Classification](http://arxiv.org/abs/1408.5882) (EMNLP 2014).
 
 Runs the model on Pang and Lee's movie review dataset (MR in the paper).
-Please cite the original paper when using the data.
+It can also run the model on Stanford Natural Language Inference (SNLI) dataset.
 
 ### Requirements
 Code is written in Python (2.7) and requires Theano (0.7).
@@ -12,23 +12,33 @@ https://code.google.com/p/word2vec/
 
 
 ### Data Preprocessing
-To process the raw data, run
+Open process_data.py and edit the path to the three snli.txt data files
+To process the raw SNLI data, run
 
 ```
-Options for model = 1 will process a premise-hypothesis
-	     			21 will process premise
-	     			22 will process hypothesis
+python process_snli.py /path-to-file/file.txt model >> /path/to/data/type.txt
+e.g. python process_snli.py ../data/unprocessed/snli/snli_1.0_train.txt 1 >>../data/processed/train.txt
+
+python process_data.py path/to/embedding False/True file-name.p
+e.g. python process_data.py ../data/embeddings/word2vec.bin True ../data/snli-w2v-Split.p
+
+Options for model = 1 will process a premise and hypothesis
+	     			21 will process premise only
+	     			22 will process hypothesis only
 
 True/False - refers to whether or not to process SNLI dataset as one pair or index premises as 0 and
 hypotheses with 1
+embedding - refers to the path to a GloVe.txt or word2vec.bin embedding.
+```
+where path points to the word2vec binary file (i.e. `GoogleNews-vectors-negative300.bin` file). 
+This will create a pickle object called `file-name.p` in the allocated folder.
 
-python process_snli.py /path-to-file/file.txt model 
-python process_data.py embedding.txt False/True file-name.p
+Alternatively, one can process the MR dataset and use it to test the correctness of the model.
+The results can be comapared with the paper [Convolutional Neural Networks for Sentence Classification](http://arxiv.org/abs/1408.5882) (EMNLP 2014).
 ```
 
-where path points to the word2vec binary file (i.e. `GoogleNews-vectors-negative300.bin` file). 
-This will create a pickle object called `mr.p` in the same folder, which contains the dataset
-in the right format.
+python process_data.py path/to/embedding
+```
 
 Note: This will create the dataset with different fold-assignments than was used in the paper.
 You should still be getting a CV score of >81% with CNN-nonstatic model, though.
@@ -37,9 +47,15 @@ You should still be getting a CV score of >81% with CNN-nonstatic model, though.
 Example commands:
 
 ```
-THEANO_FLAGS=mode=FAST_RUN,device=cpu,floatX=float32 python conv_net_sentence.py -nonstatic -rand
-THEANO_FLAGS=mode=FAST_RUN,device=cpu,floatX=float32 python conv_net_sentence.py -static -word2vec
-THEANO_FLAGS=mode=FAST_RUN,device=cpu,floatX=float32 python conv_net_sentence.py -nonstatic -word2vec
+bash init-jobs.sh num times
+
+Where num = 1 will run the baseline mode for either MR or SNLI
+	  num > 1 will run the siamese model
+
+Where times is the number of times you'd like the script to run (where 0 indicates 1 run).
+
+Note the script calls a second script which is being sent to a cluster with which uses the Open Grid scheduler.
+If you'd like to change that simply open job.sh and delete the "qsub" command infront of the THEANO_FLAGS
 ```
 
 This will run the CNN-rand, CNN-static, and CNN-nonstatic models respectively in the paper.
