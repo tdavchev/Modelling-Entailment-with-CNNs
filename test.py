@@ -143,16 +143,16 @@ if __name__=="__main__":
             results = []
             perf = train_conv_net(datasets,
                U,
-               lr_decay=0.95,
-               filter_hs=[2,3,4,5],
-               conv_non_linear="relu",
-               hidden_units=[100,2], 
+               lr_decay=lr_decay,
+               filter_hs=[3,4,5],
+               conv_non_linear=conv_non_linear_f,
+               hidden_units=[100,3], 
                shuffle_batch=True, 
                n_epochs=25, 
-               sqr_norm_lim=9,
+               sqr_norm_lim=sqr_norm_lim,
                non_static=non_static,
-               batch_size=50,
-               dropout_rate=[0.5],
+               batch_size=batch_size_f,
+               dropout_rate=[batch_size_f],
                cv=False)
 
 
