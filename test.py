@@ -24,7 +24,7 @@ if __name__=="__main__":
     # word_vectors = sys.argv[2]
     # mode= sys.argv[3]
     # Test
-    file_name = "data/snli-GloVe-Full.p"
+    file_name = "data/snli-w2v-Split.p"
     word_vectors="-word2vec"
     mode="-nonstatic"
 
@@ -69,16 +69,16 @@ if __name__=="__main__":
             word_vectors = "-glove"
 
     # Test Params
-    batch_size_f = 50
-    dropout_rate_f = 0.5
-    conv_non_linear_f = "relu"
-    modeOp = "mix4"
+    batch_size_f = 200
+    dropout_rate_f = 0.0
+    conv_non_linear_f = "tanh"
+    modeOp = "mix1"
     lr_decay = 0.95
     alpha = 1
     beta = 1
     whichAct = 3
     sqr_norm_lim = 9
-    which_model = "basic"
+    which_model = "siamese"
     if which_model == "basic":
         model = "baseline"
         model_type = "basic"
@@ -161,14 +161,14 @@ if __name__=="__main__":
         print str(np.mean(results))
         sys.stdout.flush()
     else:
-        datasets = make_idx_data(revs, word_idx_map, max_l=81,k=300, filter_h=5)
+        datasets = make_idx_data(revs, word_idx_map, max_l=81,k=300, filter_h=7)
         sys.stdout.flush()
         activations = [ReLU, Sigmoid, Tanh, Iden]
 
         perf = train_conv_net(datasets,
            U,
            img_w=300,
-           filter_hs=[3,4,5],
+           filter_hs=[7,7,7,7],
            hidden_units=[100,3],
            dropout_rate=[dropout_rate_f],
            shuffle_batch=True,
