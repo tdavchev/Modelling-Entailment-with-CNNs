@@ -86,8 +86,7 @@ def mix2(layer1_inputs,batch_size,alpha,beta,concat):
     lista.append(layer1_sub)
     layer1_input = T.concatenate(lista,1) # [50 900]
 
-    # layer1_mul = mul(concat) # [50 300]
-    layer1_add = add(batch_size, alpha, beta, concat) # [50 300]
+    layer1_mul = mul(concat) # [50 300]
 
     lista = []
     lista.append(layer1_input)
