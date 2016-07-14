@@ -124,13 +124,13 @@ do
 	echo "Random number for lr_decay --- $lr_decay"
 	randomNum 50 30
 #	alpha=$?
-	alpha=40
-	#alpha=100
-	let "beta=100-$alpha"
+	#alpha=40
+	alpha=100
+	let "beta=200-$alpha"
 	echo "Setting alpha and beta to --- $alpha, $beta"
 	activationNum
 #	activation=$?
-	activation=4
+	activation=1
 	echo "Activation num: $activation"
 	randomNum 10 6
 #	sqr_norm_lim=$?
@@ -145,7 +145,8 @@ do
 		echo "sqr_norm_lim --- $sqr_norm_lim"
 		echo "Starting job with batch size: $bs, dropout: $dropout, conv_non_linear: $cnl lr_decay: $lr_decay in mode: $mode on GPU: $GPU"
 		echo "Starting Model 3 with MODE $mode"
-		pickle="/home/s1045064/dissertation/repo-diss/sentence-classification/data/snli-GloVe-Split.p"
+		#pickle="/home/s1045064/dissertation/repo-diss/sentence-classification/data/snli-GloVe-Split.p"
+		pickle="/home/s1045064/dissertation/repo-diss/sentence-classification/data/snli-w2v-Split.p"
 		which_model="complex"
 		qsub -v PICKLE=$pickle,WORD_VECTORS=$word_vectors,MODE=$mode,BATCH_SIZE_F=$bs,DROPOUT_F=$dropout,CNL_F=$cnl,GPU_NO=$GPU,MODE_OP=$mode_op,LR_DECAY=$lr_decay,ALPHA=$alpha,BETA=$beta,ACTIVATION=$activation,SQR_NORM_LIM=$sqr_norm_lim,WHICH_MODEL=$which_model job.sh
 	fi
