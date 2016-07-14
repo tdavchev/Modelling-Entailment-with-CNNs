@@ -81,12 +81,12 @@ def set_lengths(modeOp):
     img_h = 0
     if modeOp == "concat":
         img_w = 50
-        img_h = 12
+        img_h = 16#12
     elif modeOp == "mix1" or modeOp == "mix2" or modeOp == "mix3" or modeOp == "mix4":
-        img_w = 80
-        img_h = 15
+        img_w = 100#80
+        img_h = 16#15
     else:
-        img_w = 30
+        img_w = 40#30
         img_h = 10
 
     return img_w,img_h
