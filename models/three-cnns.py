@@ -37,6 +37,8 @@ def train_conv_net(datasets,
                   ("dropout", dropout_rate), ("batch_size",batch_size),("non_static", non_static),
                     ("learn_decay",lr_decay), ("conv_non_linear", conv_non_linear), ("non_static", non_static)
                     ,("sqr_norm_lim",sqr_norm_lim),("shuffle_batch",shuffle_batch),("mode",modeOp), ("alpha",alpha),("beta",beta),("activations",activations)]
+
+    num_maps = len(filter_shapes)
     print parameters
     sys.stdout.flush()
     #define model architecture
@@ -200,7 +202,8 @@ def train_conv_net(datasets,
             modeOp, 
             batch_size,
             alpha,
-            beta)
+            beta,
+            num_maps)
     else:
         test_ffwd_layer_input = build_test(img_h, 
             img_w, 
@@ -211,7 +214,8 @@ def train_conv_net(datasets,
             modeOp, 
             len(datasets[1]),
             alpha,
-            beta)
+            beta,
+            num_maps)
 
     test_y_pred = classifier.predict(test_ffwd_layer_input)
     test_error = T.mean(T.neq(test_y_pred, y))
@@ -251,8 +255,7 @@ def train_conv_net(datasets,
 
                 test_loss /= n_test_batches
             else:
-                test_loss = test_model_all(test_set_x,test_set_y)
-                    
+                test_loss = test_model_all(test_set_x,test_set_y)           
             test_perf = 1 - test_loss
 
     return test_perf

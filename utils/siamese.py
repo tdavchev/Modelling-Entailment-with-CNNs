@@ -48,7 +48,7 @@ def set_layer1_input(mode,test_pred_layers,test_concat, img_h, img_w, data_len, 
             for idx in xrange(0,2):
                 for br in xrange(0,num_maps):
                     test_pred_inputs.append(test_pred_layers[idx][br])
-                    print len(test_pred_inputs)
+                    
             test_layer1_input = mix1(test_pred_inputs,data_len,alpha,beta,test_concat)
 
         elif mode == "mix2":
@@ -97,9 +97,9 @@ def build_test(img_h,img_w, test_size, Words, conv_layers, x, mode, data_len, al
     # initialize new parameters
     img_w, img_h = set_lengths(mode)
     # populate layers
-    test_pred_layers = populate_pred_layers(mode, conv_layers, test_layer0_input, test_size, num_maps)
+    test_pred_layers = populate_pred_layers(mode, conv_layers, test_layer0_input, test_size)
     # initialize layer 1's input
-    test_layer1_input = set_layer1_input(mode, test_pred_layers, [[],[]], img_h, img_w, data_len, alpha, beta)
+    test_layer1_input = set_layer1_input(mode, test_pred_layers, [[],[]], img_h, img_w, data_len, alpha, beta, num_maps)
     # reshape for third CNN
     test_layer0_input_three = test_layer1_input.reshape(
         (test_layer1_input.shape[0],
