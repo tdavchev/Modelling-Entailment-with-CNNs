@@ -25,7 +25,7 @@ def populate_pred_layers(mode,conv_layers,test_layer0_input,test_size):
 
     return test_pred_layers
 
-def set_layer1_input(mode,test_pred_layers,test_concat, img_h, img_w, data_len, alpha, beta):
+def set_layer1_input(mode,test_pred_layers,test_concat, img_h, img_w, data_len, alpha, beta, num_maps):
     if mode == "concat":
         test_layer1_input = concatenate_tensors(test_pred_layers)
     else:
@@ -46,15 +46,15 @@ def set_layer1_input(mode,test_pred_layers,test_concat, img_h, img_w, data_len, 
         elif mode == "mix1":
             test_pred_inputs = []
             for idx in xrange(0,2):
-                for br in xrange(0,3):
+                for br in xrange(0,num_maps):
                     test_pred_inputs.append(test_pred_layers[idx][br])
-
+                    print len(test_pred_inputs)
             test_layer1_input = mix1(test_pred_inputs,data_len,alpha,beta,test_concat)
 
         elif mode == "mix2":
             test_pred_inputs = []
             for idx in xrange(0,2):
-                for br in xrange(0,3):
+                for br in xrange(0,num_maps):
                     test_pred_inputs.append(test_pred_layers[idx][br])
 
             test_layer1_input = mix2(test_pred_inputs,data_len,alpha,beta,test_concat)
@@ -62,13 +62,13 @@ def set_layer1_input(mode,test_pred_layers,test_concat, img_h, img_w, data_len, 
         elif mode == "mix3":
             test_pred_inputs = []
             for idx in xrange(0,2):
-                for br in xrange(0,3):
+                for br in xrange(0,num_maps):
                     test_pred_inputs.append(test_pred_layers[idx][br])
 
         elif mode == "mix4":
             test_pred_inputs = []
             for idx in xrange(0,2):
-                for br in xrange(0,3):
+                for br in xrange(0,num_maps):
                     test_pred_inputs.append(test_pred_layers[idx][br])
 
             test_layer1_input = mix4(test_pred_inputs,data_len,alpha,beta,test_concat)
@@ -91,13 +91,13 @@ def set_lengths(modeOp):
 
     return img_w,img_h
 
-def build_test(img_h,img_w, test_size, Words, conv_layers, x, mode, data_len, alpha, beta):
+def build_test(img_h,img_w, test_size, Words, conv_layers, x, mode, data_len, alpha, beta, num_maps):
     # initialize layer 0's input
     test_layer0_input = set_layer0_input(Words, img_h, test_size, x)
     # initialize new parameters
     img_w, img_h = set_lengths(mode)
     # populate layers
-    test_pred_layers = populate_pred_layers(mode, conv_layers, test_layer0_input, test_size)
+    test_pred_layers = populate_pred_layers(mode, conv_layers, test_layer0_input, test_size, num_maps)
     # initialize layer 1's input
     test_layer1_input = set_layer1_input(mode, test_pred_layers, [[],[]], img_h, img_w, data_len, alpha, beta)
     # reshape for third CNN
