@@ -14,3 +14,24 @@ compile theano functions to get train/val/test errors
 ... training
 epoch: 1, training time: 931.14 secs, train perf: 75.52 %, val perf: 73.57 %
 epoch: 2, training time: 932.32 secs, train perf: 81.54 %, val perf: 77.19 %
+epoch: 3, training time: 930.94 secs, train perf: 86.20 %, val perf: 79.48 %
+epoch: 4, training time: 930.19 secs, train perf: 88.65 %, val perf: 79.55 %
+epoch: 5, training time: 929.34 secs, train perf: 90.69 %, val perf: 80.32 %
+epoch: 6, training time: 928.45 secs, train perf: 92.44 %, val perf: 79.98 %
+epoch: 7, training time: 929.55 secs, train perf: 93.05 %, val perf: 79.45 %
+epoch: 8, training time: 937.17 secs, train perf: 94.49 %, val perf: 79.07 %
+epoch: 9, training time: 939.27 secs, train perf: 95.25 %, val perf: 79.10 %
+epoch: 10, training time: 939.80 secs, train perf: 96.03 %, val perf: 79.57 %
+epoch: 11, training time: 934.99 secs, train perf: 96.07 %, val perf: 79.11 %
+epoch: 12, training time: 928.80 secs, train perf: 96.90 %, val perf: 79.19 %
+epoch: 13, training time: 929.27 secs, train perf: 97.14 %, val perf: 79.06 %
+epoch: 14, training time: 929.02 secs, train perf: 97.27 %, val perf: 79.15 %
+epoch: 15, training time: 929.55 secs, train perf: 97.40 %, val perf: 78.40 %
+epoch: 16, training time: 929.99 secs, train perf: 97.90 %, val perf: 79.60 %
+epoch: 17, training time: 930.74 secs, train perf: 97.43 %, val perf: 79.31 %
+epoch: 18, training time: 930.43 secs, train perf: 98.10 %, val perf: 79.16 %
+epoch: 19, training time: 930.18 secs, train perf: 98.36 %, val perf: 78.77 %
+epoch: 20, training time: 931.08 secs, train perf: 98.29 %, val perf: 79.13 %
+epoch: 21, training time: 932.19 secs, train perf: 98.29 %, val perf: 78.25 %
+epoch: 22, training time: 930.47 secs, train perf: 98.55 %, val perf: 78.68 %
+epoch: 23, training time: 929.91 secs, train perf: 98.79 %, val perf: 78.83 %
