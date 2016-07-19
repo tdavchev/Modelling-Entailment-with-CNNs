@@ -116,7 +116,13 @@ def train_conv_net(datasets,
             layer1_input = mix3(layer1_inputs,batch_size,alpha,beta,concat) # [50, 1200]
 
         elif modeOp == "mix4":
-            layer1_input = mix4(layer1_inputs,batch_size,alpha,beta,concat) # [50, 1200]
+            layer1_input = mix4(layer1_inputs,batch_size,alpha,beta,concat) # [50, 600]
+
+        elif modeOp == "mix5":
+            layer1_input = mix5(layer1_inputs,batch_size,alpha,beta,concat) # [50, 600]
+
+        elif modeOp == "mix6":
+            layer1_input = mix6(layer1_inputs,batch_size,alpha,beta,concat) # [50, 600]
 
 
     layer1_cnn_input = layer1_input.reshape((-1,img_h,img_w))
