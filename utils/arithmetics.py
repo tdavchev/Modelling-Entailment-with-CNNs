@@ -62,31 +62,47 @@ def circular_convolution(concat):
 
 def mix1(layer1_inputs,batch_size,alpha,beta,concat):
     layer1_concat = concatenate_tensors(layer1_inputs) # [50 600]
+    layer1_add = add(batch_size, alpha, beta, concat) # [50 300]
     layer1_sub = sub(batch_size, alpha, beta, concat) # [50 300]
 
     lista = []
     lista.append(layer1_concat)
-    lista.append(layer1_sub)
+    lista.append(layer1_add)
     layer1_input = T.concatenate(lista,1) # [50 900]
-
-    layer1_mul = mul(concat) # [50 300]
 
     lista = []
     lista.append(layer1_input)
-    lista.append(layer1_mul)
+    lista.append(layer1_sub)
 
     return T.concatenate(lista,1) # [50 1200]  
 
 def mix2(layer1_inputs,batch_size,alpha,beta,concat):
     layer1_concat = concatenate_tensors(layer1_inputs) # [50 600]
-    layer1_sub = sub(batch_size, 1, 1, concat) # [50 300]
+    layer1_add = add(batch_size, alpha, beta, concat) # [50 300]
+    layer1_mul = mul(concat) # [50 300]
 
     lista = []
     lista.append(layer1_concat)
-    lista.append(layer1_sub)
+    lista.append(layer1_add)
     layer1_input = T.concatenate(lista,1) # [50 900]
 
+    
+    lista = []
+    lista.append(layer1_input)
+    lista.append(layer1_mul)
+
+    return T.concatenate(lista,1) # [50 1200]
+
+def mix3(layer1_inputs,batch_size,alpha,beta,concat):
+    layer1_concat = concatenate_tensors(layer1_inputs) # [50 600]
+    layer1_sub = sub(batch_size, alpha, beta, concat) # [50 300]
     layer1_mul = mul(concat) # [50 300]
+
+    lista = []
+    lista.append(layer1_concat)
+    lista.append(layer1_add)
+    layer1_input = T.concatenate(lista,1) # [50 900]
+
     
     lista = []
     lista.append(layer1_input)
@@ -94,36 +110,50 @@ def mix2(layer1_inputs,batch_size,alpha,beta,concat):
 
     return T.concatenate(lista,1) # [50 1200]  
 
-def mix3(layer1_inputs,batch_size,alpha,beta,concat):
-    layer1_concat = concatenate_tensors(layer1_inputs) # [50 600]
-    layer1_sub = sub(batch_size, 1, 1, concat) # [50 300]
-
-    lista = []
-    lista.append(layer1_concat)
-    lista.append(layer1_sub)
-    layer1_input = T.concatenate(lista,1) # [50 900]
-
-    layer1_add = add(batch_size, alpha, beta, concat) # [50 300]
-
-    lista = []
-    lista.append(layer1_input)
-    lista.append(layer1_add)
-
-    return T.concatenate(lista,1) # [50 1200]
-
 def mix4(layer1_inputs,batch_size,alpha,beta,concat):
-    layer1_concat = concatenate_tensors(layer1_inputs) # [50 600]
+    layer1_add = add(batch_size, alpha, beta, concat) # [50 300]
     layer1_sub = sub(batch_size, 1, 1, concat) # [50 300]
 
     lista = []
-    lista.append(layer1_concat)
+    lista.append(layer1_add)
     lista.append(layer1_sub)
-    layer1_input = T.concatenate(lista,1) # [50 900]
 
-    layer1_circ = circular_convolution(concat) # [50 300]
+    return T.concatenate(lista,1) # [50 600]
+
+def mix5(layer1_inputs,batch_size,alpha,beta,concat):
+    layer1_add = add(batch_size, alpha, beta, concat) # [50 300]
+    layer1_mul = mul(batch_size, 1, 1, concat) # [50 300]
 
     lista = []
-    lista.append(layer1_input)
-    lista.append(layer1_circ)
+    lista.append(layer1_add)
+    lista.append(layer1_mul)
 
-    return T.concatenate(lista,1) # [50 1200] 
+    return T.concatenate(lista,1) # [50 600]
+
+def mix6(layer1_inputs,batch_size,alpha,beta,concat):
+    layer1_sub = sub(batch_size, alpha, beta, concat) # [50 300]
+    layer1_mul = mul(batch_size, 1, 1, concat) # [50 300]
+
+    lista = []
+    lista.append(layer1_sub)
+    lista.append(layer1_mul)
+
+    return T.concatenate(lista,1) # [50 600]
+
+# Poor performance
+# def mix4(layer1_inputs,batch_size,alpha,beta,concat):
+#     layer1_concat = concatenate_tensors(layer1_inputs) # [50 600]
+#     layer1_sub = sub(batch_size, 1, 1, concat) # [50 300]
+
+#     lista = []
+#     lista.append(layer1_concat)
+#     lista.append(layer1_sub)
+#     layer1_input = T.concatenate(lista,1) # [50 900]
+
+#     layer1_circ = circular_convolution(concat) # [50 300]
+
+#     lista = []
+#     lista.append(layer1_input)
+#     lista.append(layer1_circ)
+
+#     return T.concatenate(lista,1) # [50 1200] 
