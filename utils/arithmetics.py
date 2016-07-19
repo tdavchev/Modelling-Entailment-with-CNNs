@@ -60,6 +60,16 @@ def circular_convolution(concat):
 
     return circ_corr_exp[:, ::-1] # [50,300]
 
+
+'''
+lower than 117002 --> mix1 : concat,mul,sub
+                  --> mix3 : concat,add,sub
+
+Note: if 3 feature maps --> 300
+      if 4 feature maps --> 400
+      etc.
+'''
+
 def mix1(layer1_inputs,batch_size,alpha,beta,concat):
     layer1_concat = concatenate_tensors(layer1_inputs) # [50 600]
     layer1_add = add(batch_size, alpha, beta, concat) # [50 300]
@@ -141,7 +151,7 @@ def mix6(layer1_inputs,batch_size,alpha,beta,concat):
     return T.concatenate(lista,1) # [50 600]
 
 # Poor performance
-# def mix4(layer1_inputs,batch_size,alpha,beta,concat):
+# def mixN(layer1_inputs,batch_size,alpha,beta,concat):
 #     layer1_concat = concatenate_tensors(layer1_inputs) # [50 600]
 #     layer1_sub = sub(batch_size, 1, 1, concat) # [50 300]
 
