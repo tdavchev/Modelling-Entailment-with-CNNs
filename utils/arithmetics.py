@@ -110,7 +110,7 @@ def mix3(layer1_inputs,batch_size,alpha,beta,concat):
 
     lista = []
     lista.append(layer1_concat)
-    lista.append(layer1_add)
+    lista.append(layer1_sub)
     layer1_input = T.concatenate(lista,1) # [50 900]
 
     
