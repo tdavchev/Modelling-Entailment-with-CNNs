@@ -43,7 +43,7 @@ def mul(concat):
     return T.mul(concat[0],concat[1]) # [50,300]
 
 def circular_convolution(concat):
-    bs,w=concat[0].shape # [batch,width] [50, 300]
+    bs,w=concat[0].shape # [batch_size,width] [50, 300]
 
     corr_expr = T.signal.conv.conv2d(
         concat[0], 
@@ -132,7 +132,7 @@ def mix4(layer1_inputs,batch_size,alpha,beta,concat):
 
 def mix5(layer1_inputs,batch_size,alpha,beta,concat):
     layer1_add = add(batch_size, alpha, beta, concat) # [50 300]
-    layer1_mul = mul(batch_size, 1, 1, concat) # [50 300]
+    layer1_mul = mul(concat) # [50 300]
 
     lista = []
     lista.append(layer1_add)
@@ -142,7 +142,7 @@ def mix5(layer1_inputs,batch_size,alpha,beta,concat):
 
 def mix6(layer1_inputs,batch_size,alpha,beta,concat):
     layer1_sub = sub(batch_size, alpha, beta, concat) # [50 300]
-    layer1_mul = mul(batch_size, 1, 1, concat) # [50 300]
+    layer1_mul = mul(concat) # [50 300]
 
     lista = []
     lista.append(layer1_sub)
