@@ -87,7 +87,7 @@ def train_conv_net(datasets,
         layer1_inputs.append(layer1_input)
 
     # keep relatively close ratio to 300/81
-    img_w,img_h = set_lengths(modeOp)
+    img_w,img_h = set_lengths(modeOp,num_maps)
     if modeOp == "concat":
         layer1_input = concatenate_tensors(layer1_inputs)
 

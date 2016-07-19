@@ -75,19 +75,30 @@ def set_layer1_input(mode,test_pred_layers,test_concat, img_h, img_w, data_len, 
 
     return test_layer1_input.reshape((-1,img_h,img_w))
 
-def set_lengths(modeOp):
+def set_lengths(modeOp, num_maps):
     # keep relatively close ratio to 300/81
     img_w = 0
     img_h = 0
-    if modeOp == "concat":
-        img_w = 50
-        img_h = 16#12
-    elif modeOp == "mix1" or modeOp == "mix2" or modeOp == "mix3" or modeOp == "mix4":
-        img_w = 100#80
-        img_h = 16#15
+    if modeOp == "concat" or modeOp == "mix4" or modeOp == "mix5" or modeOp == "mix6":
+        img_h = 100
+        if num_maps == 3:
+            img_w = 6
+        elif num_maps == 4:
+            img_w = 8
+
+    elif modeOp == "mix1" or modeOp == "mix2" or modeOp == "mix3":
+        img_h = 200
+        if num_maps == 3:
+            img_w = 7
+        elif num_maps == 4:
+            img_w = 8
+
     else:
-        img_w = 40#30
-        img_h = 10
+        img_w = 10
+        if num_maps == 3:
+            img_h = 30
+        elif num_maps == 4:
+            img_h = 40
 
     return img_w,img_h
 
@@ -95,7 +106,7 @@ def build_test(img_h,img_w, test_size, Words, conv_layers, x, mode, data_len, al
     # initialize layer 0's input
     test_layer0_input = set_layer0_input(Words, img_h, test_size, x)
     # initialize new parameters
-    img_w, img_h = set_lengths(mode)
+    img_w, img_h = set_lengths(mode, num_maps)
     # populate layers
     test_pred_layers = populate_pred_layers(mode, conv_layers, test_layer0_input, test_size)
     # initialize layer 1's input
