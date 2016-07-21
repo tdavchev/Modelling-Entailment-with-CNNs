@@ -21,3 +21,22 @@ epoch: 4, training time: 641.49 secs, train perf: 82.94 %, val perf: 78.08 %
 epoch: 5, training time: 642.23 secs, train perf: 85.00 %, val perf: 78.18 %
 epoch: 6, training time: 641.89 secs, train perf: 86.37 %, val perf: 78.40 %
 epoch: 7, training time: 643.09 secs, train perf: 87.36 %, val perf: 78.27 %
+epoch: 8, training time: 642.22 secs, train perf: 88.71 %, val perf: 78.67 %
+epoch: 9, training time: 641.99 secs, train perf: 89.98 %, val perf: 78.50 %
+epoch: 10, training time: 641.96 secs, train perf: 90.54 %, val perf: 78.30 %
+epoch: 11, training time: 641.52 secs, train perf: 91.69 %, val perf: 78.13 %
+epoch: 12, training time: 641.44 secs, train perf: 93.10 %, val perf: 77.72 %
+epoch: 13, training time: 642.13 secs, train perf: 92.73 %, val perf: 77.17 %
+epoch: 14, training time: 642.03 secs, train perf: 94.21 %, val perf: 77.90 %
+epoch: 15, training time: 641.29 secs, train perf: 95.03 %, val perf: 77.86 %
+epoch: 16, training time: 641.59 secs, train perf: 95.00 %, val perf: 77.47 %
+epoch: 17, training time: 641.62 secs, train perf: 95.52 %, val perf: 77.60 %
+epoch: 18, training time: 641.76 secs, train perf: 94.86 %, val perf: 77.85 %
+epoch: 19, training time: 641.79 secs, train perf: 96.25 %, val perf: 77.90 %
+epoch: 20, training time: 641.70 secs, train perf: 94.14 %, val perf: 76.69 %
+epoch: 21, training time: 641.55 secs, train perf: 96.69 %, val perf: 76.92 %
+epoch: 22, training time: 641.49 secs, train perf: 96.83 %, val perf: 76.76 %
+epoch: 23, training time: 641.00 secs, train perf: 96.86 %, val perf: 77.26 %
+epoch: 24, training time: 641.61 secs, train perf: 97.39 %, val perf: 77.15 %
+epoch: 25, training time: 639.50 secs, train perf: 97.58 %, val perf: 77.22 %
+0.7851
