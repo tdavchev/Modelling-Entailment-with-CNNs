@@ -52,10 +52,14 @@ def train_conv_net(datasets,
     zero_vec = np.zeros(img_w)
     set_zero = theano.function([zero_vec_tensor], updates=[(Words, T.set_subtensor(Words[0,:], zero_vec_tensor))], allow_input_downcast=True)
     
+    # conv1d = circular_convolution([x[:,:x.shape[1]/2], x[:,x.shape[1]/2:]])
 
     first_layer0_input = Words[T.cast(x[:,:x.shape[1]/2].flatten(),dtype="int32")].reshape((x.shape[0],1,(x.shape[1]/2),Words.shape[1]))
     second_layer0_input = Words[T.cast(x[:,x.shape[1]/2:].flatten(),dtype="int32")].reshape((x.shape[0],1,(x.shape[1]/2),Words.shape[1]))
-    
+
+    # first_layer0_input = T.concatenate([first_layer0_input,conv1d],axis=1).reshape((x.shape[0],1,(x.shape[1]/2),(2*Words.shape[1])))
+    # second_layer0_input = T.concatenate([second_layer0_input,conv1d],axis=1).reshape((x.shape[0],1,(x.shape[1]/2),(2*Words.shape[1])))
+
     first_conv_layers = []
     second_conv_layers = []
     layer1_inputs = []
