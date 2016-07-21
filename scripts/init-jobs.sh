@@ -1,7 +1,7 @@
 #!/bin/bash:
 
 ####### Initialize Parameters #######
-GPU=0
+GPU=$3
 cnl="relu"
 lr_decay=0.95
 mode_op="add"
@@ -69,28 +69,30 @@ mode="-nonstatic"
 word_vectors="-word2vec"
 while [ $count -le $2 ]
 do
-	GPU=$((GPU+1))
 	if [ $GPU -eq 3 ]; then
 		GPU=0
 	fi
+	GPU=$((GPU+1))
 	let "count=$count+1"
 	randomNum 70 10
 	num=$?
+	mode_op="mix3"
 	br=$((br+1))
         if [ $br -eq 1 ]; then
-               mode_op="mul"
+        	mode_op="mix1"
 	elif [ $br -eq 2 ]; then
-		mode_op="add"
-	elif [ $br -eq 3 ]; then
-		mode_op="sub"
-	elif [ $br -eq 4 ]; then
-		mode_op="mix1"
-	elif [ $br -eq 5 ]; then
 		mode_op="mix2"
+	elif [ $br -eq 3 ]; then
+		mode_op="mix3"
+	elif [ $br -eq 4 ]; then
+		mode_op="mix4"
+	elif [ $br -eq 5 ]; then
+		mode_op="mix5"
 	elif [ $br -eq 6 ]; then
 		br=0
-		mode_op="mix3"
+		mode_op="mix6"
         fi
+	mode_op="mix1"	
 #	if [ $num -le 10 ]; then
 #		mode_op="mul"
 #	elif [ $num -le 20 ]; then
@@ -115,7 +117,7 @@ do
 	fi
 	cnl="relu"
 	randomNum 50 20
-	dropout=20
+	dropout=13
 #	dropout=$?
 	echo "Dropout is --- $dropout"
 	randomNum 94 85
@@ -140,7 +142,7 @@ do
 		pickle="/home/s1045064/dissertation/repo-diss/sentence-classification/data/snli-GloVe-Full.p"
 		which_model="basic"
 		echo "pickle: $pickle; word vectors: $word_vectors; mode: $mode; batch_size: $bs; dropout_f: $dropout; mode_op: $mode_op; cnl_f: $cnl;lr_decay: $lr_decay; alpha: $alpha; beta: $beta; activation: $activation; sqr_norm_lim: $sqr_norm_lim; which_model: $which_model"
-		qsub -v PICKLE=$pickle,WORD_VECTORS=$word_vectors,MODE=$mode,BATCH_SIZE_F=$bs,DROPOUT_F=$dropout,CNL_F=$cnl,GPU_NO=$GPU,MODE_OP=$mode_op,LR_DECAY=$lr_decay,ALPHA=$alpha,BETA=$beta,ACTIVATION=$activation,SQR_NORM_LIM=$sqr_norm_lim,WHICH_MODEL=$which_model job.sh
+		nice qsub -v PICKLE=$pickle,WORD_VECTORS=$word_vectors,MODE=$mode,BATCH_SIZE_F=$bs,DROPOUT_F=$dropout,CNL_F=$cnl,GPU_NO=$GPU,MODE_OP=$mode_op,LR_DECAY=$lr_decay,ALPHA=$alpha,BETA=$beta,ACTIVATION=$activation,SQR_NORM_LIM=$sqr_norm_lim,WHICH_MODEL=$which_model job.sh
 	else
 		echo "sqr_norm_lim --- $sqr_norm_lim"
 		echo "Starting job with batch size: $bs, dropout: $dropout, conv_non_linear: $cnl lr_decay: $lr_decay in mode: $mode on GPU: $GPU"
@@ -148,7 +150,8 @@ do
 		#pickle="/home/s1045064/dissertation/repo-diss/sentence-classification/data/snli-GloVe-Split.p"
 		pickle="/home/s1045064/dissertation/repo-diss/sentence-classification/data/snli-w2v-Split.p"
 		which_model="complex"
-		qsub -v PICKLE=$pickle,WORD_VECTORS=$word_vectors,MODE=$mode,BATCH_SIZE_F=$bs,DROPOUT_F=$dropout,CNL_F=$cnl,GPU_NO=$GPU,MODE_OP=$mode_op,LR_DECAY=$lr_decay,ALPHA=$alpha,BETA=$beta,ACTIVATION=$activation,SQR_NORM_LIM=$sqr_norm_lim,WHICH_MODEL=$which_model job.sh
+		nice qsub -v PICKLE=$pickle,WORD_VECTORS=$word_vectors,MODE=$mode,BATCH_SIZE_F=$bs,DROPOUT_F=$dropout,CNL_F=$cnl,GPU_NO=$GPU,MODE_OP=$mode_op,LR_DECAY=$lr_decay,ALPHA=$alpha,BETA=$beta,ACTIVATION=$activation,SQR_NORM_LIM=$sqr_norm_lim,WHICH_MODEL=$which_model job.sh
+	#	nice qsub -v PICKLE=$pickle,WORD_VECTORS=$word_vectors,MODE=$mode,BATCH_SIZE_F=$bs,DROPOUT_F=$dropout,CNL_F=$cnl,GPU_NO=$GPU,MODE_OP=$mode_op,LR_DECAY=$lr_decay,ALPHA=$alpha,BETA=$beta,ACTIVATION=$activation,SQR_NORM_LIM=$sqr_norm_lim,WHICH_MODEL=$which_model job-100-16.sh
 	fi
 done
 

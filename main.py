@@ -45,6 +45,7 @@ if __name__=="__main__":
         dropout_rate_f /= 100
     else:
         dropout_rate_f = 0 
+
     conv_non_linear_f = sys.argv[6]
     modeOp = sys.argv[7]
     lr_decay = sys.argv[8]
@@ -164,14 +165,14 @@ if __name__=="__main__":
         print str(np.mean(results))
         sys.stdout.flush()
     else:
-        datasets = make_idx_data(revs, word_idx_map, max_l=81,k=300, filter_h=5)
+        datasets = make_idx_data(revs, word_idx_map, max_l=81,k=300, filter_h=7)
         sys.stdout.flush()
         activations = [ReLU, Sigmoid, Tanh, Iden]
 
         perf = train_conv_net(datasets,
            U,
            img_w=300,
-           filter_hs=[3,4,5],
+           filter_hs=[2,3,4,5],
            hidden_units=[100,3],
            dropout_rate=[dropout_rate_f],
            shuffle_batch=True,
