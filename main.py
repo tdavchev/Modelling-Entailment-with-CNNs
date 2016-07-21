@@ -45,6 +45,7 @@ if __name__=="__main__":
         dropout_rate_f /= 100
     else:
         dropout_rate_f = 0 
+
     conv_non_linear_f = sys.argv[6]
     modeOp = sys.argv[7]
     lr_decay = sys.argv[8]
@@ -170,8 +171,8 @@ if __name__=="__main__":
 
         perf = train_conv_net(datasets,
            U,
-           img_w=600,
-           filter_hs=[7,7,7,7],
+           img_w=300,
+           filter_hs=[2,3,4,5],
            hidden_units=[100,3],
            dropout_rate=[dropout_rate_f],
            shuffle_batch=True,
