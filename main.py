@@ -164,18 +164,18 @@ if __name__=="__main__":
         print str(np.mean(results))
         sys.stdout.flush()
     else:
-        datasets = make_idx_data(revs, word_idx_map, max_l=81,k=300, filter_h=5)
+        datasets = make_idx_data(revs, word_idx_map, max_l=81,k=300, filter_h=7)
         sys.stdout.flush()
         activations = [ReLU, Sigmoid, Tanh, Iden]
 
         perf = train_conv_net(datasets,
            U,
-           img_w=300,
-           filter_hs=[3,4,5],
+           img_w=600,
+           filter_hs=[7,7,7,7],
            hidden_units=[100,3],
            dropout_rate=[dropout_rate_f],
            shuffle_batch=True,
-           n_epochs=25,
+           n_epochs=10,
            batch_size=batch_size_f,
            lr_decay = lr_decay,
            conv_non_linear=conv_non_linear_f,
