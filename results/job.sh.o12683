@@ -1,0 +1,39 @@
+Single Sentence Casei CNN 2
+200, 13, relu
+loading data...
+/home/s1045064/dissertation/repo-diss/sentence-classification/data/snli-w2v-Split.p
+data loaded!
+model architecture: CNN-non-static
+using: word2vec vectors
+[('image shape', 93, 300), ('filter shape', [(100, 1, 7, 300), (100, 1, 7, 300), (100, 1, 7, 300), (100, 1, 7, 300)]), ('hidden_units', [100, 3]), ('dropout', [0.13]), ('batch_size', 200), ('non_static', True), ('learn_decay', 0.95), ('conv_non_linear', 'relu'), ('non_static', True), ('sqr_norm_lim', 9), ('shuffle_batch', True), ('mode', 'mix1'), ('alpha', 1.0), ('beta', 1.0), ('activations', [<function ReLU at 0x2d0f81b8>])]
+define model architecture
+64 25
+define parameters of the model and update functions using adadelta
+shuffle dataset and assign to mini batches. if dataset size is not a multiple of mini batches, replicate
+divide train set into train/val sets
+compile theano functions to get train/val/test errors
+64 25
+... training
+epoch: 1, training time: 925.41 secs, train perf: 75.94 %, val perf: 73.65 %
+epoch: 2, training time: 926.45 secs, train perf: 82.23 %, val perf: 78.08 %
+epoch: 3, training time: 926.43 secs, train perf: 85.88 %, val perf: 79.47 %
+epoch: 4, training time: 926.70 secs, train perf: 88.43 %, val perf: 79.14 %
+epoch: 5, training time: 927.21 secs, train perf: 90.63 %, val perf: 79.38 %
+epoch: 6, training time: 926.53 secs, train perf: 91.99 %, val perf: 79.31 %
+epoch: 7, training time: 926.54 secs, train perf: 93.52 %, val perf: 78.58 %
+epoch: 8, training time: 926.48 secs, train perf: 94.26 %, val perf: 78.95 %
+epoch: 9, training time: 927.04 secs, train perf: 94.04 %, val perf: 77.82 %
+epoch: 10, training time: 927.25 secs, train perf: 95.59 %, val perf: 78.66 %
+epoch: 11, training time: 926.67 secs, train perf: 96.26 %, val perf: 78.61 %
+epoch: 12, training time: 926.66 secs, train perf: 96.78 %, val perf: 78.69 %
+epoch: 13, training time: 926.86 secs, train perf: 97.15 %, val perf: 78.86 %
+epoch: 14, training time: 926.43 secs, train perf: 97.28 %, val perf: 78.93 %
+epoch: 15, training time: 926.59 secs, train perf: 97.12 %, val perf: 78.54 %
+epoch: 16, training time: 926.02 secs, train perf: 97.85 %, val perf: 78.80 %
+epoch: 17, training time: 926.52 secs, train perf: 97.71 %, val perf: 78.11 %
+epoch: 18, training time: 927.01 secs, train perf: 98.08 %, val perf: 78.46 %
+epoch: 19, training time: 927.00 secs, train perf: 98.17 %, val perf: 78.32 %
+epoch: 20, training time: 926.66 secs, train perf: 98.35 %, val perf: 78.82 %
+epoch: 21, training time: 925.99 secs, train perf: 98.53 %, val perf: 78.72 %
+epoch: 22, training time: 926.02 secs, train perf: 98.65 %, val perf: 78.70 %
+epoch: 23, training time: 927.77 secs, train perf: 98.64 %, val perf: 78.58 %
