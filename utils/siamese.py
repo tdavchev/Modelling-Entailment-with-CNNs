@@ -91,6 +91,14 @@ def set_layer1_input(mode,test_pred_layers,test_concat, img_h, img_w, data_len, 
 
             test_layer1_input = mix6(test_pred_inputs,data_len,alpha,beta,test_concat)
 
+        elif mode == "mix7":
+            test_pred_inputs = []
+            for idx in xrange(0,2):
+                for br in xrange(0,num_maps):
+                    test_pred_inputs.append(test_pred_layers[idx][br])
+                    
+            test_layer1_input = mix7(test_pred_inputs,data_len,alpha,beta,test_concat)
+
     return test_layer1_input.reshape((-1,img_h,img_w))
 
 def set_lengths(modeOp, num_maps):
@@ -110,6 +118,13 @@ def set_lengths(modeOp, num_maps):
             img_w = 56#28#14#7
         elif num_maps == 4:
             img_w = 64#32#16#8
+
+    elif modeOp == "mix7":
+        img_h = 25
+        if num_maps == 3:
+            img_w = 60
+        elif num_maps == 4:
+            img_w = 80 
 
     else:
         img_w = 10

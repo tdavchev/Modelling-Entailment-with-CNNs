@@ -150,6 +150,28 @@ def mix6(layer1_inputs,batch_size,alpha,beta,concat):
 
     return T.concatenate(lista,1) # [50 600]
 
+def mix7(layer1_inputs,batch_size,alpha,beta,concat):
+    layer1_concat = concatenate_tensors(layer1_inputs) # [50 600]
+    layer1_add = add(batch_size, alpha, beta, concat) # [50 300]
+    layer1_sub = sub(batch_size, alpha, beta, concat) # [50 300]
+    layer1_circ = circular_convolution(layer1_inputs)
+
+    lista = []
+    lista.append(layer1_concat)
+    lista.append(layer1_add)
+    layer1_input = T.concatenate(lista,1) # [50 900]
+
+    lista = []
+    lista.append(layer1_input)
+    lista.append(layer1_sub)
+    layer1_input = T.concatenate(lista,1) # [50 1200]
+
+    lista = []
+    lista.append(layer1_input)
+    lista.append(layer1_circ)
+
+    return T.concatenate(lista,1) # [50 1500]  
+
 # Poor performance
 # def mixN(layer1_inputs,batch_size,alpha,beta,concat):
 #     layer1_concat = concatenate_tensors(layer1_inputs) # [50 600]

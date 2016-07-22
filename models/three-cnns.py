@@ -52,13 +52,9 @@ def train_conv_net(datasets,
     zero_vec = np.zeros(img_w)
     set_zero = theano.function([zero_vec_tensor], updates=[(Words, T.set_subtensor(Words[0,:], zero_vec_tensor))], allow_input_downcast=True)
     
-    # conv1d = circular_convolution([x[:,:x.shape[1]/2], x[:,x.shape[1]/2:]])
-
     first_layer0_input = Words[T.cast(x[:,:x.shape[1]/2].flatten(),dtype="int32")].reshape((x.shape[0],1,(x.shape[1]/2),Words.shape[1]))
     second_layer0_input = Words[T.cast(x[:,x.shape[1]/2:].flatten(),dtype="int32")].reshape((x.shape[0],1,(x.shape[1]/2),Words.shape[1]))
 
-    # first_layer0_input = T.concatenate([first_layer0_input,conv1d],axis=1).reshape((x.shape[0],1,(x.shape[1]/2),(2*Words.shape[1])))
-    # second_layer0_input = T.concatenate([second_layer0_input,conv1d],axis=1).reshape((x.shape[0],1,(x.shape[1]/2),(2*Words.shape[1])))
 
     first_conv_layers = []
     second_conv_layers = []
@@ -127,6 +123,9 @@ def train_conv_net(datasets,
 
         elif modeOp == "mix6":
             layer1_input = mix6(layer1_inputs,batch_size,alpha,beta,concat) # [50, 600]
+
+        elif modeOp == "mix7":
+            layer1_input = mix7(layer1_inputs,batch_size,alpha,beta,concat) # [50, 1500]
 
 
     layer1_cnn_input = layer1_input.reshape((-1,img_h,img_w))
@@ -258,7 +257,7 @@ def train_conv_net(datasets,
         sys.stdout.flush()
         if val_perf >= best_val_perf:
             best_val_perf = val_perf
-            if modeOp == "circ": # split in minibatches to decrease convolution size
+            if modeOp == "circ" or modeOp== "mix7": # split in minibatches to decrease convolution size
                 test_loss = 0
                 for minibatch_index in xrange(n_test_batches):
                     test_loss += test_model_all(test_set_x[minibatch_index*batch_size:(minibatch_index+1)*batch_size],test_set_y[minibatch_index*batch_size:(minibatch_index+1)*batch_size])
