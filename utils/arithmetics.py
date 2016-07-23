@@ -154,8 +154,7 @@ def mix7(layer1_inputs,batch_size,alpha,beta,concat):
     layer1_concat = concatenate_tensors(layer1_inputs)# [50 600] 
     layer1_add = add(batch_size, alpha, beta, concat) # [50 300] 
     layer1_sub = sub(batch_size, alpha, beta, concat) # [50 300]
-    layer1_mul = mul(concat) # [50 300]
-    # layer1_circ = circular_convolution(layer1_inputs) # [50 300]
+    layer1_circ = circular_convolution(concat) # [50 300]
 
     lista = []
     lista.append(layer1_concat)
