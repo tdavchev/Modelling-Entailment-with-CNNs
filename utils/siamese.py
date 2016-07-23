@@ -123,7 +123,7 @@ def set_lengths(modeOp, num_maps):
     elif modeOp == "mix1" or modeOp == "mix2" or modeOp == "mix3" or modeOp == "mix8":
         img_h = 25#50#25#50#100#200
         if num_maps == 3:
-            img_w = 56#28#14#7
+            img_w = 48#28#14#7
         elif num_maps == 4:
             img_w = 64#32#16#8
 

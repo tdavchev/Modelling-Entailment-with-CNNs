@@ -159,15 +159,15 @@ def mix7(layer1_inputs,batch_size,alpha,beta,concat):
     lista = []
     lista.append(layer1_concat)
     lista.append(layer1_add)
-    layer1_input = T.concatenate(lista,1) # [50 900]
+    # layer1_input = T.concatenate(lista,1) # [50 900]
 
-    lista = []
-    lista.append(layer1_input)
+    # lista = []
+    # lista.append(layer1_input)
     lista.append(layer1_sub)
-    layer1_input = T.concatenate(lista,1) # [50 1200]
+    # layer1_input = T.concatenate(lista,1) # [50 1200]
 
-    lista = []
-    lista.append(layer1_input)
+    # lista = []
+    # lista.append(layer1_input)
     lista.append(layer1_circ)
 
     return T.concatenate(lista,1) # [50 1500]  
