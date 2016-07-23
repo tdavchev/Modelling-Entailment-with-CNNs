@@ -127,6 +127,9 @@ def train_conv_net(datasets,
         elif modeOp == "mix7":
             layer1_input = mix7(layer1_inputs,batch_size,alpha,beta,concat) # [50, 1500]
 
+        elif modeOp == "mix8":
+            layer1_input = mix8(layer1_inputs,batch_size,alpha,beta,concat) # [50, 1200]
+
 
     layer1_cnn_input = layer1_input.reshape((-1,img_h,img_w))
         
@@ -181,7 +184,7 @@ def train_conv_net(datasets,
 
     n_train_batches, n_val_batches = get_n_batches(new_data, datasets[2], batch_size)
 
-    if modeOp == "circ":
+    if modeOp == "circ" or modeOp == "mix7":
         n_test_batches, _ = get_n_batches(datasets[1], [], batch_size)
 
     #divide train set into train/val sets
