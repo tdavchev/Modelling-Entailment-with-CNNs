@@ -107,6 +107,14 @@ def set_layer1_input(mode,test_pred_layers,test_concat, img_h, img_w, data_len, 
                     
             test_layer1_input = mix8(test_pred_inputs,data_len,alpha,beta,test_concat)
 
+        elif mode == "mix9":
+            test_pred_inputs = []
+            for idx in xrange(0,2):
+                for br in xrange(0,num_maps):
+                    test_pred_inputs.append(test_pred_layers[idx][br])
+                    
+            test_layer1_input = mix9(test_pred_inputs,data_len,alpha,beta,test_concat)
+
     return test_layer1_input.reshape((-1,img_h,img_w))
 
 def set_lengths(modeOp, num_maps):
