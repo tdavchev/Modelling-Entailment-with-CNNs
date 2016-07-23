@@ -127,7 +127,7 @@ def set_lengths(modeOp, num_maps):
         elif num_maps == 4:
             img_w = 64#32#16#8
 
-    elif modeOp == "mix7":
+    elif modeOp == "mix7" or modeOp == "mix9":
         img_h = 25
         if num_maps == 3:
             img_w = 60

@@ -130,6 +130,9 @@ def train_conv_net(datasets,
         elif modeOp == "mix8":
             layer1_input = mix8(layer1_inputs,batch_size,alpha,beta,concat) # [50, 1200]
 
+        elif modeOp == "mix9":
+            layer1_input = mix9(layer1_inputs,batch_size,alpha,beta,concat) # [50, 1500]
+
 
     layer1_cnn_input = layer1_input.reshape((-1,img_h,img_w))
         
