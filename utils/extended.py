@@ -1,3 +1,6 @@
+'''
+Extended model specific helper functions
+'''
 def concatenate(layers):
     concat= [[],[]]
     for br in xrange(0,2):
@@ -91,6 +94,30 @@ def set_layer1_input(mode,test_pred_layers,test_concat, img_h, img_w, data_len, 
 
             test_layer1_input = mix6(test_pred_inputs,data_len,alpha,beta,test_concat)
 
+        elif mode == "mix7":
+            test_pred_inputs = []
+            for idx in xrange(0,2):
+                for br in xrange(0,num_maps):
+                    test_pred_inputs.append(test_pred_layers[idx][br])
+                    
+            test_layer1_input = mix7(test_pred_inputs,data_len,alpha,beta,test_concat)
+
+        elif mode == "mix8":
+            test_pred_inputs = []
+            for idx in xrange(0,2):
+                for br in xrange(0,num_maps):
+                    test_pred_inputs.append(test_pred_layers[idx][br])
+                    
+            test_layer1_input = mix8(test_pred_inputs,data_len,alpha,beta,test_concat)
+
+        elif mode == "mix9":
+            test_pred_inputs = []
+            for idx in xrange(0,2):
+                for br in xrange(0,num_maps):
+                    test_pred_inputs.append(test_pred_layers[idx][br])
+                    
+            test_layer1_input = mix9(test_pred_inputs,data_len,alpha,beta,test_concat)
+
     return test_layer1_input.reshape((-1,img_h,img_w))
 
 def set_lengths(modeOp, num_maps):
@@ -98,18 +125,25 @@ def set_lengths(modeOp, num_maps):
     img_w = 0
     img_h = 0
     if modeOp == "concat" or modeOp == "mix4" or modeOp == "mix5" or modeOp == "mix6":
-        img_h = 50#100
+        img_h = 50#25#50#100
         if num_maps == 3:
-            img_w = 12#6
+            img_w = 12#24#12#6
         elif num_maps == 4:
-            img_w = 16#8
+            img_w = 16#32#16#8
 
-    elif modeOp == "mix1" or modeOp == "mix2" or modeOp == "mix3":
-        img_h = 100#200
+    elif modeOp == "mix1" or modeOp == "mix2" or modeOp == "mix3" or modeOp == "mix8":
+        img_h = 25#50#25#50#100#200
         if num_maps == 3:
-            img_w = 14#7
+            img_w = 48#28#14#7
         elif num_maps == 4:
-            img_w = 16#8
+            img_w = 64#32#16#8
+
+    elif modeOp == "mix7" or modeOp == "mix9":
+        img_h = 25
+        if num_maps == 3:
+            img_w = 60
+        elif num_maps == 4:
+            img_w = 80 
 
     else:
         img_w = 10
@@ -118,6 +152,7 @@ def set_lengths(modeOp, num_maps):
         elif num_maps == 4:
             img_h = 40
 
+    print img_w,img_h
     return img_w,img_h
 
 def build_test(img_h,img_w, test_size, Words, conv_layers, x, mode, data_len, alpha, beta, num_maps):

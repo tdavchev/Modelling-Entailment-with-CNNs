@@ -33,12 +33,13 @@ def train_conv_net(datasets,
     for filter_h in filter_hs:
         filter_shapes.append((feature_maps, 1, filter_h, filter_w))
         pool_sizes.append((img_h-filter_h+1, img_w-filter_w+1))
+    num_maps = len(filter_shapes)
+
     parameters = [("image shape",img_h,img_w),("filter shape",filter_shapes), ("hidden_units",hidden_units),
                   ("dropout", dropout_rate), ("batch_size",batch_size),("non_static", non_static),
                     ("learn_decay",lr_decay), ("conv_non_linear", conv_non_linear), ("non_static", non_static)
                     ,("sqr_norm_lim",sqr_norm_lim),("shuffle_batch",shuffle_batch),("mode",modeOp), ("alpha",alpha),("beta",beta),("activations",activations)]
 
-    num_maps = len(filter_shapes)
     print parameters
     sys.stdout.flush()
     #define model architecture
@@ -86,11 +87,13 @@ def train_conv_net(datasets,
         two_layers.append(layer1_input)
         layer1_inputs.append(layer1_input)
 
-    # keep relatively close ratio to 300/81
+    # choose shape for the input to the third CNN
+    # for example - keep relatively close ratio to 300/81
     img_w,img_h = set_lengths(modeOp,num_maps)
+
+    # apply requested operations to the outputs from the first 2 CNNs
     if modeOp == "concat":
         layer1_input = concatenate_tensors(layer1_inputs)
-
     else:
         layer1_input = []
         concat = concatenate([one_layers, two_layers])
@@ -133,9 +136,7 @@ def train_conv_net(datasets,
         elif modeOp == "mix9":
             layer1_input = mix9(layer1_inputs,batch_size,alpha,beta,concat) # [50, 1500]
 
-
-    layer1_cnn_input = layer1_input.reshape((-1,img_h,img_w))
-        
+    layer1_cnn_input = layer1_input.reshape((-1,img_h,img_w))        
     filter_w = img_w
     feature_maps = hidden_units[0]
     filter_shapes = []
@@ -183,7 +184,7 @@ def train_conv_net(datasets,
     #extra data (at random)
     np.random.seed(3435)
     new_data = complete_train_data(datasets[0], batch_size)
-    # new_data = np.random.permutation(new_data) # makes it all nonsence ! why - usually used when not enough data, maybe, to generalize better?
+    # new_data = np.random.permutation(new_data) # makes it all nonsence ! why - usually used when not enough data, to generalize better?
 
     n_train_batches, n_val_batches = get_n_batches(new_data, datasets[2], batch_size)
 
@@ -263,7 +264,10 @@ def train_conv_net(datasets,
         sys.stdout.flush()
         if val_perf >= best_val_perf:
             best_val_perf = val_perf
-            if modeOp == "circ" or modeOp== "mix7" or modeOp == "mix8": # split in minibatches to decrease convolution size
+            # doing circular convolution to the full test set of 10000 items is infeasible 
+            # (i.e. requires above 40 GB Memory on video card)
+            # to circumvent - split in batches to decrease convolution size
+            if modeOp == "circ" or modeOp== "mix7" or modeOp == "mix8":
                 test_loss = 0
                 for minibatch_index in xrange(n_test_batches):
                     test_loss += test_model_all(test_set_x[minibatch_index*batch_size:(minibatch_index+1)*batch_size],test_set_y[minibatch_index*batch_size:(minibatch_index+1)*batch_size])

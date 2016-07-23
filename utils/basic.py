@@ -1,8 +1,16 @@
+'''
+Basic model specific helper functions
+'''
+
 def build_test(img_h, test_size, Words, conv_layers, x):
-    # initialize layer 0's input
-    test_layer0_input = set_layer0_input(Words,img_h,test_size,x)
-    # predict with CNN
-    test_pred_layers = []
+    """
+    Method that builds the test after training and validation stage
+
+    params: imgage height, test size, Words, convolution layers, x
+    return: feed-forward layer input
+    """
+    test_layer0_input = set_layer0_input(Words,img_h,test_size,x) # initialize layer 0's input
+    test_pred_layers = [] # predict with CNN
     for conv_layer in conv_layers:
         test_layer0_output = conv_layer.predict(test_layer0_input, test_size)
         test_pred_layers.append(test_layer0_output.flatten(2))

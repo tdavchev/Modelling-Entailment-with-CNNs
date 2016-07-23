@@ -1,3 +1,6 @@
+'''
+Extended model specific helper functions
+'''
 def concatenate(layers):
     concat= [[],[]]
     for br in xrange(0,2):
