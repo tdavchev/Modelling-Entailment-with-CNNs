@@ -160,7 +160,7 @@ def mix7(layer1_inputs,batch_size,alpha,beta,concat):
     lista.append(layer1_concat)
     lista.append(layer1_add)
     lista.append(layer1_sub)
-    lista.append(layer1_mul)
+    lista.append(layer1_circ)
 
     return T.concatenate(lista,1) # [50 1500]  
 
