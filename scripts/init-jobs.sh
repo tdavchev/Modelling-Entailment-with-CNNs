@@ -64,7 +64,7 @@ function activationNum {
 
 count=0
 br=0
-bs=200
+bs=50
 mode="-nonstatic"
 word_vectors="-word2vec"
 while [ $count -le $2 ]
@@ -92,7 +92,7 @@ do
 		br=0
 		mode_op="mix6"
         fi
-	mode_op="mix1"	
+	mode_op="mix7"	
 #	if [ $num -le 10 ]; then
 #		mode_op="mul"
 #	elif [ $num -le 20 ]; then
