@@ -207,7 +207,7 @@ def train_conv_net(datasets,
    
     img_h = (len(datasets[0][0])-1)/2 # note we need only per sentence
 
-    if modeOp == "circ":
+    if modeOp == "circ" or modeOp == "mix7" or modeOp == "mix8":
         test_ffwd_layer_input = build_test(img_h, 
             img_w, 
             batch_size, 
