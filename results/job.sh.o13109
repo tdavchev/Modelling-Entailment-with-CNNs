@@ -1,0 +1,29 @@
+Single Sentence Casei CNN 2
+200, 13, relu
+loading data...
+/home/s1045064/dissertation/repo-diss/sentence-classification/data/snli-w2v-Split.p
+data loaded!
+model architecture: CNN-non-static
+using: word2vec vectors
+datasets configured.
+image widht is 600
+[('image shape', 93, 300), ('filter shape', [(100, 1, 2, 300), (100, 1, 3, 300), (100, 1, 4, 300), (100, 1, 5, 300)]), ('hidden_units', [100, 3]), ('dropout', [0.13]), ('batch_size', 200), ('non_static', True), ('learn_decay', 0.94), ('conv_non_linear', 'relu'), ('non_static', True), ('sqr_norm_lim', 9), ('shuffle_batch', True), ('mode', 'mix1'), ('alpha', 1.0), ('beta', 1.0), ('activations', [<function ReLU at 0x28da09b0>])]
+define model architecture
+32 50
+define parameters of the model and update functions using adadelta
+shuffle dataset and assign to mini batches. if dataset size is not a multiple of mini batches, replicate
+divide train set into train/val sets
+compile theano functions to get train/val/test errors
+32 50
+... training
+epoch: 1, training time: 680.11 secs, train perf: 75.31 %, val perf: 73.78 %
+epoch: 2, training time: 680.67 secs, train perf: 82.27 %, val perf: 78.92 %
+epoch: 3, training time: 680.56 secs, train perf: 85.16 %, val perf: 80.43 %
+epoch: 4, training time: 680.56 secs, train perf: 87.76 %, val perf: 81.27 %
+epoch: 5, training time: 680.02 secs, train perf: 89.84 %, val perf: 81.06 %
+epoch: 6, training time: 680.08 secs, train perf: 90.56 %, val perf: 80.98 %
+epoch: 7, training time: 680.26 secs, train perf: 92.18 %, val perf: 81.31 %
+epoch: 8, training time: 681.24 secs, train perf: 93.15 %, val perf: 80.60 %
+epoch: 9, training time: 680.34 secs, train perf: 92.64 %, val perf: 79.67 %
+epoch: 10, training time: 684.44 secs, train perf: 94.54 %, val perf: 80.49 %
+0.8063

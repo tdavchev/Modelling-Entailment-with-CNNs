@@ -17,3 +17,12 @@ compile theano functions to get train/val/test errors
 ... training
 epoch: 1, training time: 677.56 secs, train perf: 75.01 %, val perf: 73.37 %
 epoch: 2, training time: 676.71 secs, train perf: 82.83 %, val perf: 79.65 %
+epoch: 3, training time: 681.69 secs, train perf: 84.95 %, val perf: 80.00 %
+epoch: 4, training time: 676.08 secs, train perf: 86.94 %, val perf: 80.98 %
+epoch: 5, training time: 675.42 secs, train perf: 89.43 %, val perf: 81.15 %
+epoch: 6, training time: 675.30 secs, train perf: 90.20 %, val perf: 80.80 %
+epoch: 7, training time: 675.79 secs, train perf: 91.90 %, val perf: 80.87 %
+epoch: 8, training time: 675.91 secs, train perf: 93.06 %, val perf: 80.37 %
+epoch: 9, training time: 676.72 secs, train perf: 93.89 %, val perf: 80.85 %
+epoch: 10, training time: 674.95 secs, train perf: 94.24 %, val perf: 80.06 %
+0.8036
