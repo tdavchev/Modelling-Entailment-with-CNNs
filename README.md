@@ -12,19 +12,25 @@ https://code.google.com/p/word2vec/
 
 
 ### Data Preprocessing
-Open process_data.py and edit the path to the three snli.txt data files
+All script files are located in scripts/.
 To process the raw SNLI data, run
 
 ```
 python process_snli.py /path-to-file/file.txt model >> /path/to/data/type.txt
-e.g. python process_snli.py ../data/unprocessed/snli/snli_1.0_train.txt 1 >>../data/processed/train.txt
+e.g. python process_snli.py ../data/unprocessed/snli/snli_1.0_train.txt model 1 >> ../data/processed/train.txt
 
-python process_data.py path/to/embedding False/True file-name.p
-e.g. python process_data.py ../data/embeddings/word2vec.bin True ../data/snli-w2v-Split.p
+Note: you need to process train,test and dev
 
-Options for model = 1 will process a premise and hypothesis
+Options for model = 1 will process a premise and hypothesis together (this is what you need for all existing models)
 	     			21 will process premise only
 	     			22 will process hypothesis only
+
+```
+Next step is to process the data into a pickle file. To achieve this you need to open scripts/process_data.py and
+modify the paths specified in the data_folder variable
+```
+python process_data.py path/to/embedding False/True file-name.p
+e.g. python process_data.py ../data/embeddings/word2vec.bin True ../data/snli-w2v-Split.p
 
 True/False - refers to whether or not to process SNLI dataset as one pair or index premises as 0 and
 hypotheses with 1
@@ -36,7 +42,6 @@ This will create a pickle object called `file-name.p` in the allocated folder.
 Alternatively, one can process the MR dataset and use it to test the correctness of the model.
 The results can be comapared with the paper [Convolutional Neural Networks for Sentence Classification](http://arxiv.org/abs/1408.5882) (EMNLP 2014).
 ```
-
 python process_data.py path/to/embedding
 ```
 
