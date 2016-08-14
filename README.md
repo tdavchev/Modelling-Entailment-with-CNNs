@@ -17,7 +17,7 @@ To process the raw SNLI data, run
 
 ```
 python process_snli.py /path-to-file/file.txt model >> /path/to/data/type.txt
-e.g. python process_snli.py ../data/unprocessed/snli/snli_1.0_train.txt model 1 >> ../data/processed/train.txt
+e.g. python process_snli.py ../data/unprocessed/snli/snli_1.0_train.txt model 1 >> ../data/processed/SNLI/train.txt
 
 Note: you need to process train,test and dev
 
