@@ -1,9 +1,0 @@
-Using gpu device 0: GeForce GTX TITAN X (CNMeM is enabled with initial size: 85.0% of memory, cuDNN not available)
-/home/s1045064/dissertation/venv/lib/python2.7/site-packages/theano/tensor/signal/downsample.py:6: UserWarning: downsample module has been moved to the theano.tensor.signal.pool module.
-  "downsample module has been moved to the theano.tensor.signal.pool module.")
-Traceback (most recent call last):
-  File "/home/s1045064/dissertation/repo-diss/sentence-classification/cv_conv_net_sentence-newerversion.py", line 253, in <module>
-    trY = one_hot(trY)
-  File "/home/s1045064/dissertation/repo-diss/sentence-classification/cv_conv_net_sentence-newerversion.py", line 165, in one_hot
-    if int(data[idx][0]) == 0:
-IndexError: invalid index to scalar variable.
