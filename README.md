@@ -1,30 +1,3 @@
-```
-Project Outlook:
--data
----embeddings/
----processed/
----unprocessed/
--models
----baseline.py
----three-cnns.py
--scripts
----init-jobs.sh
----job-baseline.sh
----job.sh
----process_data.py
----process_MR_data.py
----process_snli.py
--utils
----arithmetics.py
----basic.py
----conv_net_classes.py
----helpers.py
----save.py
--main.py
--test.py
--README.md
-```
-
 ## Convolutional Neural Networks for Sentence Classification
 Code influenced by the paper [Convolutional Neural Networks for Sentence Classification](http://arxiv.org/abs/1408.5882) (EMNLP 2014).
 
@@ -39,6 +12,8 @@ https://code.google.com/p/word2vec/
 
 
 ### Data Preprocessing
+Note: the solution already contains precompiled .p files. However, should there be any issues, please follow the steps below.
+
 All script files are located in scripts/.
 To process the raw SNLI data, run
 
@@ -135,3 +110,46 @@ Hence the paper is missing a lot of things like ablation studies and variance in
 were premature (e.g. regularization does not always seem to help).
 
 Ye Zhang has written a [very nice paper](http://arxiv.org/abs/1510.03820) doing an extensive analysis of model variants (e.g. filter widths, k-max pooling, word2vec vs Glove, etc.) and their effect on performance.
+
+```
+Project File Structure:
+-data
+---embeddings/
+------glove.6B.300d.txt
+------word2vec.bin
+---processed/
+------MR
+---------mr.p
+------SNLI
+---------snli-GloVe-Full.p
+---------snli-GloVe-Split.p
+---------snli-w2v-Split.p
+---------test.txt
+---------train.txt
+---------valid.txt
+---unprocessed/
+------snli_1.0_dev.txt
+------snli_1.0_test.txt
+------snli_1.0_train.txt
+-models
+---baseline.py
+---three-cnns.py
+-scripts
+---init-jobs.sh
+---job-baseline.sh
+---job.sh
+---process_data.py
+---process_MR_data.py
+---process_snli.py
+-utils
+---arithmetics.py
+---basic.py
+---conv_net_classes.py
+---helpers.py
+---save.py
+-main.py
+-test.py
+-README.md
+```
+
+Note that files like the MR and SNLI data sets or GloVe and word2vec embeddings are not included to this folder.
