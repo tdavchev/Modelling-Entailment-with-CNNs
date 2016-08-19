@@ -1,3 +1,30 @@
+```
+Project Outlook:
+-data
+---embeddings/
+---processed/
+---unprocessed/
+-models
+---baseline.py
+---three-cnns.py
+-scripts
+---init-jobs.sh
+---job-baseline.sh
+---job.sh
+---process_data.py
+---process_MR_data.py
+---process_snli.py
+-utils
+---arithmetics.py
+---basic.py
+---conv_net_classes.py
+---helpers.py
+---save.py
+-main.py
+-test.py
+-README.md
+```
+
 ## Convolutional Neural Networks for Sentence Classification
 Code influenced by the paper [Convolutional Neural Networks for Sentence Classification](http://arxiv.org/abs/1408.5882) (EMNLP 2014).
 
