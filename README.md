@@ -1,5 +1,6 @@
 ## Convolutional Neural Networks for Sentence Classification
 Code influenced by the paper [Convolutional Neural Networks for Sentence Classification](http://arxiv.org/abs/1408.5882) (EMNLP 2014).
+The base model is based on Yoon Kim's implementation https://github.com/yoonkim/CNN_sentence
 
 Runs the model on Pang and Lee's movie review dataset (MR in the paper).
 It can also run the model on Stanford Natural Language Inference (SNLI) dataset.
@@ -10,6 +11,8 @@ Code is written in Python (2.7) and requires Theano (0.7).
 Using the pre-trained `word2vec` vectors will also require downloading the binary file from
 https://code.google.com/p/word2vec/
 
+It can also use the pre-trained 'GloVe' vectors which will require downloading the txt file from
+http://nlp.stanford.edu/projects/glove/
 
 ### Data Preprocessing
 Note: the solution already contains precompiled .p files. However, should there be any issues, please follow the steps below.
@@ -93,7 +96,7 @@ epoch: 3, training time: 16.16 secs, train perf: 91.87 %, val perf: 81.37 %
 
 ### Other Implementations
 #### TensorFlow
-[Denny Britz](http://www.wildml.com) has an implementation of the model in TensorFlow:
+[Denny Britz](http://www.wildml.com) has an implementation of the base model in TensorFlow:
 
 https://github.com/dennybritz/cnn-text-classification-tf
 
