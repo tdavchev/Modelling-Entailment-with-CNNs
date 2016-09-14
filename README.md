@@ -1,4 +1,5 @@
-## Convolutional Neural Networks for Sentence Classification
+## Convolutional Neural Networks for Modelling Entailment Relations and Sentence Classification
+Project done under the supervision of prof. Mirella Lapata as part of the University of Edinburgh MSc Dissertation.
 Code influenced by the paper [Convolutional Neural Networks for Sentence Classification](http://arxiv.org/abs/1408.5882) (EMNLP 2014).
 The base model is based on Yoon Kim's implementation https://github.com/yoonkim/CNN_sentence
 
