@@ -115,6 +115,8 @@ were premature (e.g. regularization does not always seem to help).
 
 Ye Zhang has written a [very nice paper](http://arxiv.org/abs/1510.03820) doing an extensive analysis of model variants (e.g. filter widths, k-max pooling, word2vec vs Glove, etc.) and their effect on performance.
 
+### Project Structure
+
 ```
 Project File Structure:
 -data
